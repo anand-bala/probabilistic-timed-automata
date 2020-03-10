@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "probabilistic-timed-automata"
+version = "0.1.0"
+description = "Probabilistic Timed Automata library for Python"
+authors = ["Anand Balakrishnan <anandbala1597@gmail.com>"]
+
+license = "MIT"
+
+readme = "README.md"
+repository = "https://github.com/anand-bala/probabilistic-timed-automata.git"
+
+[tool.poetry.dependencies]
+python = "^3.5"
+funcy = "^1.14"
+attrs = "^19.3.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+mypy = "^0.761"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
