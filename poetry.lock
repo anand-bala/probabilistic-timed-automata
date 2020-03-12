@@ -127,6 +127,18 @@ version = ">=0.12"
 dev = ["pre-commit", "tox"]
 
 [[package]]
+category = "main"
+description = "Python data structure and operations for intervals"
+name = "portion"
+optional = false
+python-versions = "~=3.5"
+version = "2.0.0"
+
+[package.extras]
+test = ["pytest (>=5.0.1,<5.1.0)"]
+travis = ["coverage (>=5.0.3,<5.1.0)", "coveralls (>=1.11.1,<1.12.0)"]
+
+[[package]]
 category = "dev"
 description = "library with cross-python path, ini-parsing, io, code, log facilities"
 name = "py"
@@ -218,7 +230,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["pathlib2", "unittest2", "jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "112347259ad72b7418408602e9461e6c47a94441b1a5f487904d1e2745b693f2"
+content-hash = "6accc1e12cef06ea7a319a83b351e22eab580e589f1159d9d9496ca2e3f0e130"
 python-versions = "^3.5"
 
 [metadata.files]
@@ -276,6 +288,10 @@ pathlib2 = [
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
     {file = "pluggy-0.13.1.tar.gz", hash = "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0"},
+]
+portion = [
+    {file = "portion-2.0.0-py3-none-any.whl", hash = "sha256:9cc1b6433057c61e947aa69aa227ddca1744d1359e808ddeafe70a10a7abb53d"},
+    {file = "portion-2.0.0.tar.gz", hash = "sha256:64c86f2029cf1a917fb7055962a025183fdac8512a8e32abfff1ce7de4b70ed3"},
 ]
 py = [
     {file = "py-1.8.1-py2.py3-none-any.whl", hash = "sha256:c20fdd83a5dbc0af9efd622bee9a5564e278f6380fffcacc43ba6f43db2813b0"},

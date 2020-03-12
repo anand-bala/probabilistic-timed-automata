@@ -13,6 +13,7 @@ repository = "https://github.com/anand-bala/probabilistic-timed-automata.git"
 python = "^3.5"
 funcy = "^1.14"
 attrs = "^19.3.0"
+portion = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
