@@ -9,6 +9,10 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/anand-bala/probabilistic-timed-automata.git"
 
+packages = [
+  { include = "pta" },
+]
+
 [tool.poetry.dependencies]
 python = "^3.6"
 funcy = "^1.14"

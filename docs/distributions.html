@@ -119,7 +119,7 @@ def uniform(support: Set[T]) -&gt; DiscreteDistribution[T]:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="pta.distributions.delta"><code class="name flex">
-<span>def <span class="ident">delta</span></span>(<span>center: ~T) -> <a title="pta.distributions.DiscreteDistribution" href="#pta.distributions.DiscreteDistribution">DiscreteDistribution</a></span>
+<span>def <span class="ident">delta</span></span>(<span>center)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Return the (Kronecker) delta distribution centered at <code>center</code></p>
@@ -162,7 +162,7 @@ Parameters</p>
 </details>
 </dd>
 <dt id="pta.distributions.uniform"><code class="name flex">
-<span>def <span class="ident">uniform</span></span>(<span>support: Set[~T]) -> <a title="pta.distributions.DiscreteDistribution" href="#pta.distributions.DiscreteDistribution">DiscreteDistribution</a></span>
+<span>def <span class="ident">uniform</span></span>(<span>support)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Return the uniform distribution over the given support</p>
@@ -257,7 +257,7 @@ assert p(5) == 1/10
 <h3>Methods</h3>
 <dl>
 <dt id="pta.distributions.DiscreteDistribution.sample"><code class="name flex">
-<span>def <span class="ident">sample</span></span>(<span>self, *, k: int = 1) -> Sequence[~T]</span>
+<span>def <span class="ident">sample</span></span>(<span>self, *, k=1)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Sample a value from the support</p>

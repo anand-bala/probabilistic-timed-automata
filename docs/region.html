@@ -38,10 +38,10 @@ import funcy as fn
 class Region:
     &#34;&#34;&#34;Data structure to model an Integral Region of the PTA.
 
-    This data structure is based on the paper [Hartmanns2017]_ for efficient,
-    region-based simulations of PTA.
+    This data structure is based on the paper for efficient, region-based
+    simulations of PTA.[^1]
 
-    ..  [Hartmanns2017] A. Hartmanns, S. Sedwards, and P. R. D’Argenio,
+    [^1]: A. Hartmanns, S. Sedwards, and P. R. D’Argenio, 
         &#34;Efficient simulation-based verification of probabilistic timed automata,&#34;
         in Proceedings of the 2017 Winter Simulation Conference, Las Vegas, Nevada,
         2017, pp. 1–12.
@@ -176,17 +176,23 @@ class Region:
 <dl>
 <dt id="pta.region.Region"><code class="flex name class">
 <span>class <span class="ident">Region</span></span>
-<span>(</span><span>n_clocks: int, *, is_int: bool = True, value_vector: MutableSequence[int] = NOTHING, fractional_ord: MutableSequence[int] = NOTHING, num_frac: int = 0)</span>
+<span>(</span><span>n_clocks, *, is_int=True, value_vector=NOTHING, fractional_ord=NOTHING, num_frac=0)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Data structure to model an Integral Region of the PTA.</p>
-<p>This data structure is based on the paper [Hartmanns2017]_ for efficient,
-region-based simulations of PTA.</p>
-<p>..
-[Hartmanns2017] A. Hartmanns, S. Sedwards, and P. R. D’Argenio,
+<p>This data structure is based on the paper for efficient, region-based
+simulations of PTA.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn:1">
+<p>A. Hartmanns, S. Sedwards, and P. R. D’Argenio,
 "Efficient simulation-based verification of probabilistic timed automata,"
 in Proceedings of the 2017 Winter Simulation Conference, Las Vegas, Nevada,
-2017, pp. 1–12.</p></section>
+2017, pp. 1–12.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -194,10 +200,10 @@ in Proceedings of the 2017 Winter Simulation Conference, Las Vegas, Nevada,
 <pre><code class="python">class Region:
     &#34;&#34;&#34;Data structure to model an Integral Region of the PTA.
 
-    This data structure is based on the paper [Hartmanns2017]_ for efficient,
-    region-based simulations of PTA.
+    This data structure is based on the paper for efficient, region-based
+    simulations of PTA.[^1]
 
-    ..  [Hartmanns2017] A. Hartmanns, S. Sedwards, and P. R. D’Argenio,
+    [^1]: A. Hartmanns, S. Sedwards, and P. R. D’Argenio, 
         &#34;Efficient simulation-based verification of probabilistic timed automata,&#34;
         in Proceedings of the 2017 Winter Simulation Conference, Las Vegas, Nevada,
         2017, pp. 1–12.
@@ -352,7 +358,7 @@ def n_clocks(self):
 <h3>Methods</h3>
 <dl>
 <dt id="pta.region.Region.delay"><code class="name flex">
-<span>def <span class="ident">delay</span></span>(<span>self, steps: int = 1)</span>
+<span>def <span class="ident">delay</span></span>(<span>self, steps=1)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Delay each of the clocks and move <code>steps</code> "representative" region.</p>
@@ -403,7 +409,7 @@ fractional order, etc.</p></section>
 </details>
 </dd>
 <dt id="pta.region.Region.reset"><code class="name flex">
-<span>def <span class="ident">reset</span></span>(<span>self, reset_clock: int)</span>
+<span>def <span class="ident">reset</span></span>(<span>self, reset_clock)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Reset the given clock to 0</p></section>
@@ -447,7 +453,7 @@ fractional order, etc.</p></section>
 </details>
 </dd>
 <dt id="pta.region.Region.value"><code class="name flex">
-<span>def <span class="ident">value</span></span>(<span>self) -> MutableSequence[float]</span>
+<span>def <span class="ident">value</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Get the representative values of the clocks in the current region</p>

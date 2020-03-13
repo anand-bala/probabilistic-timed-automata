@@ -88,6 +88,7 @@ class Clock:
 
     In the above example, the variables ``x`` and ``y`` are clocks with the *name* (a hashable string).
     &#34;&#34;&#34;
+
     name: Hashable = attr.ib()
 
     def __lt__(self, other: int) -&gt; &#34;ClockConstraint&#34;:
@@ -119,6 +120,8 @@ class Clock:
 
 
 class ClockConstraint(ABC):
+    &#34;&#34;&#34;An abstract class for clock constraints&#34;&#34;&#34;
+
     def __and__(self, other: &#34;ClockConstraint&#34;) -&gt; &#34;ClockConstraint&#34;:
         if isinstance(other, Boolean):
             if other.value:
@@ -129,6 +132,8 @@ class ClockConstraint(ABC):
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class Boolean(ClockConstraint):
+    &#34;&#34;&#34;An atomic boolean class to represent ``true`` and ``false`` clock constraints&#34;&#34;&#34;
+
     value: bool = attr.ib()
 
     def __and__(self, other: ClockConstraint) -&gt; ClockConstraint:
@@ -139,11 +144,15 @@ class Boolean(ClockConstraint):
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class And(ClockConstraint):
+    &#34;&#34;&#34;Class to represent conjunctions of clock constraints&#34;&#34;&#34;
+
     args: Tuple[ClockConstraint, ClockConstraint] = attr.ib()
 
 
 @unique
 class ComparisonOp(Enum):
+    &#34;&#34;&#34;Enum to represent the 4 comparison operations allowed in `SingletonConstraint`s and `DiagonalConstraint`s&#34;&#34;&#34;
+
     GE = auto()
     GT = auto()
     LE = auto()
@@ -164,6 +173,8 @@ class ComparisonOp(Enum):
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class SingletonConstraint(ClockConstraint):
+    &#34;&#34;&#34;Constraints of the form \\(c \\sim n\\) for \\(n \\in \\mathbb{N}\\) and \\(\\sim \\in \\{&lt;,\\le,\\ge,&gt;\\}\\)&#34;&#34;&#34;
+
     clock: Clock = attr.ib()
     rhs: int = attr.ib()
     op: ComparisonOp = attr.ib()
@@ -176,6 +187,8 @@ class SingletonConstraint(ClockConstraint):
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class DiagonalLHS:
+    &#34;&#34;&#34;Intermediate result for \\(c_1 - c_2\\)&#34;&#34;&#34;
+
     clock1: Clock = attr.ib()
     clock2: Clock = attr.ib()
 
@@ -195,7 +208,7 @@ class DiagonalLHS:
 # TODO(anand): Can there only be two clocks in a diagonal constraint?
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class DiagonalConstraint(ClockConstraint):
-    &#34;&#34;&#34;Diagonal constraints of the form: ``clock1 - clock2 ~ n```&#34;&#34;&#34;
+    &#34;&#34;&#34;Diagonal constraints of the form: \\(c_1 - c_2 \\sim n\\)&#34;&#34;&#34;
 
     lhs: DiagonalLHS = attr.ib()
     rhs: int = attr.ib()
@@ -208,6 +221,25 @@ class DiagonalConstraint(ClockConstraint):
 
 
 def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -&gt; Interval:
+    &#34;&#34;&#34;Compute the allowable delay with the given clock valuations and constraints
+
+    .. todo::
+        Write the LaTeX version of the function.
+
+    Parameters
+    ----------
+    values :
+        A mapping from `Clock` to the valuation of the clock.
+    constraint :
+        A clock constrain.
+
+    Returns
+    -------
+    output :
+        An interval that represents the set of possible delays that satisfy the
+        given clock constraint.
+
+    &#34;&#34;&#34;
     if isinstance(constraint, Boolean):
         if constraint.value:
             return P.closed(0, P.inf)
@@ -243,15 +275,49 @@ def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -&gt; Int
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="pta.clocks.delays"><code class="name flex">
-<span>def <span class="ident">delays</span></span>(<span>values: Mapping[pta.clocks.Clock, float], constraint: <a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a>) -> portion.interval.Interval</span>
+<span>def <span class="ident">delays</span></span>(<span>values, constraint)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Compute the allowable delay with the given clock valuations and constraints</p>
+<div class="admonition todo">
+<p class="admonition-title">TODO</p>
+<p>Write the LaTeX version of the function.</p>
+</div>
+<h2 id="parameters">Parameters</h2>
+<p>values :
+A mapping from <a title="pta.clocks.Clock" href="#pta.clocks.Clock"><code>Clock</code></a> to the valuation of the clock.
+constraint :
+A clock constrain.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>output</code> :</dt>
+<dd>An interval that represents the set of possible delays that satisfy the
+given clock constraint.</dd>
+</dl></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -&gt; Interval:
+    &#34;&#34;&#34;Compute the allowable delay with the given clock valuations and constraints
+
+    .. todo::
+        Write the LaTeX version of the function.
+
+    Parameters
+    ----------
+    values :
+        A mapping from `Clock` to the valuation of the clock.
+    constraint :
+        A clock constrain.
+
+    Returns
+    -------
+    output :
+        An interval that represents the set of possible delays that satisfy the
+        given clock constraint.
+
+    &#34;&#34;&#34;
     if isinstance(constraint, Boolean):
         if constraint.value:
             return P.closed(0, P.inf)
@@ -286,16 +352,17 @@ def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -&gt; Int
 <dl>
 <dt id="pta.clocks.And"><code class="flex name class">
 <span>class <span class="ident">And</span></span>
-<span>(</span><span>args: Tuple[pta.clocks.ClockConstraint, pta.clocks.ClockConstraint])</span>
+<span>(</span><span>args)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Helper class that provides a standard way to create an ABC using
-inheritance.</p></section>
+<section class="desc"><p>Class to represent conjunctions of clock constraints</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class And(ClockConstraint):
+    &#34;&#34;&#34;Class to represent conjunctions of clock constraints&#34;&#34;&#34;
+
     args: Tuple[ClockConstraint, ClockConstraint] = attr.ib()</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -306,16 +373,17 @@ inheritance.</p></section>
 </dd>
 <dt id="pta.clocks.Boolean"><code class="flex name class">
 <span>class <span class="ident">Boolean</span></span>
-<span>(</span><span>value: bool)</span>
+<span>(</span><span>value)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Helper class that provides a standard way to create an ABC using
-inheritance.</p></section>
+<section class="desc"><p>An atomic boolean class to represent <code>true</code> and <code>false</code> clock constraints</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Boolean(ClockConstraint):
+    &#34;&#34;&#34;An atomic boolean class to represent ``true`` and ``false`` clock constraints&#34;&#34;&#34;
+
     value: bool = attr.ib()
 
     def __and__(self, other: ClockConstraint) -&gt; ClockConstraint:
@@ -331,7 +399,7 @@ inheritance.</p></section>
 </dd>
 <dt id="pta.clocks.Clock"><code class="flex name class">
 <span>class <span class="ident">Clock</span></span>
-<span>(</span><span>name: collections.abc.Hashable)</span>
+<span>(</span><span>name)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>A Clock symbol</p>
@@ -354,6 +422,7 @@ y = Clock('y')
 
     In the above example, the variables ``x`` and ``y`` are clocks with the *name* (a hashable string).
     &#34;&#34;&#34;
+
     name: Hashable = attr.ib()
 
     def __lt__(self, other: int) -&gt; &#34;ClockConstraint&#34;:
@@ -388,13 +457,14 @@ y = Clock('y')
 <span>class <span class="ident">ClockConstraint</span></span>
 </code></dt>
 <dd>
-<section class="desc"><p>Helper class that provides a standard way to create an ABC using
-inheritance.</p></section>
+<section class="desc"><p>An abstract class for clock constraints</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ClockConstraint(ABC):
+    &#34;&#34;&#34;An abstract class for clock constraints&#34;&#34;&#34;
+
     def __and__(self, other: &#34;ClockConstraint&#34;) -&gt; &#34;ClockConstraint&#34;:
         if isinstance(other, Boolean):
             if other.value:
@@ -419,12 +489,14 @@ inheritance.</p></section>
 <span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>An enumeration.</p></section>
+<section class="desc"><p>Enum to represent the 4 comparison operations allowed in <a title="pta.clocks.SingletonConstraint" href="#pta.clocks.SingletonConstraint"><code>SingletonConstraint</code></a>s and <a title="pta.clocks.DiagonalConstraint" href="#pta.clocks.DiagonalConstraint"><code>DiagonalConstraint</code></a>s</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ComparisonOp(Enum):
+    &#34;&#34;&#34;Enum to represent the 4 comparison operations allowed in `SingletonConstraint`s and `DiagonalConstraint`s&#34;&#34;&#34;
+
     GE = auto()
     GT = auto()
     LE = auto()
@@ -468,16 +540,16 @@ inheritance.</p></section>
 </dd>
 <dt id="pta.clocks.DiagonalConstraint"><code class="flex name class">
 <span>class <span class="ident">DiagonalConstraint</span></span>
-<span>(</span><span>lhs: <a title="pta.clocks.DiagonalLHS" href="#pta.clocks.DiagonalLHS">DiagonalLHS</a>, rhs: int, op: <a title="pta.clocks.ComparisonOp" href="#pta.clocks.ComparisonOp">ComparisonOp</a>)</span>
+<span>(</span><span>lhs, rhs, op)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Diagonal constraints of the form: ``clock1 - clock2 ~ n```</p></section>
+<section class="desc"><p>Diagonal constraints of the form: <span><span class="MathJax_Preview">c_1 - c_2 \sim n</span><script type="math/tex">c_1 - c_2 \sim n</script></span></p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class DiagonalConstraint(ClockConstraint):
-    &#34;&#34;&#34;Diagonal constraints of the form: ``clock1 - clock2 ~ n```&#34;&#34;&#34;
+    &#34;&#34;&#34;Diagonal constraints of the form: \\(c_1 - c_2 \\sim n\\)&#34;&#34;&#34;
 
     lhs: DiagonalLHS = attr.ib()
     rhs: int = attr.ib()
@@ -496,15 +568,17 @@ inheritance.</p></section>
 </dd>
 <dt id="pta.clocks.DiagonalLHS"><code class="flex name class">
 <span>class <span class="ident">DiagonalLHS</span></span>
-<span>(</span><span>clock1: <a title="pta.clocks.Clock" href="#pta.clocks.Clock">Clock</a>, clock2: <a title="pta.clocks.Clock" href="#pta.clocks.Clock">Clock</a>)</span>
+<span>(</span><span>clock1, clock2)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Intermediate result for <span><span class="MathJax_Preview">c_1 - c_2</span><script type="math/tex">c_1 - c_2</script></span></p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class DiagonalLHS:
+    &#34;&#34;&#34;Intermediate result for \\(c_1 - c_2\\)&#34;&#34;&#34;
+
     clock1: Clock = attr.ib()
     clock2: Clock = attr.ib()
 
@@ -523,16 +597,17 @@ inheritance.</p></section>
 </dd>
 <dt id="pta.clocks.SingletonConstraint"><code class="flex name class">
 <span>class <span class="ident">SingletonConstraint</span></span>
-<span>(</span><span>clock: <a title="pta.clocks.Clock" href="#pta.clocks.Clock">Clock</a>, rhs: int, op: <a title="pta.clocks.ComparisonOp" href="#pta.clocks.ComparisonOp">ComparisonOp</a>)</span>
+<span>(</span><span>clock, rhs, op)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Helper class that provides a standard way to create an ABC using
-inheritance.</p></section>
+<section class="desc"><p>Constraints of the form <span><span class="MathJax_Preview">c \sim n</span><script type="math/tex">c \sim n</script></span> for <span><span class="MathJax_Preview">n \in \mathbb{N}</span><script type="math/tex">n \in \mathbb{N}</script></span> and <span><span class="MathJax_Preview">\sim \in \{&lt;,\le,\ge,&gt;\}</span><script type="math/tex">\sim \in \{<,\le,\ge,>\}</script></span></p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SingletonConstraint(ClockConstraint):
+    &#34;&#34;&#34;Constraints of the form \\(c \\sim n\\) for \\(n \\in \\mathbb{N}\\) and \\(\\sim \\in \\{&lt;,\\le,\\ge,&gt;\\}\\)&#34;&#34;&#34;
+
     clock: Clock = attr.ib()
     rhs: int = attr.ib()
     op: ComparisonOp = attr.ib()

@@ -165,7 +165,7 @@ class DiagonalLHS:
 # TODO(anand): Can there only be two clocks in a diagonal constraint?
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class DiagonalConstraint(ClockConstraint):
-    """Diagonal constraints of the form: \\(c_1 - c_2 \sim n\\)"""
+    """Diagonal constraints of the form: \\(c_1 - c_2 \\sim n\\)"""
 
     lhs: DiagonalLHS = attr.ib()
     rhs: int = attr.ib()
