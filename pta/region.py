@@ -1,6 +1,6 @@
 """The Region data structure for simulating PTA."""
 
-from typing import List
+from typing import MutableSequence
 
 import attr
 import funcy as fn
@@ -30,8 +30,8 @@ class Region:
     _n_clocks: int = attr.ib()
     _is_int: bool = attr.ib(default=True, kw_only=True)
 
-    _value_vector: List[int] = attr.ib(kw_only=True)
-    _fractional_ord: List[int] = attr.ib(kw_only=True)
+    _value_vector: MutableSequence[int] = attr.ib(kw_only=True)
+    _fractional_ord: MutableSequence[int] = attr.ib(kw_only=True)
     _num_frac: int = attr.ib(default=0, kw_only=True)
 
     @property
@@ -50,14 +50,14 @@ class Region:
             raise ValueError("n_clocks must be a non-negative integer")
 
     @_value_vector.default
-    def _value_vector_default(self) -> List[int]:
+    def _value_vector_default(self) -> MutableSequence[int]:
         return [0] * self.n_clocks
 
     @_fractional_ord.default
-    def _fractional_ord_default(self) -> List[int]:
+    def _fractional_ord_default(self) -> MutableSequence[int]:
         return [0] * self.n_clocks
 
-    def value(self) -> List[float]:
+    def value(self) -> MutableSequence[float]:
         """Get the representative values of the clocks in the current region
 
         The representative value of the region depends on the integer value and

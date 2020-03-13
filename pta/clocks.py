@@ -12,12 +12,19 @@ Here, ``~`` is one of ``<,<=,>=,>``, ``c, c_i`` are any ``Clock`` names, and
 
 from abc import ABC
 from enum import Enum, auto, unique
-from typing import Hashable
+from typing import Hashable, Mapping, Tuple, Callable
+import operator
 
 import attr
 
+# NOTE:
+#   Currently using this library for intervals, but may use a custom Intervall
+#   class in the future.
+import portion as P
+from portion import Interval
 
-@attr.s(frozen=True, auto_attribs=True, order=False)
+
+@attr.s(frozen=True, auto_attribs=True, order=False, eq=True)
 class Clock:
     name: Hashable = attr.ib()
 
@@ -56,7 +63,7 @@ class ClockConstraint(ABC):
             if other.value:
                 return self
             return other
-        return And(self, other)
+        return And((self, other))
 
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
@@ -71,8 +78,7 @@ class Boolean(ClockConstraint):
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class And(ClockConstraint):
-    lhs: ClockConstraint = attr.ib()
-    rhs: ClockConstraint = attr.ib()
+    args: Tuple[ClockConstraint, ClockConstraint] = attr.ib()
 
 
 @unique
@@ -81,6 +87,18 @@ class ComparisonOp(Enum):
     GT = auto()
     LE = auto()
     LT = auto()
+
+    def to_op(self) -> Callable[[float, float], bool]:
+        """Output the operator function that corresponds to the enum"""
+        if self == ComparisonOp.GE:
+            return operator.ge
+        if self == ComparisonOp.GT:
+            return operator.gt
+        if self == ComparisonOp.LE:
+            return operator.le
+        if self == ComparisonOp.LT:
+            return operator.lt
+        return operator.lt
 
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
@@ -125,3 +143,32 @@ class DiagonalConstraint(ClockConstraint):
     def _rhs_validator(self, attribute, value):
         if value < 0:
             raise ValueError("Clock constraint can't be negative")
+
+
+def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -> Interval:
+    if isinstance(constraint, Boolean):
+        if constraint.value:
+            return P.closed(0, P.inf)
+        return P.empty()
+    if isinstance(constraint, SingletonConstraint):
+        v_c = values[constraint.clock]
+        n: int = constraint.rhs
+        if constraint.op == ComparisonOp.GE:
+            return P.closed(n - v_c, P.inf)
+        if constraint.op == ComparisonOp.GT:
+            return P.open(n - v_c, P.inf)
+        if constraint.op == ComparisonOp.LE:
+            return P.closed(0, n - v_c)
+        if constraint.op == ComparisonOp.LT:
+            return P.closedopen(0, n - v_c)
+    if isinstance(constraint, And):
+        return delays(values, constraint.args[0]) & delays(values, constraint.args[1])
+    if isinstance(constraint, DiagonalConstraint):
+        v_c1 = values[constraint.lhs.clock1]
+        v_c2 = values[constraint.lhs.clock2]
+        op_fn = constraint.op.to_op()
+        if op_fn(v_c1 - v_c2, n):
+            return P.closed(0, P.inf)
+        return P.empty()
+    raise TypeError("Unsupported ClockConstraint type: {}"
+                    .format(type(constraint)))
