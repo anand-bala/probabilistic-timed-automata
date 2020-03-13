@@ -10,18 +10,10 @@ import funcy as fn
 class Region:
     """Data structure to model an Integral Region of the PTA.
 
-    This data structure is based on the paper [Hartmanns2017]_ for efficient,
-    region-based simulations of PTA.
+    This data structure is based on the paper for efficient, region-based
+    simulations of PTA.[^1]
 
-    Instance Variables
-    ------------------
-
-    ``n_clocks``
-        The number of clocks the region structure needs to keep track of.
-    ``is_int``
-        ``True`` if any of the clocks have integer valuation.
-
-    ..  [Hartmanns2017] A. Hartmanns, S. Sedwards, and P. R. D’Argenio,
+    [^1]: A. Hartmanns, S. Sedwards, and P. R. D’Argenio, 
         "Efficient simulation-based verification of probabilistic timed automata,"
         in Proceedings of the 2017 Winter Simulation Conference, Las Vegas, Nevada,
         2017, pp. 1–12.
@@ -63,10 +55,13 @@ class Region:
         The representative value of the region depends on the integer value and
         the *fractional order* of the individual valuations.
         """
+
         def value_fn(clock: int) -> float:
-            return(self._value_vector[clock]
-                   + ((2 * self._fractional_ord[clock] + int(self._is_int))
-                      / (2.0 * self._num_frac)))
+            return self._value_vector[clock] + (
+                (2 * self._fractional_ord[clock] + int(self._is_int))
+                / (2.0 * self._num_frac)
+            )
+
         return [value_fn(c) for c in range(self.n_clocks)]
 
     def delay(self, steps: int = 1):
@@ -80,23 +75,29 @@ class Region:
 
         if steps == 1:
             if not self.is_int:
-                self._fractional_ord = fn.lmap(lambda x: (
-                    x + 1) % self._num_frac, self._fractional_ord)
+                self._fractional_ord = fn.lmap(
+                    lambda x: (x + 1) % self._num_frac, self._fractional_ord
+                )
                 self._value_vector = fn.lmap(
                     lambda val, frac: val + int(frac == 0),
-                    self._value_vector, self._fractional_ord)
+                    self._value_vector,
+                    self._fractional_ord,
+                )
             self._is_int = not self._is_int
         else:
             self._value_vector = fn.lmap(
                 lambda val, frac: (
-                    val + (2 * frac + int(self.is_int) + steps)
-                    // (2 * self._num_frac)),
-                self._value_vector, self._fractional_ord
+                    val + (2 * frac + int(self.is_int) + steps) // (2 * self._num_frac)
+                ),
+                self._value_vector,
+                self._fractional_ord,
             )
             self._fractional_ord = fn.lmap(
-                lambda frac: ((
-                    frac + (steps + int(self.is_int)) // 2) % self._num_frac),
-                self._fractional_ord)
+                lambda frac: (
+                    (frac + (steps + int(self.is_int)) // 2) % self._num_frac
+                ),
+                self._fractional_ord,
+            )
 
             if steps % 2 == 1:
                 self._is_int = not self._is_int
@@ -110,21 +111,26 @@ class Region:
             return
 
         same: bool = fn.any(
-            lambda i, frac: (i != reset_clock and frac == self._fractional_ord[reset_clock]),
-            enumerate(self._fractional_ord)
+            lambda i, frac: (
+                i != reset_clock and frac == self._fractional_ord[reset_clock]
+            ),
+            enumerate(self._fractional_ord),
         )
 
         self._num_frac += int(not same) - int(self.is_int)
         for clk in range(self.n_clocks):
             if clk == reset_clock:
                 continue
-            if not same and (self._fractional_ord[clk]
-                             > self._fractional_ord[reset_clock]):
+            if not same and (
+                self._fractional_ord[clk] > self._fractional_ord[reset_clock]
+            ):
                 self._fractional_ord[clk] = (
-                    self._fractional_ord[clk] - 1) % self._num_frac
+                    self._fractional_ord[clk] - 1
+                ) % self._num_frac
             if not self.is_int:
                 self._fractional_ord[clk] = (
-                    self._fractional_ord[clk] + 1) % self._num_frac
+                    self._fractional_ord[clk] + 1
+                ) % self._num_frac
 
         self._fractional_ord[reset_clock] = 0
         self._value_vector[reset_clock] = 0

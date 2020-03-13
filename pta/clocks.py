@@ -8,6 +8,16 @@ Clock constraints are of the following form::
 
 Here, ``~`` is one of ``<,<=,>=,>``, ``c, c_i`` are any ``Clock`` names, and
 ``n`` is a natural number.
+
+The `Clock` and `ClockConstraint` classes have syntactic sugar to easily write the above constraints. For example::
+    
+    x = Clock('x')
+    y = Clock('y')
+
+    assert x & y == And((Clock('x'), Clock('y')))
+    assert (x - y >= 0) == DiagonalConstraint(DiagonalLHS(x, y), 0)
+
+Moreover, the `Clock` and `ClockConstraint` are *frozen*, which emulates immutable data.
 """
 
 from abc import ABC
@@ -26,39 +36,50 @@ from portion import Interval
 
 @attr.s(frozen=True, auto_attribs=True, order=False, eq=True)
 class Clock:
+    """A Clock symbol
+
+    The Clock class is a simple wrapper around any Hashable. For example::
+
+        x = Clock('x')
+        y = Clock('y')
+
+    In the above example, the variables ``x`` and ``y`` are clocks with the *name* (a hashable string).
+    """
+
     name: Hashable = attr.ib()
 
-    def __lt__(self, other: int) -> 'ClockConstraint':
+    def __lt__(self, other: int) -> "ClockConstraint":
         if other <= 0:
             # NOTE: Doesn't make sense for clock to be less than 0!
             return Boolean(False)
         return SingletonConstraint(self, other, ComparisonOp.LT)
 
-    def __le__(self, other: int) -> 'ClockConstraint':
+    def __le__(self, other: int) -> "ClockConstraint":
         if other < 0:
             # NOTE: Doesn't make sense for clock to be less than 0!
             return Boolean(False)
         return SingletonConstraint(self, other, ComparisonOp.LE)
 
-    def __gt__(self, other: int) -> 'ClockConstraint':
+    def __gt__(self, other: int) -> "ClockConstraint":
         if other < 0:
             # NOTE: The clock value must always be >= 0
             return Boolean(True)
         return SingletonConstraint(self, other, ComparisonOp.GT)
 
-    def __ge__(self, other: int) -> 'ClockConstraint':
+    def __ge__(self, other: int) -> "ClockConstraint":
         if other <= 0:
             # NOTE: The clock value must always be >= 0
             return Boolean(True)
         return SingletonConstraint(self, other, ComparisonOp.GE)
 
-    def __sub__(self, other: 'Clock') -> 'DiagonalLHS':
+    def __sub__(self, other: "Clock") -> "DiagonalLHS":
         return DiagonalLHS(self, other)
 
 
 class ClockConstraint(ABC):
+    """An abstract class for clock constraints"""
 
-    def __and__(self, other: 'ClockConstraint') -> 'ClockConstraint':
+    def __and__(self, other: "ClockConstraint") -> "ClockConstraint":
         if isinstance(other, Boolean):
             if other.value:
                 return self
@@ -68,6 +89,8 @@ class ClockConstraint(ABC):
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class Boolean(ClockConstraint):
+    """An atomic boolean class to represent ``true`` and ``false`` clock constraints"""
+
     value: bool = attr.ib()
 
     def __and__(self, other: ClockConstraint) -> ClockConstraint:
@@ -78,11 +101,15 @@ class Boolean(ClockConstraint):
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class And(ClockConstraint):
+    """Class to represent conjunctions of clock constraints"""
+
     args: Tuple[ClockConstraint, ClockConstraint] = attr.ib()
 
 
 @unique
 class ComparisonOp(Enum):
+    """Enum to represent the 4 comparison operations allowed in `SingletonConstraint`s and `DiagonalConstraint`s"""
+
     GE = auto()
     GT = auto()
     LE = auto()
@@ -103,6 +130,8 @@ class ComparisonOp(Enum):
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class SingletonConstraint(ClockConstraint):
+    """Constraints of the form \\(c \\sim n\\) for \\(n \\in \\mathbb{N}\\) and \\(\\sim \\in \\{<,\\le,\\ge,>\\}\\)"""
+
     clock: Clock = attr.ib()
     rhs: int = attr.ib()
     op: ComparisonOp = attr.ib()
@@ -115,6 +144,8 @@ class SingletonConstraint(ClockConstraint):
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class DiagonalLHS:
+    """Intermediate result for \\(c_1 - c_2\\)"""
+
     clock1: Clock = attr.ib()
     clock2: Clock = attr.ib()
 
@@ -134,7 +165,8 @@ class DiagonalLHS:
 # TODO(anand): Can there only be two clocks in a diagonal constraint?
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class DiagonalConstraint(ClockConstraint):
-    """Diagonal constraints of the form: ``clock1 - clock2 ~ n```"""
+    """Diagonal constraints of the form: \\(c_1 - c_2 \sim n\\)"""
+
     lhs: DiagonalLHS = attr.ib()
     rhs: int = attr.ib()
     op: ComparisonOp = attr.ib()
@@ -146,6 +178,25 @@ class DiagonalConstraint(ClockConstraint):
 
 
 def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -> Interval:
+    """Compute the allowable delay with the given clock valuations and constraints
+
+    .. todo::
+        Write the LaTeX version of the function.
+
+    Parameters
+    ----------
+    values :
+        A mapping from `Clock` to the valuation of the clock.
+    constraint :
+        A clock constrain.
+
+    Returns
+    -------
+    output :
+        An interval that represents the set of possible delays that satisfy the
+        given clock constraint.
+
+    """
     if isinstance(constraint, Boolean):
         if constraint.value:
             return P.closed(0, P.inf)
@@ -170,5 +221,4 @@ def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -> Interv
         if op_fn(v_c1 - v_c2, n):
             return P.closed(0, P.inf)
         return P.empty()
-    raise TypeError("Unsupported ClockConstraint type: {}"
-                    .format(type(constraint)))
+    raise TypeError("Unsupported ClockConstraint type: {}".format(type(constraint)))

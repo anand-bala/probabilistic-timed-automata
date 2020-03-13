@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.5" />
+<title>pta.clocks API documentation</title>
+<meta name="description" content="Symbolic Representation for Clock Constraints …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pta.clocks</code></h1>
+</header>
+<section id="section-intro">
+<p>Symbolic Representation for Clock Constraints</p>
+<p>Clock constraints are of the following form::</p>
+<pre><code>cc ::=  true | false |
+        cc &amp; cc |
+        c ~ n | c_1 - c_2 ~ n
+</code></pre>
+<p>Here, <code>~</code> is one of <code>&lt;,&lt;=,&gt;=,&gt;</code>, <code>c, c_i</code> are any <code>Clock</code> names, and
+<code>n</code> is a natural number.</p>
+<p>The <a title="pta.clocks.Clock" href="#pta.clocks.Clock"><code>Clock</code></a> and <a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint"><code>ClockConstraint</code></a> classes have syntactic sugar to easily write the above constraints. For example::</p>
+<pre><code>x = Clock('x')
+y = Clock('y')
+
+assert x &amp; y == And((Clock('x'), Clock('y')))
+assert (x - y &gt;= 0) == DiagonalConstraint(DiagonalLHS(x, y), 0)
+</code></pre>
+<p>Moreover, the <a title="pta.clocks.Clock" href="#pta.clocks.Clock"><code>Clock</code></a> and <a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint"><code>ClockConstraint</code></a> are <em>frozen</em>, which emulates immutable data.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Symbolic Representation for Clock Constraints
+
+Clock constraints are of the following form::
+
+    cc ::=  true | false |
+            cc &amp; cc |
+            c ~ n | c_1 - c_2 ~ n
+
+Here, ``~`` is one of ``&lt;,&lt;=,&gt;=,&gt;``, ``c, c_i`` are any ``Clock`` names, and
+``n`` is a natural number.
+
+The `Clock` and `ClockConstraint` classes have syntactic sugar to easily write the above constraints. For example::
+    
+    x = Clock(&#39;x&#39;)
+    y = Clock(&#39;y&#39;)
+
+    assert x &amp; y == And((Clock(&#39;x&#39;), Clock(&#39;y&#39;)))
+    assert (x - y &gt;= 0) == DiagonalConstraint(DiagonalLHS(x, y), 0)
+
+Moreover, the `Clock` and `ClockConstraint` are *frozen*, which emulates immutable data.
+&#34;&#34;&#34;
+
+from abc import ABC
+from enum import Enum, auto, unique
+from typing import Hashable, Mapping, Tuple, Callable
+import operator
+
+import attr
+
+# NOTE:
+#   Currently using this library for intervals, but may use a custom Intervall
+#   class in the future.
+import portion as P
+from portion import Interval
+
+
+@attr.s(frozen=True, auto_attribs=True, order=False, eq=True)
+class Clock:
+    &#34;&#34;&#34;A Clock symbol
+
+    The Clock class is a simple wrapper around any Hashable. For example::
+
+        x = Clock(&#39;x&#39;)
+        y = Clock(&#39;y&#39;)
+
+    In the above example, the variables ``x`` and ``y`` are clocks with the *name* (a hashable string).
+    &#34;&#34;&#34;
+    name: Hashable = attr.ib()
+
+    def __lt__(self, other: int) -&gt; &#34;ClockConstraint&#34;:
+        if other &lt;= 0:
+            # NOTE: Doesn&#39;t make sense for clock to be less than 0!
+            return Boolean(False)
+        return SingletonConstraint(self, other, ComparisonOp.LT)
+
+    def __le__(self, other: int) -&gt; &#34;ClockConstraint&#34;:
+        if other &lt; 0:
+            # NOTE: Doesn&#39;t make sense for clock to be less than 0!
+            return Boolean(False)
+        return SingletonConstraint(self, other, ComparisonOp.LE)
+
+    def __gt__(self, other: int) -&gt; &#34;ClockConstraint&#34;:
+        if other &lt; 0:
+            # NOTE: The clock value must always be &gt;= 0
+            return Boolean(True)
+        return SingletonConstraint(self, other, ComparisonOp.GT)
+
+    def __ge__(self, other: int) -&gt; &#34;ClockConstraint&#34;:
+        if other &lt;= 0:
+            # NOTE: The clock value must always be &gt;= 0
+            return Boolean(True)
+        return SingletonConstraint(self, other, ComparisonOp.GE)
+
+    def __sub__(self, other: &#34;Clock&#34;) -&gt; &#34;DiagonalLHS&#34;:
+        return DiagonalLHS(self, other)
+
+
+class ClockConstraint(ABC):
+    def __and__(self, other: &#34;ClockConstraint&#34;) -&gt; &#34;ClockConstraint&#34;:
+        if isinstance(other, Boolean):
+            if other.value:
+                return self
+            return other
+        return And((self, other))
+
+
+@attr.s(frozen=True, auto_attribs=True, order=False)
+class Boolean(ClockConstraint):
+    value: bool = attr.ib()
+
+    def __and__(self, other: ClockConstraint) -&gt; ClockConstraint:
+        if self.value:
+            return other
+        return Boolean(False)
+
+
+@attr.s(frozen=True, auto_attribs=True, order=False)
+class And(ClockConstraint):
+    args: Tuple[ClockConstraint, ClockConstraint] = attr.ib()
+
+
+@unique
+class ComparisonOp(Enum):
+    GE = auto()
+    GT = auto()
+    LE = auto()
+    LT = auto()
+
+    def to_op(self) -&gt; Callable[[float, float], bool]:
+        &#34;&#34;&#34;Output the operator function that corresponds to the enum&#34;&#34;&#34;
+        if self == ComparisonOp.GE:
+            return operator.ge
+        if self == ComparisonOp.GT:
+            return operator.gt
+        if self == ComparisonOp.LE:
+            return operator.le
+        if self == ComparisonOp.LT:
+            return operator.lt
+        return operator.lt
+
+
+@attr.s(frozen=True, auto_attribs=True, order=False)
+class SingletonConstraint(ClockConstraint):
+    clock: Clock = attr.ib()
+    rhs: int = attr.ib()
+    op: ComparisonOp = attr.ib()
+
+    @rhs.validator
+    def _rhs_validator(self, attribute, value):
+        if value &lt; 0:
+            raise ValueError(&#34;Clock constraint can&#39;t be negative&#34;)
+
+
+@attr.s(frozen=True, auto_attribs=True, order=False)
+class DiagonalLHS:
+    clock1: Clock = attr.ib()
+    clock2: Clock = attr.ib()
+
+    def __lt__(self, other: int) -&gt; ClockConstraint:
+        return DiagonalConstraint(self, other, ComparisonOp.LT)
+
+    def __le__(self, other: int) -&gt; ClockConstraint:
+        return DiagonalConstraint(self, other, ComparisonOp.LE)
+
+    def __gt__(self, other: int) -&gt; ClockConstraint:
+        return DiagonalConstraint(self, other, ComparisonOp.GT)
+
+    def __ge__(self, other: int) -&gt; ClockConstraint:
+        return DiagonalConstraint(self, other, ComparisonOp.GE)
+
+
+# TODO(anand): Can there only be two clocks in a diagonal constraint?
+@attr.s(frozen=True, auto_attribs=True, order=False)
+class DiagonalConstraint(ClockConstraint):
+    &#34;&#34;&#34;Diagonal constraints of the form: ``clock1 - clock2 ~ n```&#34;&#34;&#34;
+
+    lhs: DiagonalLHS = attr.ib()
+    rhs: int = attr.ib()
+    op: ComparisonOp = attr.ib()
+
+    @rhs.validator
+    def _rhs_validator(self, attribute, value):
+        if value &lt; 0:
+            raise ValueError(&#34;Clock constraint can&#39;t be negative&#34;)
+
+
+def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -&gt; Interval:
+    if isinstance(constraint, Boolean):
+        if constraint.value:
+            return P.closed(0, P.inf)
+        return P.empty()
+    if isinstance(constraint, SingletonConstraint):
+        v_c = values[constraint.clock]
+        n: int = constraint.rhs
+        if constraint.op == ComparisonOp.GE:
+            return P.closed(n - v_c, P.inf)
+        if constraint.op == ComparisonOp.GT:
+            return P.open(n - v_c, P.inf)
+        if constraint.op == ComparisonOp.LE:
+            return P.closed(0, n - v_c)
+        if constraint.op == ComparisonOp.LT:
+            return P.closedopen(0, n - v_c)
+    if isinstance(constraint, And):
+        return delays(values, constraint.args[0]) &amp; delays(values, constraint.args[1])
+    if isinstance(constraint, DiagonalConstraint):
+        v_c1 = values[constraint.lhs.clock1]
+        v_c2 = values[constraint.lhs.clock2]
+        op_fn = constraint.op.to_op()
+        if op_fn(v_c1 - v_c2, n):
+            return P.closed(0, P.inf)
+        return P.empty()
+    raise TypeError(&#34;Unsupported ClockConstraint type: {}&#34;.format(type(constraint)))</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="pta.clocks.delays"><code class="name flex">
+<span>def <span class="ident">delays</span></span>(<span>values: Mapping[pta.clocks.Clock, float], constraint: <a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a>) -> portion.interval.Interval</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -&gt; Interval:
+    if isinstance(constraint, Boolean):
+        if constraint.value:
+            return P.closed(0, P.inf)
+        return P.empty()
+    if isinstance(constraint, SingletonConstraint):
+        v_c = values[constraint.clock]
+        n: int = constraint.rhs
+        if constraint.op == ComparisonOp.GE:
+            return P.closed(n - v_c, P.inf)
+        if constraint.op == ComparisonOp.GT:
+            return P.open(n - v_c, P.inf)
+        if constraint.op == ComparisonOp.LE:
+            return P.closed(0, n - v_c)
+        if constraint.op == ComparisonOp.LT:
+            return P.closedopen(0, n - v_c)
+    if isinstance(constraint, And):
+        return delays(values, constraint.args[0]) &amp; delays(values, constraint.args[1])
+    if isinstance(constraint, DiagonalConstraint):
+        v_c1 = values[constraint.lhs.clock1]
+        v_c2 = values[constraint.lhs.clock2]
+        op_fn = constraint.op.to_op()
+        if op_fn(v_c1 - v_c2, n):
+            return P.closed(0, P.inf)
+        return P.empty()
+    raise TypeError(&#34;Unsupported ClockConstraint type: {}&#34;.format(type(constraint)))</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pta.clocks.And"><code class="flex name class">
+<span>class <span class="ident">And</span></span>
+<span>(</span><span>args: Tuple[pta.clocks.ClockConstraint, pta.clocks.ClockConstraint])</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class And(ClockConstraint):
+    args: Tuple[ClockConstraint, ClockConstraint] = attr.ib()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></li>
+<li>abc.ABC</li>
+</ul>
+</dd>
+<dt id="pta.clocks.Boolean"><code class="flex name class">
+<span>class <span class="ident">Boolean</span></span>
+<span>(</span><span>value: bool)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Boolean(ClockConstraint):
+    value: bool = attr.ib()
+
+    def __and__(self, other: ClockConstraint) -&gt; ClockConstraint:
+        if self.value:
+            return other
+        return Boolean(False)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></li>
+<li>abc.ABC</li>
+</ul>
+</dd>
+<dt id="pta.clocks.Clock"><code class="flex name class">
+<span>class <span class="ident">Clock</span></span>
+<span>(</span><span>name: collections.abc.Hashable)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>A Clock symbol</p>
+<p>The Clock class is a simple wrapper around any Hashable. For example::</p>
+<pre><code>x = Clock('x')
+y = Clock('y')
+</code></pre>
+<p>In the above example, the variables <code>x</code> and <code>y</code> are clocks with the <em>name</em> (a hashable string).</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Clock:
+    &#34;&#34;&#34;A Clock symbol
+
+    The Clock class is a simple wrapper around any Hashable. For example::
+
+        x = Clock(&#39;x&#39;)
+        y = Clock(&#39;y&#39;)
+
+    In the above example, the variables ``x`` and ``y`` are clocks with the *name* (a hashable string).
+    &#34;&#34;&#34;
+    name: Hashable = attr.ib()
+
+    def __lt__(self, other: int) -&gt; &#34;ClockConstraint&#34;:
+        if other &lt;= 0:
+            # NOTE: Doesn&#39;t make sense for clock to be less than 0!
+            return Boolean(False)
+        return SingletonConstraint(self, other, ComparisonOp.LT)
+
+    def __le__(self, other: int) -&gt; &#34;ClockConstraint&#34;:
+        if other &lt; 0:
+            # NOTE: Doesn&#39;t make sense for clock to be less than 0!
+            return Boolean(False)
+        return SingletonConstraint(self, other, ComparisonOp.LE)
+
+    def __gt__(self, other: int) -&gt; &#34;ClockConstraint&#34;:
+        if other &lt; 0:
+            # NOTE: The clock value must always be &gt;= 0
+            return Boolean(True)
+        return SingletonConstraint(self, other, ComparisonOp.GT)
+
+    def __ge__(self, other: int) -&gt; &#34;ClockConstraint&#34;:
+        if other &lt;= 0:
+            # NOTE: The clock value must always be &gt;= 0
+            return Boolean(True)
+        return SingletonConstraint(self, other, ComparisonOp.GE)
+
+    def __sub__(self, other: &#34;Clock&#34;) -&gt; &#34;DiagonalLHS&#34;:
+        return DiagonalLHS(self, other)</code></pre>
+</details>
+</dd>
+<dt id="pta.clocks.ClockConstraint"><code class="flex name class">
+<span>class <span class="ident">ClockConstraint</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ClockConstraint(ABC):
+    def __and__(self, other: &#34;ClockConstraint&#34;) -&gt; &#34;ClockConstraint&#34;:
+        if isinstance(other, Boolean):
+            if other.value:
+                return self
+            return other
+        return And((self, other))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="pta.clocks.And" href="#pta.clocks.And">And</a></li>
+<li><a title="pta.clocks.Boolean" href="#pta.clocks.Boolean">Boolean</a></li>
+<li><a title="pta.clocks.DiagonalConstraint" href="#pta.clocks.DiagonalConstraint">DiagonalConstraint</a></li>
+<li><a title="pta.clocks.SingletonConstraint" href="#pta.clocks.SingletonConstraint">SingletonConstraint</a></li>
+</ul>
+</dd>
+<dt id="pta.clocks.ComparisonOp"><code class="flex name class">
+<span>class <span class="ident">ComparisonOp</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>An enumeration.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ComparisonOp(Enum):
+    GE = auto()
+    GT = auto()
+    LE = auto()
+    LT = auto()
+
+    def to_op(self) -&gt; Callable[[float, float], bool]:
+        &#34;&#34;&#34;Output the operator function that corresponds to the enum&#34;&#34;&#34;
+        if self == ComparisonOp.GE:
+            return operator.ge
+        if self == ComparisonOp.GT:
+            return operator.gt
+        if self == ComparisonOp.LE:
+            return operator.le
+        if self == ComparisonOp.LT:
+            return operator.lt
+        return operator.lt</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="pta.clocks.ComparisonOp.GE"><code class="name">var <span class="ident">GE</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="pta.clocks.ComparisonOp.GT"><code class="name">var <span class="ident">GT</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="pta.clocks.ComparisonOp.LE"><code class="name">var <span class="ident">LE</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="pta.clocks.ComparisonOp.LT"><code class="name">var <span class="ident">LT</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+</dd>
+<dt id="pta.clocks.DiagonalConstraint"><code class="flex name class">
+<span>class <span class="ident">DiagonalConstraint</span></span>
+<span>(</span><span>lhs: <a title="pta.clocks.DiagonalLHS" href="#pta.clocks.DiagonalLHS">DiagonalLHS</a>, rhs: int, op: <a title="pta.clocks.ComparisonOp" href="#pta.clocks.ComparisonOp">ComparisonOp</a>)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Diagonal constraints of the form: ``clock1 - clock2 ~ n```</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DiagonalConstraint(ClockConstraint):
+    &#34;&#34;&#34;Diagonal constraints of the form: ``clock1 - clock2 ~ n```&#34;&#34;&#34;
+
+    lhs: DiagonalLHS = attr.ib()
+    rhs: int = attr.ib()
+    op: ComparisonOp = attr.ib()
+
+    @rhs.validator
+    def _rhs_validator(self, attribute, value):
+        if value &lt; 0:
+            raise ValueError(&#34;Clock constraint can&#39;t be negative&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></li>
+<li>abc.ABC</li>
+</ul>
+</dd>
+<dt id="pta.clocks.DiagonalLHS"><code class="flex name class">
+<span>class <span class="ident">DiagonalLHS</span></span>
+<span>(</span><span>clock1: <a title="pta.clocks.Clock" href="#pta.clocks.Clock">Clock</a>, clock2: <a title="pta.clocks.Clock" href="#pta.clocks.Clock">Clock</a>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DiagonalLHS:
+    clock1: Clock = attr.ib()
+    clock2: Clock = attr.ib()
+
+    def __lt__(self, other: int) -&gt; ClockConstraint:
+        return DiagonalConstraint(self, other, ComparisonOp.LT)
+
+    def __le__(self, other: int) -&gt; ClockConstraint:
+        return DiagonalConstraint(self, other, ComparisonOp.LE)
+
+    def __gt__(self, other: int) -&gt; ClockConstraint:
+        return DiagonalConstraint(self, other, ComparisonOp.GT)
+
+    def __ge__(self, other: int) -&gt; ClockConstraint:
+        return DiagonalConstraint(self, other, ComparisonOp.GE)</code></pre>
+</details>
+</dd>
+<dt id="pta.clocks.SingletonConstraint"><code class="flex name class">
+<span>class <span class="ident">SingletonConstraint</span></span>
+<span>(</span><span>clock: <a title="pta.clocks.Clock" href="#pta.clocks.Clock">Clock</a>, rhs: int, op: <a title="pta.clocks.ComparisonOp" href="#pta.clocks.ComparisonOp">ComparisonOp</a>)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SingletonConstraint(ClockConstraint):
+    clock: Clock = attr.ib()
+    rhs: int = attr.ib()
+    op: ComparisonOp = attr.ib()
+
+    @rhs.validator
+    def _rhs_validator(self, attribute, value):
+        if value &lt; 0:
+            raise ValueError(&#34;Clock constraint can&#39;t be negative&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></li>
+<li>abc.ABC</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pta" href="index.html">pta</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="pta.clocks.delays" href="#pta.clocks.delays">delays</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pta.clocks.And" href="#pta.clocks.And">And</a></code></h4>
+</li>
+<li>
+<h4><code><a title="pta.clocks.Boolean" href="#pta.clocks.Boolean">Boolean</a></code></h4>
+</li>
+<li>
+<h4><code><a title="pta.clocks.Clock" href="#pta.clocks.Clock">Clock</a></code></h4>
+</li>
+<li>
+<h4><code><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></code></h4>
+</li>
+<li>
+<h4><code><a title="pta.clocks.ComparisonOp" href="#pta.clocks.ComparisonOp">ComparisonOp</a></code></h4>
+<ul class="">
+<li><code><a title="pta.clocks.ComparisonOp.GE" href="#pta.clocks.ComparisonOp.GE">GE</a></code></li>
+<li><code><a title="pta.clocks.ComparisonOp.GT" href="#pta.clocks.ComparisonOp.GT">GT</a></code></li>
+<li><code><a title="pta.clocks.ComparisonOp.LE" href="#pta.clocks.ComparisonOp.LE">LE</a></code></li>
+<li><code><a title="pta.clocks.ComparisonOp.LT" href="#pta.clocks.ComparisonOp.LT">LT</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pta.clocks.DiagonalConstraint" href="#pta.clocks.DiagonalConstraint">DiagonalConstraint</a></code></h4>
+</li>
+<li>
+<h4><code><a title="pta.clocks.DiagonalLHS" href="#pta.clocks.DiagonalLHS">DiagonalLHS</a></code></h4>
+</li>
+<li>
+<h4><code><a title="pta.clocks.SingletonConstraint" href="#pta.clocks.SingletonConstraint">SingletonConstraint</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

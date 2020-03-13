@@ -12,18 +12,29 @@ import funcy as fn
 # TODO: Is it worth using numpy or torch distributions instead? No (I think)...
 
 # DiscreteSpace = TypeVar('DiscreteSpace', Hashable)
-T = TypeVar('T', bound=Hashable)
+T = TypeVar("T", bound=Hashable)
 
 
 @attr.s(frozen=True, auto_attribs=True)
 class DiscreteDistribution(Generic[T]):
-    """A Discrete distribution over a finite, countable support"""
+    """A Discrete distribution over a finite, countable support
+    
+    You can call the instantiated distribution to get the probability of an input::
+
+        p = uniform(range(10))
+        assert p(5) == 1/10
+
+    """
+
     _dist: Mapping[T, float] = attr.ib()
 
     def sample(self, *, k: int = 1) -> Sequence[T]:
         """Sample a value from the support
 
-        :param k: Number of items to sample from the distribution.
+        Parameters
+        ----------
+        k : int
+            Number of items to sample from the distribution.
         """
         support, distribution = zip(*self._dist.items())
         return random.choices(support, distribution, k=k)
@@ -46,7 +57,10 @@ def delta(center: T) -> DiscreteDistribution[T]:
             0, \\quad \\text{otherwise.}
         \\end{cases}
 
-    :param center: Center of the delta distribution
+    Parameters
+    ----------
+    center : Hashable
+        Center of the delta distribution
     """
     return DiscreteDistribution(dict([(center, 1)]))
 
@@ -54,7 +68,16 @@ def delta(center: T) -> DiscreteDistribution[T]:
 def uniform(support: Set[T]) -> DiscreteDistribution[T]:
     """Return the uniform distribution over the given support
 
-    :param support: Any finite set of states.
+    Parameters
+    ----------
+    support : Hashable
+        Any finite set of states.
+
+    Returns
+    -------
+    output : DiscreteDistribution
+        A uniform distribution over the finite set of states.
+        
     """
     prob = 1 / len(support)
     return DiscreteDistribution({s: prob for s in support})
