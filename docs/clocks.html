@@ -53,7 +53,7 @@ Here, ``~`` is one of ``&lt;,&lt;=,&gt;=,&gt;``, ``c, c_i`` are any ``Clock`` na
 ``n`` is a natural number.
 
 The `Clock` and `ClockConstraint` classes have syntactic sugar to easily write the above constraints. For example::
-    
+
     x = Clock(&#39;x&#39;)
     y = Clock(&#39;y&#39;)
 
@@ -63,7 +63,7 @@ The `Clock` and `ClockConstraint` classes have syntactic sugar to easily write t
 Moreover, the `Clock` and `ClockConstraint` are *frozen*, which emulates immutable data.
 &#34;&#34;&#34;
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from enum import Enum, auto, unique
 from typing import Hashable, Mapping, Tuple, Callable
 import operator
@@ -129,6 +129,14 @@ class ClockConstraint(ABC):
             return other
         return And((self, other))
 
+    @abstractmethod
+    def contains(self, value: Mapping[Clock, float]) -&gt; bool:
+        &#34;&#34;&#34;Check if the clock constraints evaluate to true given clock valuations.&#34;&#34;&#34;
+        raise NotImplementedError(&#34;Can&#39;t get the interval for the abstract ClockConstraint class&#34;)
+
+    def __contains__(self, value: Mapping[Clock, float]) -&gt; bool:
+        return self.contains(value)
+
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class Boolean(ClockConstraint):
@@ -141,6 +149,9 @@ class Boolean(ClockConstraint):
             return other
         return Boolean(False)
 
+    def contains(self, value: Mapping[Clock, float]) -&gt; bool:
+        return self.value
+
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class And(ClockConstraint):
@@ -148,10 +159,13 @@ class And(ClockConstraint):
 
     args: Tuple[ClockConstraint, ClockConstraint] = attr.ib()
 
+    def contains(self, value: Mapping[Clock, float]) -&gt; bool:
+        return (value in self.args[0]) and (value in self.args[1])
+
 
 @unique
 class ComparisonOp(Enum):
-    &#34;&#34;&#34;Enum to represent the 4 comparison operations allowed in `SingletonConstraint`s and `DiagonalConstraint`s&#34;&#34;&#34;
+    &#34;&#34;&#34;Four comparison operations allowed in `SingletonConstraint`s and `DiagonalConstraint`s&#34;&#34;&#34;
 
     GE = auto()
     GT = auto()
@@ -184,6 +198,9 @@ class SingletonConstraint(ClockConstraint):
         if value &lt; 0:
             raise ValueError(&#34;Clock constraint can&#39;t be negative&#34;)
 
+    def contains(self, value: Mapping[Clock, float]) -&gt; bool:
+        return self.op.to_op()(value[self.clock], self.rhs)
+
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class DiagonalLHS:
@@ -191,6 +208,9 @@ class DiagonalLHS:
 
     clock1: Clock = attr.ib()
     clock2: Clock = attr.ib()
+
+    def __call__(self, value: Mapping[Clock, float]) -&gt; float:
+        return value[self.clock1] - value[self.clock2]
 
     def __lt__(self, other: int) -&gt; ClockConstraint:
         return DiagonalConstraint(self, other, ComparisonOp.LT)
@@ -218,6 +238,9 @@ class DiagonalConstraint(ClockConstraint):
     def _rhs_validator(self, attribute, value):
         if value &lt; 0:
             raise ValueError(&#34;Clock constraint can&#39;t be negative&#34;)
+
+    def contains(self, value: Mapping[Clock, float]) -&gt; bool:
+        return self.op.to_op()(self.lhs(value), self.rhs)
 
 
 def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -&gt; Interval:
@@ -363,12 +386,23 @@ given clock constraint.</dd>
 <pre><code class="python">class And(ClockConstraint):
     &#34;&#34;&#34;Class to represent conjunctions of clock constraints&#34;&#34;&#34;
 
-    args: Tuple[ClockConstraint, ClockConstraint] = attr.ib()</code></pre>
+    args: Tuple[ClockConstraint, ClockConstraint] = attr.ib()
+
+    def contains(self, value: Mapping[Clock, float]) -&gt; bool:
+        return (value in self.args[0]) and (value in self.args[1])</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></li>
 <li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></b></code>:
+<ul class="hlist">
+<li><code><a title="pta.clocks.ClockConstraint.contains" href="#pta.clocks.ClockConstraint.contains">contains</a></code></li>
+</ul>
+</li>
 </ul>
 </dd>
 <dt id="pta.clocks.Boolean"><code class="flex name class">
@@ -389,12 +423,23 @@ given clock constraint.</dd>
     def __and__(self, other: ClockConstraint) -&gt; ClockConstraint:
         if self.value:
             return other
-        return Boolean(False)</code></pre>
+        return Boolean(False)
+
+    def contains(self, value: Mapping[Clock, float]) -&gt; bool:
+        return self.value</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></li>
 <li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></b></code>:
+<ul class="hlist">
+<li><code><a title="pta.clocks.ClockConstraint.contains" href="#pta.clocks.ClockConstraint.contains">contains</a></code></li>
+</ul>
+</li>
 </ul>
 </dd>
 <dt id="pta.clocks.Clock"><code class="flex name class">
@@ -470,7 +515,15 @@ y = Clock('y')
             if other.value:
                 return self
             return other
-        return And((self, other))</code></pre>
+        return And((self, other))
+
+    @abstractmethod
+    def contains(self, value: Mapping[Clock, float]) -&gt; bool:
+        &#34;&#34;&#34;Check if the clock constraints evaluate to true given clock valuations.&#34;&#34;&#34;
+        raise NotImplementedError(&#34;Can&#39;t get the interval for the abstract ClockConstraint class&#34;)
+
+    def __contains__(self, value: Mapping[Clock, float]) -&gt; bool:
+        return self.contains(value)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -483,19 +536,37 @@ y = Clock('y')
 <li><a title="pta.clocks.DiagonalConstraint" href="#pta.clocks.DiagonalConstraint">DiagonalConstraint</a></li>
 <li><a title="pta.clocks.SingletonConstraint" href="#pta.clocks.SingletonConstraint">SingletonConstraint</a></li>
 </ul>
+<h3>Methods</h3>
+<dl>
+<dt id="pta.clocks.ClockConstraint.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, value)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Check if the clock constraints evaluate to true given clock valuations.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def contains(self, value: Mapping[Clock, float]) -&gt; bool:
+    &#34;&#34;&#34;Check if the clock constraints evaluate to true given clock valuations.&#34;&#34;&#34;
+    raise NotImplementedError(&#34;Can&#39;t get the interval for the abstract ClockConstraint class&#34;)</code></pre>
+</details>
+</dd>
+</dl>
 </dd>
 <dt id="pta.clocks.ComparisonOp"><code class="flex name class">
 <span>class <span class="ident">ComparisonOp</span></span>
 <span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Enum to represent the 4 comparison operations allowed in <a title="pta.clocks.SingletonConstraint" href="#pta.clocks.SingletonConstraint"><code>SingletonConstraint</code></a>s and <a title="pta.clocks.DiagonalConstraint" href="#pta.clocks.DiagonalConstraint"><code>DiagonalConstraint</code></a>s</p></section>
+<section class="desc"><p>Four comparison operations allowed in <a title="pta.clocks.SingletonConstraint" href="#pta.clocks.SingletonConstraint"><code>SingletonConstraint</code></a>s and <a title="pta.clocks.DiagonalConstraint" href="#pta.clocks.DiagonalConstraint"><code>DiagonalConstraint</code></a>s</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ComparisonOp(Enum):
-    &#34;&#34;&#34;Enum to represent the 4 comparison operations allowed in `SingletonConstraint`s and `DiagonalConstraint`s&#34;&#34;&#34;
+    &#34;&#34;&#34;Four comparison operations allowed in `SingletonConstraint`s and `DiagonalConstraint`s&#34;&#34;&#34;
 
     GE = auto()
     GT = auto()
@@ -558,12 +629,23 @@ y = Clock('y')
     @rhs.validator
     def _rhs_validator(self, attribute, value):
         if value &lt; 0:
-            raise ValueError(&#34;Clock constraint can&#39;t be negative&#34;)</code></pre>
+            raise ValueError(&#34;Clock constraint can&#39;t be negative&#34;)
+
+    def contains(self, value: Mapping[Clock, float]) -&gt; bool:
+        return self.op.to_op()(self.lhs(value), self.rhs)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></li>
 <li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></b></code>:
+<ul class="hlist">
+<li><code><a title="pta.clocks.ClockConstraint.contains" href="#pta.clocks.ClockConstraint.contains">contains</a></code></li>
+</ul>
+</li>
 </ul>
 </dd>
 <dt id="pta.clocks.DiagonalLHS"><code class="flex name class">
@@ -581,6 +663,9 @@ y = Clock('y')
 
     clock1: Clock = attr.ib()
     clock2: Clock = attr.ib()
+
+    def __call__(self, value: Mapping[Clock, float]) -&gt; float:
+        return value[self.clock1] - value[self.clock2]
 
     def __lt__(self, other: int) -&gt; ClockConstraint:
         return DiagonalConstraint(self, other, ComparisonOp.LT)
@@ -615,12 +700,23 @@ y = Clock('y')
     @rhs.validator
     def _rhs_validator(self, attribute, value):
         if value &lt; 0:
-            raise ValueError(&#34;Clock constraint can&#39;t be negative&#34;)</code></pre>
+            raise ValueError(&#34;Clock constraint can&#39;t be negative&#34;)
+
+    def contains(self, value: Mapping[Clock, float]) -&gt; bool:
+        return self.op.to_op()(value[self.clock], self.rhs)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></li>
 <li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></b></code>:
+<ul class="hlist">
+<li><code><a title="pta.clocks.ClockConstraint.contains" href="#pta.clocks.ClockConstraint.contains">contains</a></code></li>
+</ul>
+</li>
 </ul>
 </dd>
 </dl>
@@ -655,6 +751,9 @@ y = Clock('y')
 </li>
 <li>
 <h4><code><a title="pta.clocks.ClockConstraint" href="#pta.clocks.ClockConstraint">ClockConstraint</a></code></h4>
+<ul class="">
+<li><code><a title="pta.clocks.ClockConstraint.contains" href="#pta.clocks.ClockConstraint.contains">contains</a></code></li>
+</ul>
 </li>
 <li>
 <h4><code><a title="pta.clocks.ComparisonOp" href="#pta.clocks.ComparisonOp">ComparisonOp</a></code></h4>

@@ -28,31 +28,79 @@
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Probabilistic Timed Automaton&#34;&#34;&#34;
 
-from typing import Set, Hashable, Callable, Tuple
+from typing import Set, Hashable, Mapping, Tuple, Union
 
 import attr
 
-from .clocks import Clock, ClockConstraint
+from .clocks import Clock, ClockConstraint, delays, Interval
 from .distributions import DiscreteDistribution
 
+
+Label = Union[str, int]
 
 Location = Hashable
 Target = Tuple[Set[Clock], Location]
 Transition = Tuple[ClockConstraint, DiscreteDistribution[Target]]
 
-EdgeFn = Callable[[Location], Set[Transition]]
-InvariantFn = Callable[[Location], ClockConstraint]
-
 
 @attr.s(frozen=True, auto_attribs=True, kw_only=True)
 class PTA:
-    _locations: Set[Location] = attr.ib()
-    _clocks: Set[Clock] = attr.ib()
+    &#34;&#34;&#34;
+    A PTA is a 6-tuple \\(M = \\left\\langle Q, C, T, q_0, I \\right\\rangle\\) where
+
+    - \\(Q\\) is the set of locations in the PTA;
+    - \\(C\\) is the set of clocks in the PTA;
+    - \\(T \\) is the transition function that maps a location to a set of possible
+      transitions that can be taken (and their associated guards), along with the
+      probabilities associated with the set of clocks that are reset and the next
+      location;
+    - \\(q_0\\) is the initial location in the PTA; and
+    - \\(I\\) is the invariant function that maps a location to a clock constraint
+      such that as long as the clock constraint is satisfied, the clock can
+      progress in the location.
+    &#34;&#34;&#34;
+
+    _locations: Set[Location] = attr.ib(converter=frozenset)
+    _clocks: Set[Clock] = attr.ib(converter=frozenset)
 
     _init_location: Location = attr.ib()
 
-    _transitions: EdgeFn = attr.ib()
-    _invariants: InvariantFn = attr.ib()</code></pre>
+    _transitions: Mapping[Location, Mapping[Label, Transition]] = attr.ib()
+    _invariants: Mapping[Location, ClockConstraint] = attr.ib()
+
+    def enabled_actions(
+        self, loc: Location, values: Mapping[Clock, float]
+    ) -&gt; Mapping[Label, DiscreteDistribution[Target]]:
+        &#34;&#34;&#34;Return the set of enabled edges available at a location with given clock valuation.
+
+        The edges are enabled with respect to their guards and the given valuation.
+
+        Parameters
+        ----------
+        loc:
+            Location in the PTA (raises error if ``loc`` not in PTA.
+        values:
+            Valuations for clocks in PTA (raises error if ``values`` does not
+            contain keys for all clocks in the PTA.
+
+        Returns
+        -------
+        output:
+            Set of distributions corresponding to edges enabled in the location.
+        &#34;&#34;&#34;
+        assert loc in self._locations, &#34;Given location is not present in the PTA&#34;
+        assert (
+            self._clocks &lt;= values.keys()
+        ), &#34;Valuations do not contain keys for all clocks in PTA&#34;
+
+        return {
+            label: dist
+            for label, (guard, dist) in self._transitions[loc].items()
+            if values in guard
+        }
+
+    def allowed_delays(self, loc: Location, values: Mapping[Clock, float]) -&gt; Interval:
+        return delays(values, self._invariants[loc])</code></pre>
 </details>
 </section>
 <section>
@@ -69,20 +117,150 @@ class PTA:
 <span>(</span><span>*, locations, clocks, init_location, transitions, invariants)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>A PTA is a 6-tuple <span><span class="MathJax_Preview">M = \left\langle Q, C, T, q_0, I \right\rangle</span><script type="math/tex">M = \left\langle Q, C, T, q_0, I \right\rangle</script></span> where</p>
+<ul>
+<li><span><span class="MathJax_Preview">Q</span><script type="math/tex">Q</script></span> is the set of locations in the PTA;</li>
+<li><span><span class="MathJax_Preview">C</span><script type="math/tex">C</script></span> is the set of clocks in the PTA;</li>
+<li><span><span class="MathJax_Preview">T </span><script type="math/tex">T </script></span> is the transition function that maps a location to a set of possible
+transitions that can be taken (and their associated guards), along with the
+probabilities associated with the set of clocks that are reset and the next
+location;</li>
+<li><span><span class="MathJax_Preview">q_0</span><script type="math/tex">q_0</script></span> is the initial location in the PTA; and</li>
+<li><span><span class="MathJax_Preview">I</span><script type="math/tex">I</script></span> is the invariant function that maps a location to a clock constraint
+such that as long as the clock constraint is satisfied, the clock can
+progress in the location.</li>
+</ul></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class PTA:
-    _locations: Set[Location] = attr.ib()
-    _clocks: Set[Clock] = attr.ib()
+    &#34;&#34;&#34;
+    A PTA is a 6-tuple \\(M = \\left\\langle Q, C, T, q_0, I \\right\\rangle\\) where
+
+    - \\(Q\\) is the set of locations in the PTA;
+    - \\(C\\) is the set of clocks in the PTA;
+    - \\(T \\) is the transition function that maps a location to a set of possible
+      transitions that can be taken (and their associated guards), along with the
+      probabilities associated with the set of clocks that are reset and the next
+      location;
+    - \\(q_0\\) is the initial location in the PTA; and
+    - \\(I\\) is the invariant function that maps a location to a clock constraint
+      such that as long as the clock constraint is satisfied, the clock can
+      progress in the location.
+    &#34;&#34;&#34;
+
+    _locations: Set[Location] = attr.ib(converter=frozenset)
+    _clocks: Set[Clock] = attr.ib(converter=frozenset)
 
     _init_location: Location = attr.ib()
 
-    _transitions: EdgeFn = attr.ib()
-    _invariants: InvariantFn = attr.ib()</code></pre>
+    _transitions: Mapping[Location, Mapping[Label, Transition]] = attr.ib()
+    _invariants: Mapping[Location, ClockConstraint] = attr.ib()
+
+    def enabled_actions(
+        self, loc: Location, values: Mapping[Clock, float]
+    ) -&gt; Mapping[Label, DiscreteDistribution[Target]]:
+        &#34;&#34;&#34;Return the set of enabled edges available at a location with given clock valuation.
+
+        The edges are enabled with respect to their guards and the given valuation.
+
+        Parameters
+        ----------
+        loc:
+            Location in the PTA (raises error if ``loc`` not in PTA.
+        values:
+            Valuations for clocks in PTA (raises error if ``values`` does not
+            contain keys for all clocks in the PTA.
+
+        Returns
+        -------
+        output:
+            Set of distributions corresponding to edges enabled in the location.
+        &#34;&#34;&#34;
+        assert loc in self._locations, &#34;Given location is not present in the PTA&#34;
+        assert (
+            self._clocks &lt;= values.keys()
+        ), &#34;Valuations do not contain keys for all clocks in PTA&#34;
+
+        return {
+            label: dist
+            for label, (guard, dist) in self._transitions[loc].items()
+            if values in guard
+        }
+
+    def allowed_delays(self, loc: Location, values: Mapping[Clock, float]) -&gt; Interval:
+        return delays(values, self._invariants[loc])</code></pre>
 </details>
+<h3>Methods</h3>
+<dl>
+<dt id="pta.pta.PTA.allowed_delays"><code class="name flex">
+<span>def <span class="ident">allowed_delays</span></span>(<span>self, loc, values)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def allowed_delays(self, loc: Location, values: Mapping[Clock, float]) -&gt; Interval:
+    return delays(values, self._invariants[loc])</code></pre>
+</details>
+</dd>
+<dt id="pta.pta.PTA.enabled_actions"><code class="name flex">
+<span>def <span class="ident">enabled_actions</span></span>(<span>self, loc, values)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return the set of enabled edges available at a location with given clock valuation.</p>
+<p>The edges are enabled with respect to their guards and the given valuation.</p>
+<h2 id="parameters">Parameters</h2>
+<p>loc:
+Location in the PTA (raises error if <code>loc</code> not in PTA.
+values:
+Valuations for clocks in PTA (raises error if <code>values</code> does not
+contain keys for all clocks in the PTA.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>output</code>:</dt>
+<dd>Set of distributions corresponding to edges enabled in the location.</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enabled_actions(
+    self, loc: Location, values: Mapping[Clock, float]
+) -&gt; Mapping[Label, DiscreteDistribution[Target]]:
+    &#34;&#34;&#34;Return the set of enabled edges available at a location with given clock valuation.
+
+    The edges are enabled with respect to their guards and the given valuation.
+
+    Parameters
+    ----------
+    loc:
+        Location in the PTA (raises error if ``loc`` not in PTA.
+    values:
+        Valuations for clocks in PTA (raises error if ``values`` does not
+        contain keys for all clocks in the PTA.
+
+    Returns
+    -------
+    output:
+        Set of distributions corresponding to edges enabled in the location.
+    &#34;&#34;&#34;
+    assert loc in self._locations, &#34;Given location is not present in the PTA&#34;
+    assert (
+        self._clocks &lt;= values.keys()
+    ), &#34;Valuations do not contain keys for all clocks in PTA&#34;
+
+    return {
+        label: dist
+        for label, (guard, dist) in self._transitions[loc].items()
+        if values in guard
+    }</code></pre>
+</details>
+</dd>
+</dl>
 </dd>
 </dl>
 </section>
@@ -102,6 +280,10 @@ class PTA:
 <ul>
 <li>
 <h4><code><a title="pta.pta.PTA" href="#pta.pta.PTA">PTA</a></code></h4>
+<ul class="">
+<li><code><a title="pta.pta.PTA.allowed_delays" href="#pta.pta.PTA.allowed_delays">allowed_delays</a></code></li>
+<li><code><a title="pta.pta.PTA.enabled_actions" href="#pta.pta.PTA.enabled_actions">enabled_actions</a></code></li>
+</ul>
 </li>
 </ul>
 </li>

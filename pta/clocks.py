@@ -10,7 +10,7 @@ Here, ``~`` is one of ``<,<=,>=,>``, ``c, c_i`` are any ``Clock`` names, and
 ``n`` is a natural number.
 
 The `Clock` and `ClockConstraint` classes have syntactic sugar to easily write the above constraints. For example::
-    
+
     x = Clock('x')
     y = Clock('y')
 
@@ -20,7 +20,7 @@ The `Clock` and `ClockConstraint` classes have syntactic sugar to easily write t
 Moreover, the `Clock` and `ClockConstraint` are *frozen*, which emulates immutable data.
 """
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from enum import Enum, auto, unique
 from typing import Hashable, Mapping, Tuple, Callable
 import operator
@@ -86,6 +86,14 @@ class ClockConstraint(ABC):
             return other
         return And((self, other))
 
+    @abstractmethod
+    def contains(self, value: Mapping[Clock, float]) -> bool:
+        """Check if the clock constraints evaluate to true given clock valuations."""
+        raise NotImplementedError("Can't get the interval for the abstract ClockConstraint class")
+
+    def __contains__(self, value: Mapping[Clock, float]) -> bool:
+        return self.contains(value)
+
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class Boolean(ClockConstraint):
@@ -98,6 +106,9 @@ class Boolean(ClockConstraint):
             return other
         return Boolean(False)
 
+    def contains(self, value: Mapping[Clock, float]) -> bool:
+        return self.value
+
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class And(ClockConstraint):
@@ -105,10 +116,13 @@ class And(ClockConstraint):
 
     args: Tuple[ClockConstraint, ClockConstraint] = attr.ib()
 
+    def contains(self, value: Mapping[Clock, float]) -> bool:
+        return (value in self.args[0]) and (value in self.args[1])
+
 
 @unique
 class ComparisonOp(Enum):
-    """Enum to represent the 4 comparison operations allowed in `SingletonConstraint`s and `DiagonalConstraint`s"""
+    """Four comparison operations allowed in `SingletonConstraint`s and `DiagonalConstraint`s"""
 
     GE = auto()
     GT = auto()
@@ -141,6 +155,9 @@ class SingletonConstraint(ClockConstraint):
         if value < 0:
             raise ValueError("Clock constraint can't be negative")
 
+    def contains(self, value: Mapping[Clock, float]) -> bool:
+        return self.op.to_op()(value[self.clock], self.rhs)
+
 
 @attr.s(frozen=True, auto_attribs=True, order=False)
 class DiagonalLHS:
@@ -148,6 +165,9 @@ class DiagonalLHS:
 
     clock1: Clock = attr.ib()
     clock2: Clock = attr.ib()
+
+    def __call__(self, value: Mapping[Clock, float]) -> float:
+        return value[self.clock1] - value[self.clock2]
 
     def __lt__(self, other: int) -> ClockConstraint:
         return DiagonalConstraint(self, other, ComparisonOp.LT)
@@ -175,6 +195,9 @@ class DiagonalConstraint(ClockConstraint):
     def _rhs_validator(self, attribute, value):
         if value < 0:
             raise ValueError("Clock constraint can't be negative")
+
+    def contains(self, value: Mapping[Clock, float]) -> bool:
+        return self.op.to_op()(self.lhs(value), self.rhs)
 
 
 def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -> Interval:

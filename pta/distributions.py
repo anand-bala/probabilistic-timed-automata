@@ -1,7 +1,7 @@
 """Collection of distributions for the PTA and the Region MDP"""
 
 import random
-from itertools import product
+# from itertools import product
 
 from typing import Generic, TypeVar, Hashable, Mapping, Sequence, Set
 
@@ -18,7 +18,7 @@ T = TypeVar("T", bound=Hashable)
 @attr.s(frozen=True, auto_attribs=True)
 class DiscreteDistribution(Generic[T]):
     """A Discrete distribution over a finite, countable support
-    
+
     You can call the instantiated distribution to get the probability of an input::
 
         p = uniform(range(10))
@@ -77,7 +77,6 @@ def uniform(support: Set[T]) -> DiscreteDistribution[T]:
     -------
     output : DiscreteDistribution
         A uniform distribution over the finite set of states.
-        
     """
     prob = 1 / len(support)
     return DiscreteDistribution({s: prob for s in support})

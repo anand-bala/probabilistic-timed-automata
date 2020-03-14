@@ -26,12 +26,18 @@ tox:
 	@tox
 
 .PHONY: docs
-docs: docs_clean
+docs:
 	@poetry run pdoc --html -c latex_math=True --output-dir=docs/_build pta
-	@mv docs/_build/pta/* docs/
+	@mv -u docs/_build/pta/* docs/
 	@rm -rf docs/_build
 
 .PHONY: docs_clean
 docs_clean:
 	@rm -rf docs/*
+
+
+.PHONY: check
+check:
+	@poetry run mypy -p pta
+	@poetry run flake8 pta
 

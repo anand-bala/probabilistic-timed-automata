@@ -13,7 +13,7 @@ class Region:
     This data structure is based on the paper for efficient, region-based
     simulations of PTA.[^1]
 
-    [^1]: A. Hartmanns, S. Sedwards, and P. R. D’Argenio, 
+    [^1]: A. Hartmanns, S. Sedwards, and P. R. D’Argenio,
         "Efficient simulation-based verification of probabilistic timed automata,"
         in Proceedings of the 2017 Winter Simulation Conference, Las Vegas, Nevada,
         2017, pp. 1–12.

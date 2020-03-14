@@ -29,7 +29,7 @@
 <pre><code class="python">&#34;&#34;&#34;Collection of distributions for the PTA and the Region MDP&#34;&#34;&#34;
 
 import random
-from itertools import product
+# from itertools import product
 
 from typing import Generic, TypeVar, Hashable, Mapping, Sequence, Set
 
@@ -46,7 +46,7 @@ T = TypeVar(&#34;T&#34;, bound=Hashable)
 @attr.s(frozen=True, auto_attribs=True)
 class DiscreteDistribution(Generic[T]):
     &#34;&#34;&#34;A Discrete distribution over a finite, countable support
-    
+
     You can call the instantiated distribution to get the probability of an input::
 
         p = uniform(range(10))
@@ -105,7 +105,6 @@ def uniform(support: Set[T]) -&gt; DiscreteDistribution[T]:
     -------
     output : DiscreteDistribution
         A uniform distribution over the finite set of states.
-        
     &#34;&#34;&#34;
     prob = 1 / len(support)
     return DiscreteDistribution({s: prob for s in support})</code></pre>
@@ -192,7 +191,6 @@ Parameters</p>
     -------
     output : DiscreteDistribution
         A uniform distribution over the finite set of states.
-        
     &#34;&#34;&#34;
     prob = 1 / len(support)
     return DiscreteDistribution({s: prob for s in support})</code></pre>
@@ -219,7 +217,7 @@ assert p(5) == 1/10
 </summary>
 <pre><code class="python">class DiscreteDistribution(Generic[T]):
     &#34;&#34;&#34;A Discrete distribution over a finite, countable support
-    
+
     You can call the instantiated distribution to get the probability of an input::
 
         p = uniform(range(10))
