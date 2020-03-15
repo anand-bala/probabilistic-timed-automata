@@ -34,6 +34,7 @@ import attr
 
 from .clocks import Clock, ClockConstraint, delays, Interval
 from .distributions import DiscreteDistribution
+from .region import Region
 
 
 Label = Union[str, int]
@@ -68,6 +69,16 @@ class PTA:
     _transitions: Mapping[Location, Mapping[Label, Transition]] = attr.ib()
     _invariants: Mapping[Location, ClockConstraint] = attr.ib()
 
+    @property
+    def clocks(self) -&gt; Set[Clock]:
+        &#34;&#34;&#34;Get the set of clocks in the PTA&#34;&#34;&#34;
+        return self._clocks
+
+    @property
+    def locations(self) -&gt; Set[Location]:
+        &#34;&#34;&#34;Get the set of locations in the PTA&#34;&#34;&#34;
+        return self._locations
+
     def enabled_actions(
         self, loc: Location, values: Mapping[Clock, float]
     ) -&gt; Mapping[Label, DiscreteDistribution[Target]]:
@@ -100,7 +111,33 @@ class PTA:
         }
 
     def allowed_delays(self, loc: Location, values: Mapping[Clock, float]) -&gt; Interval:
-        return delays(values, self._invariants[loc])</code></pre>
+        &#34;&#34;&#34;Return the allowed interval of delays at the given location and clock valuation.
+
+        See Also
+        --------
+        `pta.clocks.delays`
+        &#34;&#34;&#34;
+        return delays(values, self._invariants[loc])
+
+    def to_region_mdp(self) -&gt; &#39;RegionMDP&#39;:
+        &#34;&#34;&#34;Get the integral region graph MDP of the PTA&#34;&#34;&#34;
+        return RegionMDP(self)
+
+
+@attr.s(auto_attribs=True, eq=False, order=False)
+class RegionMDP:
+    &#34;&#34;&#34;An integrel region graph MDP simulation of a PTA.
+
+    The region MDP shouldn&#39;t be directly constructed as it requires access to
+    private information of the PTA. Instead, use the `PTA.to_region_mdp()`
+    method.
+    &#34;&#34;&#34;
+
+    _pta: PTA = attr.ib()
+    _current_region: Region = attr.ib(init=False)
+
+    def __attrs_post_init__(self):
+        self._current_region = Region(self._pta.clocks)</code></pre>
 </details>
 </section>
 <section>
@@ -158,6 +195,16 @@ progress in the location.</li>
     _transitions: Mapping[Location, Mapping[Label, Transition]] = attr.ib()
     _invariants: Mapping[Location, ClockConstraint] = attr.ib()
 
+    @property
+    def clocks(self) -&gt; Set[Clock]:
+        &#34;&#34;&#34;Get the set of clocks in the PTA&#34;&#34;&#34;
+        return self._clocks
+
+    @property
+    def locations(self) -&gt; Set[Location]:
+        &#34;&#34;&#34;Get the set of locations in the PTA&#34;&#34;&#34;
+        return self._locations
+
     def enabled_actions(
         self, loc: Location, values: Mapping[Clock, float]
     ) -&gt; Mapping[Label, DiscreteDistribution[Target]]:
@@ -190,20 +237,67 @@ progress in the location.</li>
         }
 
     def allowed_delays(self, loc: Location, values: Mapping[Clock, float]) -&gt; Interval:
-        return delays(values, self._invariants[loc])</code></pre>
+        &#34;&#34;&#34;Return the allowed interval of delays at the given location and clock valuation.
+
+        See Also
+        --------
+        `pta.clocks.delays`
+        &#34;&#34;&#34;
+        return delays(values, self._invariants[loc])
+
+    def to_region_mdp(self) -&gt; &#39;RegionMDP&#39;:
+        &#34;&#34;&#34;Get the integral region graph MDP of the PTA&#34;&#34;&#34;
+        return RegionMDP(self)</code></pre>
 </details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="pta.pta.PTA.clocks"><code class="name">var <span class="ident">clocks</span></code></dt>
+<dd>
+<section class="desc"><p>Get the set of clocks in the PTA</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def clocks(self) -&gt; Set[Clock]:
+    &#34;&#34;&#34;Get the set of clocks in the PTA&#34;&#34;&#34;
+    return self._clocks</code></pre>
+</details>
+</dd>
+<dt id="pta.pta.PTA.locations"><code class="name">var <span class="ident">locations</span></code></dt>
+<dd>
+<section class="desc"><p>Get the set of locations in the PTA</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def locations(self) -&gt; Set[Location]:
+    &#34;&#34;&#34;Get the set of locations in the PTA&#34;&#34;&#34;
+    return self._locations</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="pta.pta.PTA.allowed_delays"><code class="name flex">
 <span>def <span class="ident">allowed_delays</span></span>(<span>self, loc, values)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Return the allowed interval of delays at the given location and clock valuation.</p>
+<h2 id="see-also">See Also</h2>
+<p><code>pta.clocks.delays</code></p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def allowed_delays(self, loc: Location, values: Mapping[Clock, float]) -&gt; Interval:
+    &#34;&#34;&#34;Return the allowed interval of delays at the given location and clock valuation.
+
+    See Also
+    --------
+    `pta.clocks.delays`
+    &#34;&#34;&#34;
     return delays(values, self._invariants[loc])</code></pre>
 </details>
 </dd>
@@ -260,7 +354,49 @@ contain keys for all clocks in the PTA.</p>
     }</code></pre>
 </details>
 </dd>
+<dt id="pta.pta.PTA.to_region_mdp"><code class="name flex">
+<span>def <span class="ident">to_region_mdp</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Get the integral region graph MDP of the PTA</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_region_mdp(self) -&gt; &#39;RegionMDP&#39;:
+    &#34;&#34;&#34;Get the integral region graph MDP of the PTA&#34;&#34;&#34;
+    return RegionMDP(self)</code></pre>
+</details>
+</dd>
 </dl>
+</dd>
+<dt id="pta.pta.RegionMDP"><code class="flex name class">
+<span>class <span class="ident">RegionMDP</span></span>
+<span>(</span><span>pta)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>An integrel region graph MDP simulation of a PTA.</p>
+<p>The region MDP shouldn't be directly constructed as it requires access to
+private information of the PTA. Instead, use the <a title="pta.pta.PTA.to_region_mdp" href="#pta.pta.PTA.to_region_mdp"><code>PTA.to_region_mdp()</code></a>
+method.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RegionMDP:
+    &#34;&#34;&#34;An integrel region graph MDP simulation of a PTA.
+
+    The region MDP shouldn&#39;t be directly constructed as it requires access to
+    private information of the PTA. Instead, use the `PTA.to_region_mdp()`
+    method.
+    &#34;&#34;&#34;
+
+    _pta: PTA = attr.ib()
+    _current_region: Region = attr.ib(init=False)
+
+    def __attrs_post_init__(self):
+        self._current_region = Region(self._pta.clocks)</code></pre>
+</details>
 </dd>
 </dl>
 </section>
@@ -282,8 +418,14 @@ contain keys for all clocks in the PTA.</p>
 <h4><code><a title="pta.pta.PTA" href="#pta.pta.PTA">PTA</a></code></h4>
 <ul class="">
 <li><code><a title="pta.pta.PTA.allowed_delays" href="#pta.pta.PTA.allowed_delays">allowed_delays</a></code></li>
+<li><code><a title="pta.pta.PTA.clocks" href="#pta.pta.PTA.clocks">clocks</a></code></li>
 <li><code><a title="pta.pta.PTA.enabled_actions" href="#pta.pta.PTA.enabled_actions">enabled_actions</a></code></li>
+<li><code><a title="pta.pta.PTA.locations" href="#pta.pta.PTA.locations">locations</a></code></li>
+<li><code><a title="pta.pta.PTA.to_region_mdp" href="#pta.pta.PTA.to_region_mdp">to_region_mdp</a></code></li>
 </ul>
+</li>
+<li>
+<h4><code><a title="pta.pta.RegionMDP" href="#pta.pta.RegionMDP">RegionMDP</a></code></h4>
 </li>
 </ul>
 </li>

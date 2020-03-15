@@ -132,7 +132,9 @@ class ClockConstraint(ABC):
     @abstractmethod
     def contains(self, value: Mapping[Clock, float]) -&gt; bool:
         &#34;&#34;&#34;Check if the clock constraints evaluate to true given clock valuations.&#34;&#34;&#34;
-        raise NotImplementedError(&#34;Can&#39;t get the interval for the abstract ClockConstraint class&#34;)
+        raise NotImplementedError(
+            &#34;Can&#39;t get the interval for the abstract ClockConstraint class&#34;
+        )
 
     def __contains__(self, value: Mapping[Clock, float]) -&gt; bool:
         return self.contains(value)
@@ -520,7 +522,9 @@ y = Clock('y')
     @abstractmethod
     def contains(self, value: Mapping[Clock, float]) -&gt; bool:
         &#34;&#34;&#34;Check if the clock constraints evaluate to true given clock valuations.&#34;&#34;&#34;
-        raise NotImplementedError(&#34;Can&#39;t get the interval for the abstract ClockConstraint class&#34;)
+        raise NotImplementedError(
+            &#34;Can&#39;t get the interval for the abstract ClockConstraint class&#34;
+        )
 
     def __contains__(self, value: Mapping[Clock, float]) -&gt; bool:
         return self.contains(value)</code></pre>
@@ -550,7 +554,9 @@ y = Clock('y')
 <pre><code class="python">@abstractmethod
 def contains(self, value: Mapping[Clock, float]) -&gt; bool:
     &#34;&#34;&#34;Check if the clock constraints evaluate to true given clock valuations.&#34;&#34;&#34;
-    raise NotImplementedError(&#34;Can&#39;t get the interval for the abstract ClockConstraint class&#34;)</code></pre>
+    raise NotImplementedError(
+        &#34;Can&#39;t get the interval for the abstract ClockConstraint class&#34;
+    )</code></pre>
 </details>
 </dd>
 </dl>

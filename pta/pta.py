@@ -6,6 +6,7 @@ import attr
 
 from .clocks import Clock, ClockConstraint, delays, Interval
 from .distributions import DiscreteDistribution
+from .region import Region
 
 
 Label = Union[str, int]
@@ -40,6 +41,16 @@ class PTA:
     _transitions: Mapping[Location, Mapping[Label, Transition]] = attr.ib()
     _invariants: Mapping[Location, ClockConstraint] = attr.ib()
 
+    @property
+    def clocks(self) -> Set[Clock]:
+        """Get the set of clocks in the PTA"""
+        return self._clocks
+
+    @property
+    def locations(self) -> Set[Location]:
+        """Get the set of locations in the PTA"""
+        return self._locations
+
     def enabled_actions(
         self, loc: Location, values: Mapping[Clock, float]
     ) -> Mapping[Label, DiscreteDistribution[Target]]:
@@ -72,4 +83,30 @@ class PTA:
         }
 
     def allowed_delays(self, loc: Location, values: Mapping[Clock, float]) -> Interval:
+        """Return the allowed interval of delays at the given location and clock valuation.
+
+        See Also
+        --------
+        `pta.clocks.delays`
+        """
         return delays(values, self._invariants[loc])
+
+    def to_region_mdp(self) -> "RegionMDP":
+        """Get the integral region graph MDP of the PTA"""
+        return RegionMDP(self)
+
+
+@attr.s(auto_attribs=True, eq=False, order=False)
+class RegionMDP:
+    """An integral region graph MDP simulation of a PTA with generator API.
+
+    The region MDP shouldn't be directly constructed as it requires access to
+    private information of the PTA. Instead, use the `PTA.to_region_mdp()`
+    method.
+    """
+
+    _pta: PTA = attr.ib()
+    _current_region: Region = attr.ib(init=False)
+
+    def __attrs_post_init__(self):
+        self._current_region = Region(self._pta.clocks)

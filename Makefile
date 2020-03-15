@@ -11,7 +11,7 @@ clean:
 
 .PHONY: format
 format: clean
-	@poetry run black pta/ tests/
+	poetry run black pta/ tests/
 
 .PHONY: test
 test:
@@ -27,7 +27,7 @@ tox:
 
 .PHONY: docs
 docs:
-	@poetry run pdoc --html -c latex_math=True --output-dir=docs/_build pta
+	poetry run pdoc --html -c latex_math=True --output-dir=docs/_build pta
 	@mv -u docs/_build/pta/* docs/
 	@rm -rf docs/_build
 
@@ -38,6 +38,6 @@ docs_clean:
 
 .PHONY: check
 check:
-	@poetry run mypy -p pta
-	@poetry run flake8 pta
+	poetry run mypy -p pta
+	poetry run flake8 pta
 

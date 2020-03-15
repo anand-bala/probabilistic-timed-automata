@@ -1,13 +1,13 @@
 """Collection of distributions for the PTA and the Region MDP"""
 
 import random
+
 # from itertools import product
+import functools
 
 from typing import Generic, TypeVar, Hashable, Mapping, Sequence, Set
 
 import attr
-import funcy as fn
-
 
 # TODO: Is it worth using numpy or torch distributions instead? No (I think)...
 
@@ -39,7 +39,7 @@ class DiscreteDistribution(Generic[T]):
         support, distribution = zip(*self._dist.items())
         return random.choices(support, distribution, k=k)
 
-    @fn.memoize
+    @functools.lru_cache(128)
     def __call__(self, x: T) -> float:
         """Get the probability of ``x`` in the distribution"""
         return self._dist.get(x, 0)

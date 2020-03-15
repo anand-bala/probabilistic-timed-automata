@@ -89,7 +89,9 @@ class ClockConstraint(ABC):
     @abstractmethod
     def contains(self, value: Mapping[Clock, float]) -> bool:
         """Check if the clock constraints evaluate to true given clock valuations."""
-        raise NotImplementedError("Can't get the interval for the abstract ClockConstraint class")
+        raise NotImplementedError(
+            "Can't get the interval for the abstract ClockConstraint class"
+        )
 
     def __contains__(self, value: Mapping[Clock, float]) -> bool:
         return self.contains(value)

@@ -15,7 +15,6 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-funcy = "^1.14"
 attrs = "^19.3.0"
 portion = "^2.0.0"
 

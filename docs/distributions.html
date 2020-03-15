@@ -29,13 +29,13 @@
 <pre><code class="python">&#34;&#34;&#34;Collection of distributions for the PTA and the Region MDP&#34;&#34;&#34;
 
 import random
+
 # from itertools import product
+import functools
 
 from typing import Generic, TypeVar, Hashable, Mapping, Sequence, Set
 
 import attr
-import funcy as fn
-
 
 # TODO: Is it worth using numpy or torch distributions instead? No (I think)...
 
@@ -67,7 +67,7 @@ class DiscreteDistribution(Generic[T]):
         support, distribution = zip(*self._dist.items())
         return random.choices(support, distribution, k=k)
 
-    @fn.memoize
+    @functools.lru_cache(128)
     def __call__(self, x: T) -&gt; float:
         &#34;&#34;&#34;Get the probability of ``x`` in the distribution&#34;&#34;&#34;
         return self._dist.get(x, 0)
@@ -238,7 +238,7 @@ assert p(5) == 1/10
         support, distribution = zip(*self._dist.items())
         return random.choices(support, distribution, k=k)
 
-    @fn.memoize
+    @functools.lru_cache(128)
     def __call__(self, x: T) -&gt; float:
         &#34;&#34;&#34;Get the probability of ``x`` in the distribution&#34;&#34;&#34;
         return self._dist.get(x, 0)</code></pre>
