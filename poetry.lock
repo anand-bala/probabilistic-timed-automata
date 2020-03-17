@@ -205,7 +205,7 @@ description = "Python data structure and operations for intervals"
 name = "portion"
 optional = false
 python-versions = "~=3.5"
-version = "2.0.0"
+version = "2.0.1"
 
 [package.extras]
 test = ["pytest (>=5.0.1,<5.1.0)"]
@@ -233,7 +233,7 @@ description = "pytest: simple powerful testing with Python"
 name = "pytest"
 optional = false
 python-versions = ">=3.5"
-version = "5.4.0"
+version = "5.4.1"
 
 [package.dependencies]
 atomicwrites = ">=1.0"
@@ -430,8 +430,8 @@ pluggy = [
     {file = "pluggy-0.13.1.tar.gz", hash = "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0"},
 ]
 portion = [
-    {file = "portion-2.0.0-py3-none-any.whl", hash = "sha256:9cc1b6433057c61e947aa69aa227ddca1744d1359e808ddeafe70a10a7abb53d"},
-    {file = "portion-2.0.0.tar.gz", hash = "sha256:64c86f2029cf1a917fb7055962a025183fdac8512a8e32abfff1ce7de4b70ed3"},
+    {file = "portion-2.0.1-py3-none-any.whl", hash = "sha256:9a1bfc47d4f8fee86698e413a5808db4c95a9326247774e91908050ec420df40"},
+    {file = "portion-2.0.1.tar.gz", hash = "sha256:337d55a97dab6170eee13777ad354be9f2f6000c58a670b1947984a442aa6614"},
 ]
 py = [
     {file = "py-1.8.1-py2.py3-none-any.whl", hash = "sha256:c20fdd83a5dbc0af9efd622bee9a5564e278f6380fffcacc43ba6f43db2813b0"},
@@ -442,8 +442,8 @@ pyparsing = [
     {file = "pyparsing-2.4.6.tar.gz", hash = "sha256:4c830582a84fb022400b85429791bc551f1f4871c33f23e44f353119e92f969f"},
 ]
 pytest = [
-    {file = "pytest-5.4.0-py3-none-any.whl", hash = "sha256:48c891b40d391ec824477c13d10d5eadf698c83a1671aba491f6db222035d6da"},
-    {file = "pytest-5.4.0.tar.gz", hash = "sha256:76418969e4b9db462a393f1baa13eeb39ba32eccf6013657f4f8295baa234842"},
+    {file = "pytest-5.4.1-py3-none-any.whl", hash = "sha256:0e5b30f5cb04e887b91b1ee519fa3d89049595f428c1db76e73bd7f17b09b172"},
+    {file = "pytest-5.4.1.tar.gz", hash = "sha256:84dde37075b8805f3d1f392cc47e38a0e59518fb46a431cfdaf7cf1ce805f970"},
 ]
 regex = [
     {file = "regex-2020.2.20-cp27-cp27m-win32.whl", hash = "sha256:99272d6b6a68c7ae4391908fc15f6b8c9a6c345a46b632d7fdb7ef6c883a2bbb"},

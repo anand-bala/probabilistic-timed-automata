@@ -44,6 +44,9 @@ class DiscreteDistribution(Generic[T]):
         """Get the probability of ``x`` in the distribution"""
         return self._dist.get(x, 0)
 
+    def validate_support(self, check_set: Set[T]) -> bool:
+        return not (set(self._dist.keys()) <= check_set)
+
 
 def delta(center: T) -> DiscreteDistribution[T]:
     """Return the (Kronecker) delta distribution centered at ``center``

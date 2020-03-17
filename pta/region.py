@@ -45,7 +45,7 @@ class Region:
         self._is_int = True
         self._value_vector = {clock: 0 for clock in self.clocks}
         self._fractional_ord = {clock: 0 for clock in self.clocks}
-        self._num_frac = 0
+        self._num_frac = 1
 
     def value(self) -> Mapping[Clock, float]:
         """Get the representative values of the clocks in the current region
@@ -63,7 +63,7 @@ class Region:
         return {c: value_fn(c) for c in self.clocks}
 
     def delay(self, steps: int = 1):
-        """Delay each of the clocks and move ``steps`` "representative" region.
+        """Delay each of the clocks and move by ``steps`` "representative" region.
 
         If ``steps`` is 1, the region is updated to the next region. Otherwise,
         for ``steps`` > 1, the number of regions moved is dependent on the
