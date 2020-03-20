@@ -40,7 +40,6 @@ docs:
 	@echo "Copying built docs to $(DOCDST)"
 	@mkdir -p $(DOCDST)
 	@cp -a $(DOCDST)/_build/html/. $(DOCDST)
-	@rm -rf $(DOCDST)/_sources $(DOCDST)/.doctrees
 
 .PHONY: tox
 tox:

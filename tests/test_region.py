@@ -1,10 +1,10 @@
 from pytest import approx
-from pta import Region, clocks
+from pta import Region, new_clocks
 
 
 def test_region_value():
     """Check if the region outputs the correct values given a series of delays"""
-    x, y, z = clocks(("x", "y", "z"))
+    x, y, z = new_clocks(("x", "y", "z"))
 
     reg = Region((x, y, z))
     assert reg.value() == {x: 0, y: 0, z: 0}
