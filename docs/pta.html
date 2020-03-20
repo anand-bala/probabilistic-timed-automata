@@ -1,441 +1,645 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.5" />
-<title>pta.pta API documentation</title>
-<meta name="description" content="Probabilistic Timed Automaton" />
-<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
-<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
-<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
-<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
-<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
-<script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
-</head>
-<body>
-<main>
-<article id="content">
-<header>
-<h1 class="title">Module <code>pta.pta</code></h1>
-</header>
-<section id="section-intro">
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>pta package &#8212; Probabilistic Timed Automata v0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Probabilistic Timed Automata" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="index.html ">
+        Probabilistic Timed Automata v0.1.0 documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="index.html" title="Previous document">Probabilistic Timed Automata</a>
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="index.html">Home</a></li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pta-package">
+<h1>pta package<a class="headerlink" href="#pta-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pta.clocks">
+<span id="pta-clocks-module"></span><h2>pta.clocks module<a class="headerlink" href="#module-pta.clocks" title="Permalink to this headline">¶</a></h2>
+<p>Symbolic Representation for Clock Constraints</p>
+<p>Clock constraints are of the following form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cc</span> <span class="p">:</span><span class="o">:=</span>  <span class="n">true</span> <span class="o">|</span> <span class="n">false</span> <span class="o">|</span>
+        <span class="n">cc</span> <span class="o">&amp;</span> <span class="n">cc</span> <span class="o">|</span>
+        <span class="n">c</span> <span class="o">~</span> <span class="n">n</span> <span class="o">|</span> <span class="n">c_1</span> <span class="o">-</span> <span class="n">c_2</span> <span class="o">~</span> <span class="n">n</span>
+</pre></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">~</span></code> is one of <code class="docutils literal notranslate"><span class="pre">&lt;,&lt;=,&gt;=,&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">c,</span> <span class="pre">c_i</span></code> are any <code class="docutils literal notranslate"><span class="pre">Clock</span></code> names, and
+<code class="docutils literal notranslate"><span class="pre">n</span></code> is a natural number.</p>
+<p>The <cite>Clock</cite> and <cite>ClockConstraint</cite> classes have syntactic sugar to easily write the above constraints. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">Clock</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">Clock</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">x</span> <span class="o">&amp;</span> <span class="n">y</span> <span class="o">==</span> <span class="n">And</span><span class="p">((</span><span class="n">Clock</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span> <span class="n">Clock</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)))</span>
+<span class="k">assert</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">DiagonalConstraint</span><span class="p">(</span><span class="n">DiagonalLHS</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Moreover, the <cite>Clock</cite> and <cite>ClockConstraint</cite> are <em>frozen</em>, which emulates immutable data.</p>
+<dl class="class">
+<dt id="pta.clocks.And">
+<em class="property">class </em><code class="sig-prename descclassname">pta.clocks.</code><code class="sig-name descname">And</code><span class="sig-paren">(</span><em class="sig-param">args: Tuple[pta.clocks.ClockConstraint, pta.clocks.ClockConstraint]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pta/clocks.html#And"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.And" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pta.clocks.ClockConstraint" title="pta.clocks.ClockConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">pta.clocks.ClockConstraint</span></code></a></p>
+<p>Class to represent conjunctions of clock constraints</p>
+<dl class="method">
+<dt id="pta.clocks.And.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param">value: Mapping[pta.clocks.Clock, float]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pta/clocks.html#And.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.And.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the clock constraints evaluate to true given clock valuations.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.And.args">
+<code class="sig-name descname">args</code><em class="property">: Tuple[ClockConstraint, ClockConstraint]</em><em class="property"> = None</em><a class="headerlink" href="#pta.clocks.And.args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pta.clocks.Boolean">
+<em class="property">class </em><code class="sig-prename descclassname">pta.clocks.</code><code class="sig-name descname">Boolean</code><span class="sig-paren">(</span><em class="sig-param">value: bool</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pta/clocks.html#Boolean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.Boolean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pta.clocks.ClockConstraint" title="pta.clocks.ClockConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">pta.clocks.ClockConstraint</span></code></a></p>
+<p>An atomic boolean class to represent <code class="docutils literal notranslate"><span class="pre">true</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code> clock constraints</p>
+<dl class="method">
+<dt id="pta.clocks.Boolean.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param">value: Mapping[pta.clocks.Clock, float]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pta/clocks.html#Boolean.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.Boolean.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the clock constraints evaluate to true given clock valuations.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.Boolean.value">
+<code class="sig-name descname">value</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#pta.clocks.Boolean.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pta.clocks.Clock">
+<em class="property">class </em><code class="sig-prename descclassname">pta.clocks.</code><code class="sig-name descname">Clock</code><span class="sig-paren">(</span><em class="sig-param">name: Hashable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pta/clocks.html#Clock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.Clock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Clock symbol</p>
+<p>The Clock class is a simple wrapper around any Hashable. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">Clock</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">Clock</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the above example, the variables <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are clocks with the <em>name</em> (a hashable string).</p>
+<dl class="attribute">
+<dt id="pta.clocks.Clock.name">
+<code class="sig-name descname">name</code><em class="property">: Hashable</em><em class="property"> = None</em><a class="headerlink" href="#pta.clocks.Clock.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pta.clocks.ClockConstraint">
+<em class="property">class </em><code class="sig-prename descclassname">pta.clocks.</code><code class="sig-name descname">ClockConstraint</code><a class="reference internal" href="_modules/pta/clocks.html#ClockConstraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.ClockConstraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>An abstract class for clock constraints</p>
+<dl class="method">
+<dt id="pta.clocks.ClockConstraint.contains">
+<em class="property">abstract </em><code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param">value: Mapping[pta.clocks.Clock, float]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pta/clocks.html#ClockConstraint.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.ClockConstraint.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the clock constraints evaluate to true given clock valuations.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pta.clocks.ComparisonOp">
+<em class="property">class </em><code class="sig-prename descclassname">pta.clocks.</code><code class="sig-name descname">ComparisonOp</code><a class="reference internal" href="_modules/pta/clocks.html#ComparisonOp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.ComparisonOp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Four comparison operations allowed in <a href="#id1"><span class="problematic" id="id2">`</span></a>SingletonConstraint`s and <a href="#id3"><span class="problematic" id="id4">`</span></a>DiagonalConstraint`s</p>
+<dl class="method">
+<dt id="pta.clocks.ComparisonOp.to_op">
+<code class="sig-name descname">to_op</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Callable[[float, float], bool]<a class="reference internal" href="_modules/pta/clocks.html#ComparisonOp.to_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.ComparisonOp.to_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output the operator function that corresponds to the enum</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.ComparisonOp.GE">
+<code class="sig-name descname">GE</code><em class="property"> = 1</em><a class="headerlink" href="#pta.clocks.ComparisonOp.GE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.ComparisonOp.GT">
+<code class="sig-name descname">GT</code><em class="property"> = 2</em><a class="headerlink" href="#pta.clocks.ComparisonOp.GT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.ComparisonOp.LE">
+<code class="sig-name descname">LE</code><em class="property"> = 3</em><a class="headerlink" href="#pta.clocks.ComparisonOp.LE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.ComparisonOp.LT">
+<code class="sig-name descname">LT</code><em class="property"> = 4</em><a class="headerlink" href="#pta.clocks.ComparisonOp.LT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pta.clocks.DiagonalConstraint">
+<em class="property">class </em><code class="sig-prename descclassname">pta.clocks.</code><code class="sig-name descname">DiagonalConstraint</code><span class="sig-paren">(</span><em class="sig-param">lhs: pta.clocks.DiagonalLHS</em>, <em class="sig-param">rhs: int</em>, <em class="sig-param">op: pta.clocks.ComparisonOp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pta/clocks.html#DiagonalConstraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.DiagonalConstraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pta.clocks.ClockConstraint" title="pta.clocks.ClockConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">pta.clocks.ClockConstraint</span></code></a></p>
+<p>Diagonal constraints of the form: (c_1 - c_2 sim n)</p>
+<dl class="method">
+<dt id="pta.clocks.DiagonalConstraint.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param">value: Mapping[pta.clocks.Clock, float]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pta/clocks.html#DiagonalConstraint.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.DiagonalConstraint.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the clock constraints evaluate to true given clock valuations.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.DiagonalConstraint.lhs">
+<code class="sig-name descname">lhs</code><em class="property">: DiagonalLHS</em><em class="property"> = None</em><a class="headerlink" href="#pta.clocks.DiagonalConstraint.lhs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.DiagonalConstraint.op">
+<code class="sig-name descname">op</code><em class="property">: ComparisonOp</em><em class="property"> = None</em><a class="headerlink" href="#pta.clocks.DiagonalConstraint.op" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.DiagonalConstraint.rhs">
+<code class="sig-name descname">rhs</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#pta.clocks.DiagonalConstraint.rhs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pta.clocks.DiagonalLHS">
+<em class="property">class </em><code class="sig-prename descclassname">pta.clocks.</code><code class="sig-name descname">DiagonalLHS</code><span class="sig-paren">(</span><em class="sig-param">clock1: pta.clocks.Clock</em>, <em class="sig-param">clock2: pta.clocks.Clock</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pta/clocks.html#DiagonalLHS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.DiagonalLHS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Intermediate result for (c_1 - c_2)</p>
+<dl class="attribute">
+<dt id="pta.clocks.DiagonalLHS.clock1">
+<code class="sig-name descname">clock1</code><em class="property">: Clock</em><em class="property"> = None</em><a class="headerlink" href="#pta.clocks.DiagonalLHS.clock1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.DiagonalLHS.clock2">
+<code class="sig-name descname">clock2</code><em class="property">: Clock</em><em class="property"> = None</em><a class="headerlink" href="#pta.clocks.DiagonalLHS.clock2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pta.clocks.SingletonConstraint">
+<em class="property">class </em><code class="sig-prename descclassname">pta.clocks.</code><code class="sig-name descname">SingletonConstraint</code><span class="sig-paren">(</span><em class="sig-param">clock: pta.clocks.Clock</em>, <em class="sig-param">rhs: int</em>, <em class="sig-param">op: pta.clocks.ComparisonOp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pta/clocks.html#SingletonConstraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.SingletonConstraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pta.clocks.ClockConstraint" title="pta.clocks.ClockConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">pta.clocks.ClockConstraint</span></code></a></p>
+<p>Constraints of the form (c sim n) for (n in mathbb{N}) and (sim in {&lt;,le,ge,&gt;})</p>
+<dl class="method">
+<dt id="pta.clocks.SingletonConstraint.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param">value: Mapping[pta.clocks.Clock, float]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pta/clocks.html#SingletonConstraint.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.SingletonConstraint.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the clock constraints evaluate to true given clock valuations.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.SingletonConstraint.clock">
+<code class="sig-name descname">clock</code><em class="property">: Clock</em><em class="property"> = None</em><a class="headerlink" href="#pta.clocks.SingletonConstraint.clock" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.SingletonConstraint.op">
+<code class="sig-name descname">op</code><em class="property">: ComparisonOp</em><em class="property"> = None</em><a class="headerlink" href="#pta.clocks.SingletonConstraint.op" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pta.clocks.SingletonConstraint.rhs">
+<code class="sig-name descname">rhs</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#pta.clocks.SingletonConstraint.rhs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pta.clocks.delays">
+<code class="sig-prename descclassname">pta.clocks.</code><code class="sig-name descname">delays</code><span class="sig-paren">(</span><em class="sig-param">values: Mapping[pta.clocks.Clock, float], constraint: pta.clocks.ClockConstraint</em><span class="sig-paren">)</span> &#x2192; portion.interval.Interval<a class="reference internal" href="_modules/pta/clocks.html#delays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clocks.delays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the allowable delay with the given clock valuations and constraints</p>
+<div class="admonition-todo admonition" id="id5">
+<p class="admonition-title">Todo</p>
+<p>Write the LaTeX version of the function.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> – A mapping from <cite>Clock</cite> to the valuation of the clock.</p></li>
+<li><p><strong>constraint</strong> – A clock constrain.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An interval that represents the set of possible delays that satisfy the
+given clock constraint.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>output</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pta.distributions">
+<span id="pta-distributions-module"></span><h2>pta.distributions module<a class="headerlink" href="#module-pta.distributions" title="Permalink to this headline">¶</a></h2>
+<p>Collection of distributions for the PTA and the Region MDP</p>
+<dl class="class">
+<dt id="pta.distributions.DiscreteDistribution">
+<em class="property">class </em><code class="sig-prename descclassname">pta.distributions.</code><code class="sig-name descname">DiscreteDistribution</code><span class="sig-paren">(</span><em class="sig-param">dist: Mapping[T, float]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pta/distributions.html#DiscreteDistribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.distributions.DiscreteDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<p>A Discrete distribution over a finite, countable support</p>
+<p>You can call the instantiated distribution to get the probability of an input:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">uniform</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="k">assert</span> <span class="n">p</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="o">/</span><span class="mi">10</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="pta.distributions.DiscreteDistribution.sample">
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">k: int = 1</em><span class="sig-paren">)</span> &#x2192; Sequence[T]<a class="reference internal" href="_modules/pta/distributions.html#DiscreteDistribution.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.distributions.DiscreteDistribution.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample a value from the support</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>k</strong> (<em>int</em>) – Number of items to sample from the distribution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.distributions.DiscreteDistribution.validate_support">
+<code class="sig-name descname">validate_support</code><span class="sig-paren">(</span><em class="sig-param">check_set: Set[T]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pta/distributions.html#DiscreteDistribution.validate_support"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.distributions.DiscreteDistribution.validate_support" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pta.distributions.delta">
+<code class="sig-prename descclassname">pta.distributions.</code><code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">center: T</em><span class="sig-paren">)</span> &#x2192; pta.distributions.DiscreteDistribution[~T][T]<a class="reference internal" href="_modules/pta/distributions.html#delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.distributions.delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the (Kronecker) delta distribution centered at <code class="docutils literal notranslate"><span class="pre">center</span></code></p>
+<p>Essentially, the distributon is the following:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\texttt{Unit}(\omega)(x) = \begin{cases}
+    1, \quad \text{for } x = \omega \\
+    0, \quad \text{otherwise.}
+\end{cases}\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>center</strong> (<em>Hashable</em>) – Center of the delta distribution</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pta.distributions.uniform">
+<code class="sig-prename descclassname">pta.distributions.</code><code class="sig-name descname">uniform</code><span class="sig-paren">(</span><em class="sig-param">support: Set[T]</em><span class="sig-paren">)</span> &#x2192; pta.distributions.DiscreteDistribution[~T][T]<a class="reference internal" href="_modules/pta/distributions.html#uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.distributions.uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the uniform distribution over the given support</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>support</strong> (<em>Hashable</em>) – Any finite set of states.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>output</strong> – A uniform distribution over the finite set of states.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pta.distributions.DiscreteDistribution" title="pta.distributions.DiscreteDistribution">DiscreteDistribution</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pta.pta">
+<span id="pta-pta-module"></span><h2>pta.pta module<a class="headerlink" href="#module-pta.pta" title="Permalink to this headline">¶</a></h2>
 <p>Probabilistic Timed Automaton</p>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">&#34;&#34;&#34;Probabilistic Timed Automaton&#34;&#34;&#34;
-
-from typing import Set, Hashable, Mapping, Tuple, Union
-
-import attr
-
-from .clocks import Clock, ClockConstraint, delays, Interval
-from .distributions import DiscreteDistribution
-from .region import Region
-
-
-Label = Union[str, int]
-
-Location = Hashable
-Target = Tuple[Set[Clock], Location]
-Transition = Tuple[ClockConstraint, DiscreteDistribution[Target]]
-
-
-@attr.s(frozen=True, auto_attribs=True, kw_only=True)
-class PTA:
-    &#34;&#34;&#34;
-    A PTA is a 6-tuple \\(M = \\left\\langle Q, C, T, q_0, I \\right\\rangle\\) where
-
-    - \\(Q\\) is the set of locations in the PTA;
-    - \\(C\\) is the set of clocks in the PTA;
-    - \\(T \\) is the transition function that maps a location to a set of possible
-      transitions that can be taken (and their associated guards), along with the
-      probabilities associated with the set of clocks that are reset and the next
-      location;
-    - \\(q_0\\) is the initial location in the PTA; and
-    - \\(I\\) is the invariant function that maps a location to a clock constraint
-      such that as long as the clock constraint is satisfied, the clock can
-      progress in the location.
-    &#34;&#34;&#34;
-
-    _locations: Set[Location] = attr.ib(converter=frozenset)
-    _clocks: Set[Clock] = attr.ib(converter=frozenset)
-
-    _init_location: Location = attr.ib()
-
-    _transitions: Mapping[Location, Mapping[Label, Transition]] = attr.ib()
-    _invariants: Mapping[Location, ClockConstraint] = attr.ib()
-
-    @property
-    def clocks(self) -&gt; Set[Clock]:
-        &#34;&#34;&#34;Get the set of clocks in the PTA&#34;&#34;&#34;
-        return self._clocks
-
-    @property
-    def locations(self) -&gt; Set[Location]:
-        &#34;&#34;&#34;Get the set of locations in the PTA&#34;&#34;&#34;
-        return self._locations
-
-    def enabled_actions(
-        self, loc: Location, values: Mapping[Clock, float]
-    ) -&gt; Mapping[Label, DiscreteDistribution[Target]]:
-        &#34;&#34;&#34;Return the set of enabled edges available at a location with given clock valuation.
-
-        The edges are enabled with respect to their guards and the given valuation.
-
-        Parameters
-        ----------
-        loc:
-            Location in the PTA (raises error if ``loc`` not in PTA.
-        values:
-            Valuations for clocks in PTA (raises error if ``values`` does not
-            contain keys for all clocks in the PTA.
-
-        Returns
-        -------
-        output:
-            Set of distributions corresponding to edges enabled in the location.
-        &#34;&#34;&#34;
-        assert loc in self._locations, &#34;Given location is not present in the PTA&#34;
-        assert (
-            self._clocks &lt;= values.keys()
-        ), &#34;Valuations do not contain keys for all clocks in PTA&#34;
-
-        return {
-            label: dist
-            for label, (guard, dist) in self._transitions[loc].items()
-            if values in guard
-        }
-
-    def allowed_delays(self, loc: Location, values: Mapping[Clock, float]) -&gt; Interval:
-        &#34;&#34;&#34;Return the allowed interval of delays at the given location and clock valuation.
-
-        See Also
-        --------
-        `pta.clocks.delays`
-        &#34;&#34;&#34;
-        return delays(values, self._invariants[loc])
-
-    def to_region_mdp(self) -&gt; &#39;RegionMDP&#39;:
-        &#34;&#34;&#34;Get the integral region graph MDP of the PTA&#34;&#34;&#34;
-        return RegionMDP(self)
-
-
-@attr.s(auto_attribs=True, eq=False, order=False)
-class RegionMDP:
-    &#34;&#34;&#34;An integrel region graph MDP simulation of a PTA.
-
-    The region MDP shouldn&#39;t be directly constructed as it requires access to
-    private information of the PTA. Instead, use the `PTA.to_region_mdp()`
-    method.
-    &#34;&#34;&#34;
-
-    _pta: PTA = attr.ib()
-    _current_region: Region = attr.ib(init=False)
-
-    def __attrs_post_init__(self):
-        self._current_region = Region(self._pta.clocks)</code></pre>
-</details>
-</section>
-<section>
-</section>
-<section>
-</section>
-<section>
-</section>
-<section>
-<h2 class="section-title" id="header-classes">Classes</h2>
-<dl>
-<dt id="pta.pta.PTA"><code class="flex name class">
-<span>class <span class="ident">PTA</span></span>
-<span>(</span><span>*, locations, clocks, init_location, transitions, invariants)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>A PTA is a 6-tuple <span><span class="MathJax_Preview">M = \left\langle Q, C, T, q_0, I \right\rangle</span><script type="math/tex">M = \left\langle Q, C, T, q_0, I \right\rangle</script></span> where</p>
-<ul>
-<li><span><span class="MathJax_Preview">Q</span><script type="math/tex">Q</script></span> is the set of locations in the PTA;</li>
-<li><span><span class="MathJax_Preview">C</span><script type="math/tex">C</script></span> is the set of clocks in the PTA;</li>
-<li><span><span class="MathJax_Preview">T </span><script type="math/tex">T </script></span> is the transition function that maps a location to a set of possible
+<dl class="class">
+<dt id="pta.pta.PTA">
+<em class="property">class </em><code class="sig-prename descclassname">pta.pta.</code><code class="sig-name descname">PTA</code><span class="sig-paren">(</span><em class="sig-param">*, locations, clocks, init_location: Location, transitions: Mapping[Location, Mapping[Action, Tuple[pta.clocks.ClockConstraint, pta.distributions.DiscreteDistribution[typing.Tuple[typing.Set[pta.clocks.Clock], ~Location]][Tuple[Set[pta.clocks.Clock], Location]]]]], invariants: Mapping[Location, pta.clocks.ClockConstraint], labels: Mapping[Location, Set[str]]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pta/pta.html#PTA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.pta.PTA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<p>A PTA is a tuple (M = leftlangle Q, C, T, q_0, I, L rightrangle) where</p>
+<ul class="simple">
+<li><p>(Q) is the set of locations in the PTA;</p></li>
+<li><p>(C) is the set of clocks in the PTA;</p></li>
+<li><p>(T ) is the transition function that maps a location to a set of possible
 transitions that can be taken (and their associated guards), along with the
 probabilities associated with the set of clocks that are reset and the next
-location;</li>
-<li><span><span class="MathJax_Preview">q_0</span><script type="math/tex">q_0</script></span> is the initial location in the PTA; and</li>
-<li><span><span class="MathJax_Preview">I</span><script type="math/tex">I</script></span> is the invariant function that maps a location to a clock constraint
+location;</p></li>
+<li><p>(q_0) is the initial location in the PTA; and</p></li>
+<li><p>(I) is the invariant function that maps a location to a clock constraint
 such that as long as the clock constraint is satisfied, the clock can
-progress in the location.</li>
-</ul></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class PTA:
-    &#34;&#34;&#34;
-    A PTA is a 6-tuple \\(M = \\left\\langle Q, C, T, q_0, I \\right\\rangle\\) where
-
-    - \\(Q\\) is the set of locations in the PTA;
-    - \\(C\\) is the set of clocks in the PTA;
-    - \\(T \\) is the transition function that maps a location to a set of possible
-      transitions that can be taken (and their associated guards), along with the
-      probabilities associated with the set of clocks that are reset and the next
-      location;
-    - \\(q_0\\) is the initial location in the PTA; and
-    - \\(I\\) is the invariant function that maps a location to a clock constraint
-      such that as long as the clock constraint is satisfied, the clock can
-      progress in the location.
-    &#34;&#34;&#34;
-
-    _locations: Set[Location] = attr.ib(converter=frozenset)
-    _clocks: Set[Clock] = attr.ib(converter=frozenset)
-
-    _init_location: Location = attr.ib()
-
-    _transitions: Mapping[Location, Mapping[Label, Transition]] = attr.ib()
-    _invariants: Mapping[Location, ClockConstraint] = attr.ib()
-
-    @property
-    def clocks(self) -&gt; Set[Clock]:
-        &#34;&#34;&#34;Get the set of clocks in the PTA&#34;&#34;&#34;
-        return self._clocks
-
-    @property
-    def locations(self) -&gt; Set[Location]:
-        &#34;&#34;&#34;Get the set of locations in the PTA&#34;&#34;&#34;
-        return self._locations
-
-    def enabled_actions(
-        self, loc: Location, values: Mapping[Clock, float]
-    ) -&gt; Mapping[Label, DiscreteDistribution[Target]]:
-        &#34;&#34;&#34;Return the set of enabled edges available at a location with given clock valuation.
-
-        The edges are enabled with respect to their guards and the given valuation.
-
-        Parameters
-        ----------
-        loc:
-            Location in the PTA (raises error if ``loc`` not in PTA.
-        values:
-            Valuations for clocks in PTA (raises error if ``values`` does not
-            contain keys for all clocks in the PTA.
-
-        Returns
-        -------
-        output:
-            Set of distributions corresponding to edges enabled in the location.
-        &#34;&#34;&#34;
-        assert loc in self._locations, &#34;Given location is not present in the PTA&#34;
-        assert (
-            self._clocks &lt;= values.keys()
-        ), &#34;Valuations do not contain keys for all clocks in PTA&#34;
-
-        return {
-            label: dist
-            for label, (guard, dist) in self._transitions[loc].items()
-            if values in guard
-        }
-
-    def allowed_delays(self, loc: Location, values: Mapping[Clock, float]) -&gt; Interval:
-        &#34;&#34;&#34;Return the allowed interval of delays at the given location and clock valuation.
-
-        See Also
-        --------
-        `pta.clocks.delays`
-        &#34;&#34;&#34;
-        return delays(values, self._invariants[loc])
-
-    def to_region_mdp(self) -&gt; &#39;RegionMDP&#39;:
-        &#34;&#34;&#34;Get the integral region graph MDP of the PTA&#34;&#34;&#34;
-        return RegionMDP(self)</code></pre>
-</details>
-<h3>Instance variables</h3>
-<dl>
-<dt id="pta.pta.PTA.clocks"><code class="name">var <span class="ident">clocks</span></code></dt>
-<dd>
-<section class="desc"><p>Get the set of clocks in the PTA</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def clocks(self) -&gt; Set[Clock]:
-    &#34;&#34;&#34;Get the set of clocks in the PTA&#34;&#34;&#34;
-    return self._clocks</code></pre>
-</details>
-</dd>
-<dt id="pta.pta.PTA.locations"><code class="name">var <span class="ident">locations</span></code></dt>
-<dd>
-<section class="desc"><p>Get the set of locations in the PTA</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def locations(self) -&gt; Set[Location]:
-    &#34;&#34;&#34;Get the set of locations in the PTA&#34;&#34;&#34;
-    return self._locations</code></pre>
-</details>
-</dd>
-</dl>
-<h3>Methods</h3>
-<dl>
-<dt id="pta.pta.PTA.allowed_delays"><code class="name flex">
-<span>def <span class="ident">allowed_delays</span></span>(<span>self, loc, values)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Return the allowed interval of delays at the given location and clock valuation.</p>
-<h2 id="see-also">See Also</h2>
-<p><code>pta.clocks.delays</code></p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def allowed_delays(self, loc: Location, values: Mapping[Clock, float]) -&gt; Interval:
-    &#34;&#34;&#34;Return the allowed interval of delays at the given location and clock valuation.
-
-    See Also
-    --------
-    `pta.clocks.delays`
-    &#34;&#34;&#34;
-    return delays(values, self._invariants[loc])</code></pre>
-</details>
-</dd>
-<dt id="pta.pta.PTA.enabled_actions"><code class="name flex">
-<span>def <span class="ident">enabled_actions</span></span>(<span>self, loc, values)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Return the set of enabled edges available at a location with given clock valuation.</p>
-<p>The edges are enabled with respect to their guards and the given valuation.</p>
-<h2 id="parameters">Parameters</h2>
-<p>loc:
-Location in the PTA (raises error if <code>loc</code> not in PTA.
-values:
-Valuations for clocks in PTA (raises error if <code>values</code> does not
-contain keys for all clocks in the PTA.</p>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>output</code>:</dt>
-<dd>Set of distributions corresponding to edges enabled in the location.</dd>
-</dl></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def enabled_actions(
-    self, loc: Location, values: Mapping[Clock, float]
-) -&gt; Mapping[Label, DiscreteDistribution[Target]]:
-    &#34;&#34;&#34;Return the set of enabled edges available at a location with given clock valuation.
-
-    The edges are enabled with respect to their guards and the given valuation.
-
-    Parameters
-    ----------
-    loc:
-        Location in the PTA (raises error if ``loc`` not in PTA.
-    values:
-        Valuations for clocks in PTA (raises error if ``values`` does not
-        contain keys for all clocks in the PTA.
-
-    Returns
-    -------
-    output:
-        Set of distributions corresponding to edges enabled in the location.
-    &#34;&#34;&#34;
-    assert loc in self._locations, &#34;Given location is not present in the PTA&#34;
-    assert (
-        self._clocks &lt;= values.keys()
-    ), &#34;Valuations do not contain keys for all clocks in PTA&#34;
-
-    return {
-        label: dist
-        for label, (guard, dist) in self._transitions[loc].items()
-        if values in guard
-    }</code></pre>
-</details>
-</dd>
-<dt id="pta.pta.PTA.to_region_mdp"><code class="name flex">
-<span>def <span class="ident">to_region_mdp</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Get the integral region graph MDP of the PTA</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_region_mdp(self) -&gt; &#39;RegionMDP&#39;:
-    &#34;&#34;&#34;Get the integral region graph MDP of the PTA&#34;&#34;&#34;
-    return RegionMDP(self)</code></pre>
-</details>
-</dd>
-</dl>
-</dd>
-<dt id="pta.pta.RegionMDP"><code class="flex name class">
-<span>class <span class="ident">RegionMDP</span></span>
-<span>(</span><span>pta)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>An integrel region graph MDP simulation of a PTA.</p>
-<p>The region MDP shouldn't be directly constructed as it requires access to
-private information of the PTA. Instead, use the <a title="pta.pta.PTA.to_region_mdp" href="#pta.pta.PTA.to_region_mdp"><code>PTA.to_region_mdp()</code></a>
-method.</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class RegionMDP:
-    &#34;&#34;&#34;An integrel region graph MDP simulation of a PTA.
-
-    The region MDP shouldn&#39;t be directly constructed as it requires access to
-    private information of the PTA. Instead, use the `PTA.to_region_mdp()`
-    method.
-    &#34;&#34;&#34;
-
-    _pta: PTA = attr.ib()
-    _current_region: Region = attr.ib(init=False)
-
-    def __attrs_post_init__(self):
-        self._current_region = Region(self._pta.clocks)</code></pre>
-</details>
-</dd>
-</dl>
-</section>
-</article>
-<nav id="sidebar">
-<h1>Index</h1>
-<div class="toc">
-<ul></ul>
+progress in the location.</p></li>
+<li><p>(L) is the labelling function, (L : Q to 2^{textrm{AP}}).</p></li>
+</ul>
+<dl class="method">
+<dt id="pta.pta.PTA.allowed_delays">
+<code class="sig-name descname">allowed_delays</code><span class="sig-paren">(</span><em class="sig-param">loc: Location, values: Mapping[pta.clocks.Clock, float]</em><span class="sig-paren">)</span> &#x2192; portion.interval.Interval<a class="reference internal" href="_modules/pta/pta.html#PTA.allowed_delays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.pta.PTA.allowed_delays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the allowed interval of delays at the given location and clock valuation.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">None()</span></code></p>
 </div>
-<ul id="index">
-<li><h3>Super-module</h3>
-<ul>
-<li><code><a title="pta" href="index.html">pta</a></code></li>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.pta.PTA.enabled_actions">
+<code class="sig-name descname">enabled_actions</code><span class="sig-paren">(</span><em class="sig-param">loc: Location, values: Mapping[pta.clocks.Clock, float]</em><span class="sig-paren">)</span> &#x2192; Mapping[Action, pta.distributions.DiscreteDistribution[typing.Tuple[typing.Set[pta.clocks.Clock], ~Location]][Tuple[Set[pta.clocks.Clock], Location]]]<a class="reference internal" href="_modules/pta/pta.html#PTA.enabled_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.pta.PTA.enabled_actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of enabled edges available at a location with given clock valuation.</p>
+<p>The edges are enabled with respect to their guards and the given valuation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loc</strong> – Location in the PTA (raises error if <code class="docutils literal notranslate"><span class="pre">loc</span></code> not in PTA.</p></li>
+<li><p><strong>values</strong> – Valuations for clocks in PTA (raises error if <code class="docutils literal notranslate"><span class="pre">values</span></code> does not
+contain keys for all clocks in the PTA.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set of distributions corresponding to edges enabled in the location.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>output</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.pta.PTA.labels">
+<code class="sig-name descname">labels</code><span class="sig-paren">(</span><em class="sig-param">location: Location</em><span class="sig-paren">)</span> &#x2192; Set[str]<a class="reference internal" href="_modules/pta/pta.html#PTA.labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.pta.PTA.labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the set of labels enabled at the given location</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.pta.PTA.to_region_mdp">
+<code class="sig-name descname">to_region_mdp</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; pta.pta.RegionMDP<a class="reference internal" href="_modules/pta/pta.html#PTA.to_region_mdp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.pta.PTA.to_region_mdp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the integral region graph MDP of the PTA</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.pta.PTA.clocks">
+<em class="property">property </em><code class="sig-name descname">clocks</code><a class="headerlink" href="#pta.pta.PTA.clocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the set of clocks in the PTA</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.pta.PTA.initial_location">
+<em class="property">property </em><code class="sig-name descname">initial_location</code><a class="headerlink" href="#pta.pta.PTA.initial_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the initial location of the PTA</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.pta.PTA.locations">
+<em class="property">property </em><code class="sig-name descname">locations</code><a class="headerlink" href="#pta.pta.PTA.locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the set of locations in the PTA</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pta.pta.RegionMDP">
+<em class="property">class </em><code class="sig-prename descclassname">pta.pta.</code><code class="sig-name descname">RegionMDP</code><span class="sig-paren">(</span><em class="sig-param">pta: pta.pta.PTA[~Location, ~Action][Location, Action]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pta/pta.html#RegionMDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.pta.RegionMDP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<p>An integral region graph MDP simulation of a PTA with generator API.</p>
+<p>The region MDP shouldn’t be directly constructed as it requires access to
+private information of the PTA. Instead, use the <cite>PTA.to_region_mdp()</cite>
+method.</p>
+<p>Provides an OpenAI <code class="docutils literal notranslate"><span class="pre">gym</span></code>-like environment to simulate PTAs</p>
+<dl class="method">
+<dt id="pta.pta.RegionMDP.delay">
+<code class="sig-name descname">delay</code><span class="sig-paren">(</span><em class="sig-param">time: float</em><span class="sig-paren">)</span> &#x2192; Tuple[Location, Mapping[pta.clocks.Clock, float]]<a class="reference internal" href="_modules/pta/pta.html#RegionMDP.delay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.pta.RegionMDP.delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stay in the current location and delay by <code class="docutils literal notranslate"><span class="pre">time</span></code> amount</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>time</strong> – The duration to delay taking an action</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The current location and clock valuation</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>output</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.pta.RegionMDP.enabled_actions">
+<code class="sig-name descname">enabled_actions</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Mapping[Action, pta.distributions.DiscreteDistribution[typing.Tuple[typing.Set[pta.clocks.Clock], ~Location]][Tuple[Set[pta.clocks.Clock], Location]]]<a class="reference internal" href="_modules/pta/pta.html#RegionMDP.enabled_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.pta.RegionMDP.enabled_actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of enabled edges available given the current state of the MDP</p>
+<p>The edges are enabled with respect to their guards and the clock valuations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Set of distributions corresponding to edges enabled in the location.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>output</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.pta.RegionMDP.invariant_interval">
+<code class="sig-name descname">invariant_interval</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; portion.interval.Interval<a class="reference internal" href="_modules/pta/pta.html#RegionMDP.invariant_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.pta.RegionMDP.invariant_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the allowed interval of delays before the invariant associated with the location turns false.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.pta.RegionMDP.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Tuple[Location, Mapping[pta.clocks.Clock, float]]<a class="reference internal" href="_modules/pta/pta.html#RegionMDP.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.pta.RegionMDP.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the PTA to an initial state</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The current location and clock valuation</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>output</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.pta.RegionMDP.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">start: Location = None</em>, <em class="sig-param">label: bool = False</em><span class="sig-paren">)</span> &#x2192; Generator[Tuple[Location, float], Union[float, Action], None]<a class="reference internal" href="_modules/pta/pta.html#RegionMDP.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.pta.RegionMDP.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coroutine interface for simulating the Region MDP</p>
+<p>Users can send either a time of delay or an enabled action from the given location.
+The generator yields the</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.pta.RegionMDP.clock_valuation">
+<em class="property">property </em><code class="sig-name descname">clock_valuation</code><a class="headerlink" href="#pta.pta.RegionMDP.clock_valuation" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current clock valuation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.pta.RegionMDP.location">
+<em class="property">property </em><code class="sig-name descname">location</code><a class="headerlink" href="#pta.pta.RegionMDP.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current location of the MDP</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pta.region">
+<span id="pta-region-module"></span><h2>pta.region module<a class="headerlink" href="#module-pta.region" title="Permalink to this headline">¶</a></h2>
+<p>The Region data structure for simulating PTA.</p>
+<dl class="class">
+<dt id="pta.region.Region">
+<em class="property">class </em><code class="sig-prename descclassname">pta.region.</code><code class="sig-name descname">Region</code><span class="sig-paren">(</span><em class="sig-param">clocks: Set[pta.clocks.Clock]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pta/region.html#Region"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.region.Region" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Efficient data structure to model an Integral Region of the PTA <a class="reference internal" href="#hartmanns2017" id="id6"><span>[Hartmanns2017]</span></a></p>
+<dl class="citation">
+<dt class="label" id="hartmanns2017"><span class="brackets"><a class="fn-backref" href="#id6">Hartmanns2017</a></span></dt>
+<dd><p>A. Hartmanns, S. Sedwards, and P. R. D’Argenio,
+“Efficient simulation-based verification of probabilistic timed automata,”
+in Proceedings of the 2017 Winter Simulation Conference, Las Vegas, Nevada,
+2017, pp. 1–12.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pta.region.Region.delay">
+<code class="sig-name descname">delay</code><span class="sig-paren">(</span><em class="sig-param">steps: int = 1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pta/region.html#Region.delay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.region.Region.delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delay each of the clocks and move by <code class="docutils literal notranslate"><span class="pre">steps</span></code> “representative” region.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">steps</span></code> is 1, the region is updated to the next region. Otherwise,
+for <code class="docutils literal notranslate"><span class="pre">steps</span></code> &gt; 1, the number of regions moved is dependent on the
+fractional order, etc.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.region.Region.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param">reset_clock: pta.clocks.Clock</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pta/region.html#Region.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.region.Region.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the given clock to 0</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.region.Region.value">
+<code class="sig-name descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Mapping[pta.clocks.Clock, float]<a class="reference internal" href="_modules/pta/region.html#Region.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.region.Region.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the representative values of the clocks in the current region</p>
+<p>The representative value of the region depends on the integer value and
+the <em>fractional order</em> of the individual valuations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.region.Region.clocks">
+<em class="property">property </em><code class="sig-name descname">clocks</code><a class="headerlink" href="#pta.region.Region.clocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>The set of clocks in the region</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.region.Region.is_int">
+<em class="property">property </em><code class="sig-name descname">is_int</code><a class="headerlink" href="#pta.region.Region.is_int" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if any of the clocks have integer valuation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pta.region.Region.n_clocks">
+<em class="property">property </em><code class="sig-name descname">n_clocks</code><a class="headerlink" href="#pta.region.Region.n_clocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of clocks in the region.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pta">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pta" title="Permalink to this headline">¶</a></h2>
+<p>Probabilistic Timed Automata</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pta package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pta.clocks">pta.clocks module</a></li>
+<li><a class="reference internal" href="#module-pta.distributions">pta.distributions module</a></li>
+<li><a class="reference internal" href="#module-pta.pta">pta.pta module</a></li>
+<li><a class="reference internal" href="#module-pta.region">pta.region module</a></li>
+<li><a class="reference internal" href="#module-pta">Module contents</a></li>
 </ul>
 </li>
-<li><h3><a href="#header-classes">Classes</a></h3>
-<ul>
-<li>
-<h4><code><a title="pta.pta.PTA" href="#pta.pta.PTA">PTA</a></code></h4>
-<ul class="">
-<li><code><a title="pta.pta.PTA.allowed_delays" href="#pta.pta.PTA.allowed_delays">allowed_delays</a></code></li>
-<li><code><a title="pta.pta.PTA.clocks" href="#pta.pta.PTA.clocks">clocks</a></code></li>
-<li><code><a title="pta.pta.PTA.enabled_actions" href="#pta.pta.PTA.enabled_actions">enabled_actions</a></code></li>
-<li><code><a title="pta.pta.PTA.locations" href="#pta.pta.PTA.locations">locations</a></code></li>
-<li><code><a title="pta.pta.PTA.to_region_mdp" href="#pta.pta.PTA.to_region_mdp">to_region_mdp</a></code></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pta.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pta package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pta.clocks">pta.clocks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pta.distributions">pta.distributions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pta.pta">pta.pta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pta.region">pta.region module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pta">Module contents</a></li>
 </ul>
 </li>
-<li>
-<h4><code><a title="pta.pta.RegionMDP" href="#pta.pta.RegionMDP">RegionMDP</a></code></h4>
-</li>
 </ul>
-</li>
-</ul>
-</nav>
-</main>
-<footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
-</footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad()</script>
-</body>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="index.html" title="Previous document">Probabilistic Timed Automata</a>
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="index.html">Home</a></li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2020, Anand Balakrishnan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.4.4
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
 </html>

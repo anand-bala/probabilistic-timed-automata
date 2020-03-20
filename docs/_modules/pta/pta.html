@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>pta.pta &#8212; Probabilistic Timed Automata v0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../../index.html ">
+        Probabilistic Timed Automata v0.1.0 documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../index.html">Home</a></li>
+      <li>
+        <a href="../index.html">Module code</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pta.pta</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Probabilistic Timed Automaton&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Generic</span>
+<span class="kn">import</span> <span class="nn">types</span>
+
+<span class="kn">import</span> <span class="nn">attr</span>
+
+<span class="kn">from</span> <span class="nn">.clocks</span> <span class="kn">import</span> <span class="n">Clock</span><span class="p">,</span> <span class="n">ClockConstraint</span><span class="p">,</span> <span class="n">delays</span><span class="p">,</span> <span class="n">Interval</span>
+<span class="kn">from</span> <span class="nn">.distributions</span> <span class="kn">import</span> <span class="n">DiscreteDistribution</span>
+<span class="kn">from</span> <span class="nn">.region</span> <span class="kn">import</span> <span class="n">Region</span>
+
+
+<span class="c1"># Action = Union[str, int]</span>
+<span class="n">Action</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;Action&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Hashable</span><span class="p">)</span>
+<span class="n">Label</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="n">Location</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;Location&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Hashable</span><span class="p">)</span>
+
+
+<span class="n">Target</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">Clock</span><span class="p">],</span> <span class="n">Location</span><span class="p">]</span>
+<span class="n">Transition</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">ClockConstraint</span><span class="p">,</span> <span class="n">DiscreteDistribution</span><span class="p">[</span><span class="n">Target</span><span class="p">]]</span>
+
+<span class="n">TransitionFn</span> <span class="o">=</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Location</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Action</span><span class="p">,</span> <span class="n">Transition</span><span class="p">]]</span>
+
+
+<div class="viewcode-block" id="PTA"><a class="viewcode-back" href="../../pta.html#pta.pta.PTA">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">PTA</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">Location</span><span class="p">,</span> <span class="n">Action</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A PTA is a tuple \\(M = \\left\\langle Q, C, T, q_0, I, L \\right\\rangle\\) where</span>
+
+<span class="sd">    - \\(Q\\) is the set of locations in the PTA;</span>
+<span class="sd">    - \\(C\\) is the set of clocks in the PTA;</span>
+<span class="sd">    - \\(T \\) is the transition function that maps a location to a set of possible</span>
+<span class="sd">      transitions that can be taken (and their associated guards), along with the</span>
+<span class="sd">      probabilities associated with the set of clocks that are reset and the next</span>
+<span class="sd">      location;</span>
+<span class="sd">    - \\(q_0\\) is the initial location in the PTA; and</span>
+<span class="sd">    - \\(I\\) is the invariant function that maps a location to a clock constraint</span>
+<span class="sd">      such that as long as the clock constraint is satisfied, the clock can</span>
+<span class="sd">      progress in the location.</span>
+<span class="sd">    - \\(L\\) is the labelling function, \\(L : Q \\to 2^{\\textrm{AP}}\\).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_locations</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Location</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">frozenset</span><span class="p">)</span>
+    <span class="n">_clocks</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Clock</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">frozenset</span><span class="p">)</span>
+
+    <span class="n">_init_location</span><span class="p">:</span> <span class="n">Location</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">()</span>
+
+    <span class="n">_transitions</span><span class="p">:</span> <span class="n">TransitionFn</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">()</span>
+    <span class="n">_invariants</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Location</span><span class="p">,</span> <span class="n">ClockConstraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">()</span>
+    <span class="n">_labels</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Location</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Label</span><span class="p">]]</span>
+
+    <span class="nd">@_init_location</span><span class="o">.</span><span class="n">validator</span>
+    <span class="k">def</span> <span class="nf">_init_location_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="n">attr</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Location</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Given initial location not in the set of locations&quot;</span><span class="p">)</span>
+
+    <span class="nd">@_transitions</span><span class="o">.</span><span class="n">validator</span>
+    <span class="k">def</span> <span class="nf">_transitions_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="n">attr</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">TransitionFn</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Transition mapping does not contain a key for locations </span><span class="si">{}</span><span class="s2"> in the PTA&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+            <span class="p">)</span>
+        <span class="c1"># TODO: check if the edges don&#39;t do anything stupid.</span>
+
+    <span class="nd">@_invariants</span><span class="o">.</span><span class="n">validator</span>
+    <span class="k">def</span> <span class="nf">_invariants_validator</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="n">attr</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Location</span><span class="p">,</span> <span class="n">ClockConstraint</span><span class="p">]</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Invariants mapping does not contain a key for locations </span><span class="si">{}</span><span class="s2"> in the PTA&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+            <span class="p">)</span>
+        <span class="c1"># TODO: Check if clock constraints are only defined on known clocks...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">clocks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Clock</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the set of clocks in the PTA&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clocks</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">locations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Location</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the set of locations in the PTA&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">initial_location</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Location</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the initial location of the PTA&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_location</span>
+
+<div class="viewcode-block" id="PTA.labels"><a class="viewcode-back" href="../../pta.html#pta.pta.PTA.labels">[docs]</a>    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="n">Location</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Label</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the set of labels enabled at the given location&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">location</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="PTA.enabled_actions"><a class="viewcode-back" href="../../pta.html#pta.pta.PTA.enabled_actions">[docs]</a>    <span class="k">def</span> <span class="nf">enabled_actions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="n">Location</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Action</span><span class="p">,</span> <span class="n">DiscreteDistribution</span><span class="p">[</span><span class="n">Target</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Return the set of enabled edges available at a location with given clock valuation.</span>
+
+<span class="sd">        The edges are enabled with respect to their guards and the given valuation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        loc:</span>
+<span class="sd">            Location in the PTA (raises error if ``loc`` not in PTA.</span>
+<span class="sd">        values:</span>
+<span class="sd">            Valuations for clocks in PTA (raises error if ``values`` does not</span>
+<span class="sd">            contain keys for all clocks in the PTA.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        output:</span>
+<span class="sd">            Set of distributions corresponding to edges enabled in the location.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">loc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span><span class="p">,</span> <span class="s2">&quot;Given location is not present in the PTA&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clocks</span> <span class="o">&lt;=</span> <span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">),</span> <span class="s2">&quot;Valuations do not contain keys for all clocks in PTA&quot;</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">label</span><span class="p">:</span> <span class="n">dist</span>
+            <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="p">(</span><span class="n">guard</span><span class="p">,</span> <span class="n">dist</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transitions</span><span class="p">[</span><span class="n">loc</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">guard</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="PTA.allowed_delays"><a class="viewcode-back" href="../../pta.html#pta.pta.PTA.allowed_delays">[docs]</a>    <span class="k">def</span> <span class="nf">allowed_delays</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="n">Location</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Interval</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the allowed interval of delays at the given location and clock valuation.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        `pta.clocks.delays`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">delays</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_invariants</span><span class="p">[</span><span class="n">loc</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="PTA.to_region_mdp"><a class="viewcode-back" href="../../pta.html#pta.pta.PTA.to_region_mdp">[docs]</a>    <span class="k">def</span> <span class="nf">to_region_mdp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;RegionMDP&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the integral region graph MDP of the PTA&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">RegionMDP</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="RegionMDP"><a class="viewcode-back" href="../../pta.html#pta.pta.RegionMDP">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">RegionMDP</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">Location</span><span class="p">,</span> <span class="n">Action</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;An integral region graph MDP simulation of a PTA with generator API.</span>
+
+<span class="sd">    The region MDP shouldn&#39;t be directly constructed as it requires access to</span>
+<span class="sd">    private information of the PTA. Instead, use the `PTA.to_region_mdp()`</span>
+<span class="sd">    method.</span>
+
+<span class="sd">    Provides an OpenAI ``gym``-like environment to simulate PTAs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_pta</span><span class="p">:</span> <span class="n">PTA</span><span class="p">[</span><span class="n">Location</span><span class="p">,</span> <span class="n">Action</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">()</span>
+    <span class="n">_current_region</span><span class="p">:</span> <span class="n">Region</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_current_location</span><span class="p">:</span> <span class="n">Location</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># MDPState = Tuple[Location, float] # (PTA state, representative valuation)</span>
+    <span class="c1"># MDPAction = Union[float, Action] # Delay time or pick an edge</span>
+
+    <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_region</span> <span class="o">=</span> <span class="n">Region</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">clocks</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">initial_location</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_current_transitions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Action</span><span class="p">,</span> <span class="n">Transition</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">_transitions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">location</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Location</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The current location of the MDP&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">clock_valuation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;The current clock valuation&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_region</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+
+<div class="viewcode-block" id="RegionMDP.enabled_actions"><a class="viewcode-back" href="../../pta.html#pta.pta.RegionMDP.enabled_actions">[docs]</a>    <span class="k">def</span> <span class="nf">enabled_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Action</span><span class="p">,</span> <span class="n">DiscreteDistribution</span><span class="p">[</span><span class="n">Target</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Return the set of enabled edges available given the current state of the MDP</span>
+
+<span class="sd">        The edges are enabled with respect to their guards and the clock valuations.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        output:</span>
+<span class="sd">            Set of distributions corresponding to edges enabled in the location.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clock_valuation</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">label</span><span class="p">:</span> <span class="n">dist</span>
+            <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="p">(</span><span class="n">guard</span><span class="p">,</span> <span class="n">dist</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_transitions</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">guard</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="RegionMDP.invariant_interval"><a class="viewcode-back" href="../../pta.html#pta.pta.RegionMDP.invariant_interval">[docs]</a>    <span class="k">def</span> <span class="nf">invariant_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Interval</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the allowed interval of delays before the invariant associated with the location turns false.&quot;&quot;&quot;</span>
+        <span class="n">loc</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clock_valuation</span>
+        <span class="k">return</span> <span class="n">delays</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">_invariants</span><span class="p">[</span><span class="n">loc</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="RegionMDP.reset"><a class="viewcode-back" href="../../pta.html#pta.pta.RegionMDP.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Location</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Reset the PTA to an initial state</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        output:</span>
+<span class="sd">            The current location and clock valuation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__attrs_post_init__</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clock_valuation</span></div>
+
+<div class="viewcode-block" id="RegionMDP.delay"><a class="viewcode-back" href="../../pta.html#pta.pta.RegionMDP.delay">[docs]</a>    <span class="k">def</span> <span class="nf">delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Location</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Stay in the current location and delay by ``time`` amount</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time:</span>
+<span class="sd">            The duration to delay taking an action</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        output:</span>
+<span class="sd">            The current location and clock valuation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Decide on an interface for the MDP. Does the scheduler make an integral delay or a floating delay?</span>
+        <span class="k">pass</span></div>
+
+    <span class="c1"># TODO: Update this to async/await once Python 3.7 becomes more popular.</span>
+<div class="viewcode-block" id="RegionMDP.run"><a class="viewcode-back" href="../../pta.html#pta.pta.RegionMDP.run">[docs]</a>    <span class="nd">@types</span><span class="o">.</span><span class="n">coroutine</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">Location</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Location</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Action</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Coroutine interface for simulating the Region MDP</span>
+
+<span class="sd">        Users can send either a time of delay or an enabled action from the given location.</span>
+<span class="sd">        The generator yields the</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form class="search" action="../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pta.html">pta package</a></li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../index.html">Home</a></li>
+      <li>
+        <a href="../index.html">Module code</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2020, Anand Balakrishnan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.4.4
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

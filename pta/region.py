@@ -9,11 +9,9 @@ from .clocks import Clock
 
 @attr.s(auto_attribs=True)
 class Region:
-    """Efficient data structure to model an Integral Region of the PTA.[^1]
+    """Efficient data structure to model an Integral Region of the PTA [Hartmanns2017]_
 
-    References
-    ----------
-    [^1]: A. Hartmanns, S. Sedwards, and P. R. D’Argenio,
+    .. [Hartmanns2017] A. Hartmanns, S. Sedwards, and P. R. D’Argenio,
         "Efficient simulation-based verification of probabilistic timed automata,"
         in Proceedings of the 2017 Winter Simulation Conference, Las Vegas, Nevada,
         2017, pp. 1–12.
