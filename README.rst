@@ -37,7 +37,5 @@ yourself with it). Then, you can run:
 Usage
 -----
 
-.. todo:: Need to fill this in
-
 
 
