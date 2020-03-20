@@ -11,6 +11,7 @@ repository = "https://github.com/anand-bala/probabilistic-timed-automata.git"
 
 packages = [
   { include = "pta" },
+  { include = "pta_examples" },
 ]
 
 [tool.poetry.dependencies]

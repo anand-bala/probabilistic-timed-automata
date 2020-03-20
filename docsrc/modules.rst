@@ -5,3 +5,4 @@ Documentation
    :maxdepth: 4
 
    pta
+   pta_examples

@@ -15,4 +15,3 @@ Submodules
    pta/distributions
    pta/region
    pta/pta
-   pta/examples
