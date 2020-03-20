@@ -27,8 +27,13 @@ format: clean_py
 	poetry run black pta/ tests/
 	poetry run autoflake --in-place --remove-all-unused-imports --ignore-init-module-imports --recursive pta/ tests/
 
+.PHONY: check
+check:
+	poetry run mypy -p pta
+	poetry run flake8 pta
+
 .PHONY: test
-test:
+test: check
 	@poetry run pytest
 
 .PHONY: build docs
@@ -41,11 +46,3 @@ docs:
 	@mkdir -p $(DOCDST)
 	@cp -a $(DOCDST)/_build/html/. $(DOCDST)
 
-.PHONY: tox
-tox:
-	@tox
-
-.PHONY: check
-check:
-	poetry run mypy -p pta
-	poetry run flake8 pta

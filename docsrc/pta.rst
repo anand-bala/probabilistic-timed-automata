@@ -13,5 +13,6 @@ Submodules
 
    pta/clock
    pta/distributions
-   pta/pta
    pta/region
+   pta/pta
+   pta/examples
