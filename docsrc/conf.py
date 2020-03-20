@@ -23,7 +23,6 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.githubpages",
     "sphinx.ext.napoleon",
-    "sphinx.ext.intersphinx",
 ]
 
 templates_path = ["_templates"]
@@ -38,12 +37,9 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 html_theme_path = [better_theme_path]
 html_theme = "better"
 
-html_sidebars = {
-    "**": ["localtoc.html", "searchbox.html"],
-}
 html_context = {}
 html_sidebars = {
-    '**': ['localtoc.html', 'sourcelink.html', 'searchbox.html', 'globaltoc.html'],
+    '**': ['localtoc.html', 'searchbox.html'],
 }
 
 html_title = F"{project} v{release} documentation"
@@ -57,7 +53,7 @@ html_static_path = ["_static"]
 # Napoleon settings
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
-napoleon_include_init_with_doc = True
+napoleon_include_init_with_doc = False
 napoleon_include_private_with_doc = False
 napoleon_include_special_with_doc = True
 napoleon_use_admonition_for_examples = True
@@ -68,7 +64,9 @@ napoleon_use_param = True
 napoleon_use_rtype = True
 
 # Autodoc configuration
-autodoc_member_order = 'groupwise'
+autodoc_member_order = 'bysource'
+# TODO: Update this when Sphinx 3.0 is released
+# autodoc_typehints = 'description'
 
 # -- Options for todo extension ----------------------------------------------
 

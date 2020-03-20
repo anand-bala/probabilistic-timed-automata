@@ -1,14 +1,11 @@
 .. include:: ../README.rst
 
+.. include:: modules.rst
 
-Documentation
--------------
+Citations
+=========
 
-.. toctree::
-   :maxdepth: 4
-
-   pta
-
+.. include:: bibliography.rst
 
 Indices and tables
 ==================

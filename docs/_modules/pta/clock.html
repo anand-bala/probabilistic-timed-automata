@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>pta.clocks &#8212; Probabilistic Timed Automata v0.1.0 documentation</title>
+    <title>pta.clock &#8212; Probabilistic Timed Automata v0.1.0 documentation</title>
     <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -30,6 +30,9 @@
       <li><a href="../../index.html">Home</a></li>
       <li>
         <a href="../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../pta.html">pta</a>
       </li> 
     </ul>
   </nav>
@@ -40,7 +43,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for pta.clocks</h1><div class="highlight"><pre>
+  <h1>Source code for pta.clock</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Symbolic Representation for Clock Constraints</span>
 
 <span class="sd">Clock constraints are of the following form::</span>
@@ -77,7 +80,7 @@
 <span class="kn">from</span> <span class="nn">portion</span> <span class="kn">import</span> <span class="n">Interval</span>
 
 
-<div class="viewcode-block" id="Clock"><a class="viewcode-back" href="../../pta.html#pta.clocks.Clock">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="Clock"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Clock">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Clock</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;A Clock symbol</span>
 
@@ -119,7 +122,7 @@
         <span class="k">return</span> <span class="n">DiagonalLHS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ClockConstraint"><a class="viewcode-back" href="../../pta.html#pta.clocks.ClockConstraint">[docs]</a><span class="k">class</span> <span class="nc">ClockConstraint</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="ClockConstraint"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.ClockConstraint">[docs]</a><span class="k">class</span> <span class="nc">ClockConstraint</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An abstract class for clock constraints&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;ClockConstraint&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ClockConstraint&quot;</span><span class="p">:</span>
@@ -129,7 +132,7 @@
             <span class="k">return</span> <span class="n">other</span>
         <span class="k">return</span> <span class="n">And</span><span class="p">((</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
 
-<div class="viewcode-block" id="ClockConstraint.contains"><a class="viewcode-back" href="../../pta.html#pta.clocks.ClockConstraint.contains">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="ClockConstraint.contains"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.ClockConstraint.contains">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Check if the clock constraints evaluate to true given clock valuations.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
@@ -140,7 +143,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Boolean"><a class="viewcode-back" href="../../pta.html#pta.clocks.Boolean">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="viewcode-block" id="Boolean"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Boolean">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Boolean</span><span class="p">(</span><span class="n">ClockConstraint</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An atomic boolean class to represent ``true`` and ``false`` clock constraints&quot;&quot;&quot;</span>
 
@@ -151,30 +154,30 @@
             <span class="k">return</span> <span class="n">other</span>
         <span class="k">return</span> <span class="n">Boolean</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Boolean.contains"><a class="viewcode-back" href="../../pta.html#pta.clocks.Boolean.contains">[docs]</a>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="Boolean.contains"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Boolean.contains">[docs]</a>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div></div>
 
 
-<div class="viewcode-block" id="And"><a class="viewcode-back" href="../../pta.html#pta.clocks.And">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="viewcode-block" id="And"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.And">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">And</span><span class="p">(</span><span class="n">ClockConstraint</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to represent conjunctions of clock constraints&quot;&quot;&quot;</span>
 
     <span class="n">args</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">ClockConstraint</span><span class="p">,</span> <span class="n">ClockConstraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">()</span>
 
-<div class="viewcode-block" id="And.contains"><a class="viewcode-back" href="../../pta.html#pta.clocks.And.contains">[docs]</a>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="And.contains"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.And.contains">[docs]</a>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div></div>
 
 
-<div class="viewcode-block" id="ComparisonOp"><a class="viewcode-back" href="../../pta.html#pta.clocks.ComparisonOp">[docs]</a><span class="nd">@unique</span>
+<div class="viewcode-block" id="ComparisonOp"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.ComparisonOp">[docs]</a><span class="nd">@unique</span>
 <span class="k">class</span> <span class="nc">ComparisonOp</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Four comparison operations allowed in `SingletonConstraint`s and `DiagonalConstraint`s&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Four comparison operations allowed in `SingletonConstraint` and `DiagonalConstraint` &quot;&quot;&quot;</span>
 
     <span class="n">GE</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">GT</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">LE</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">LT</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
 
-<div class="viewcode-block" id="ComparisonOp.to_op"><a class="viewcode-back" href="../../pta.html#pta.clocks.ComparisonOp.to_op">[docs]</a>    <span class="k">def</span> <span class="nf">to_op</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]:</span>
+<div class="viewcode-block" id="ComparisonOp.to_op"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.ComparisonOp.to_op">[docs]</a>    <span class="k">def</span> <span class="nf">to_op</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Output the operator function that corresponds to the enum&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">ComparisonOp</span><span class="o">.</span><span class="n">GE</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">operator</span><span class="o">.</span><span class="n">ge</span>
@@ -187,7 +190,7 @@
         <span class="k">return</span> <span class="n">operator</span><span class="o">.</span><span class="n">lt</span></div></div>
 
 
-<div class="viewcode-block" id="SingletonConstraint"><a class="viewcode-back" href="../../pta.html#pta.clocks.SingletonConstraint">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="viewcode-block" id="SingletonConstraint"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.SingletonConstraint">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">SingletonConstraint</span><span class="p">(</span><span class="n">ClockConstraint</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Constraints of the form \\(c \\sim n\\) for \\(n \\in \\mathbb{N}\\) and \\(\\sim \\in \\{&lt;,\\le,\\ge,&gt;\\}\\)&quot;&quot;&quot;</span>
 
@@ -200,11 +203,11 @@
         <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Clock constraint can&#39;t be negative&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SingletonConstraint.contains"><a class="viewcode-back" href="../../pta.html#pta.clocks.SingletonConstraint.contains">[docs]</a>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="SingletonConstraint.contains"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.SingletonConstraint.contains">[docs]</a>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">to_op</span><span class="p">()(</span><span class="n">value</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">clock</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="DiagonalLHS"><a class="viewcode-back" href="../../pta.html#pta.clocks.DiagonalLHS">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="viewcode-block" id="DiagonalLHS"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.DiagonalLHS">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">DiagonalLHS</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Intermediate result for \\(c_1 - c_2\\)&quot;&quot;&quot;</span>
 
@@ -228,7 +231,7 @@
 
 
 <span class="c1"># TODO(anand): Can there only be two clocks in a diagonal constraint?</span>
-<div class="viewcode-block" id="DiagonalConstraint"><a class="viewcode-back" href="../../pta.html#pta.clocks.DiagonalConstraint">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="viewcode-block" id="DiagonalConstraint"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.DiagonalConstraint">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">DiagonalConstraint</span><span class="p">(</span><span class="n">ClockConstraint</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Diagonal constraints of the form: \\(c_1 - c_2 \\sim n\\)&quot;&quot;&quot;</span>
 
@@ -241,11 +244,11 @@
         <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Clock constraint can&#39;t be negative&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DiagonalConstraint.contains"><a class="viewcode-back" href="../../pta.html#pta.clocks.DiagonalConstraint.contains">[docs]</a>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="DiagonalConstraint.contains"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.DiagonalConstraint.contains">[docs]</a>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">to_op</span><span class="p">()(</span><span class="bp">self</span><span class="o">.</span><span class="n">lhs</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="delays"><a class="viewcode-back" href="../../pta.html#pta.clocks.delays">[docs]</a><span class="k">def</span> <span class="nf">delays</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">constraint</span><span class="p">:</span> <span class="n">ClockConstraint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Interval</span><span class="p">:</span>
+<div class="viewcode-block" id="delays"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.delays">[docs]</a><span class="k">def</span> <span class="nf">delays</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Clock</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">constraint</span><span class="p">:</span> <span class="n">ClockConstraint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Interval</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Compute the allowable delay with the given clock valuations and constraints</span>
 
 <span class="sd">    .. todo::</span>
@@ -304,11 +307,6 @@
   <input type="hidden" name="area" value="default" />
 </form>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-<h3><a href="../../index.html">Table of Contents</a></h3>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../pta.html">pta package</a></li>
-</ul>
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -323,6 +321,9 @@
       <li><a href="../../index.html">Home</a></li>
       <li>
         <a href="../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../pta.html">pta</a>
       </li> 
     </ul>
   </nav>

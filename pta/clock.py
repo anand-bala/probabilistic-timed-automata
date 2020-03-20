@@ -124,7 +124,7 @@ class And(ClockConstraint):
 
 @unique
 class ComparisonOp(Enum):
-    """Four comparison operations allowed in `SingletonConstraint`s and `DiagonalConstraint`s"""
+    """Four comparison operations allowed in `SingletonConstraint` and `DiagonalConstraint` """
 
     GE = auto()
     GT = auto()

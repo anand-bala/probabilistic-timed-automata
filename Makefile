@@ -5,6 +5,7 @@ DOCDST := ./docs
 
 .PHONY: clean clean_py clean_docs
 clean_py:
+	@echo "Cleaning Python package artifacts"
 	@rm -rf build dist .eggs *.egg-info
 	@rm -rf .benchmarks .coverage coverage.xml htmlcov report.xml .tox
 	@find . -type d -name '.mypy_cache' -exec rm -rf {} +
@@ -13,7 +14,10 @@ clean_py:
 	@find . -type f -name "*.py[co]" -exec rm -rf {} +
 
 clean_docs:
+	@echo "Removing Sphinx build tree"
 	@$(MAKE) -C $(DOCSRC) clean
+	@echo "Removing documentation copied from Sphinx"
+	@rm -rf $(DOCDST)/*
 
 clean: clean_docs clean_py
 
@@ -21,10 +25,11 @@ clean: clean_docs clean_py
 .PHONY: format
 format: clean_py
 	poetry run black pta/ tests/
+	poetry run autoflake --in-place --remove-all-unused-imports --ignore-init-module-imports --recursive pta/ tests/
 
 .PHONY: test
 test:
-	@poetry run pytest -sq
+	@poetry run pytest
 
 .PHONY: build docs
 build: format docs
@@ -35,6 +40,7 @@ docs:
 	@echo "Copying built docs to $(DOCDST)"
 	@mkdir -p $(DOCDST)
 	@cp -a $(DOCDST)/_build/html/. $(DOCDST)
+	@rm -rf $(DOCDST)/_sources $(DOCDST)/.doctrees
 
 .PHONY: tox
 tox:
