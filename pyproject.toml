@@ -6,7 +6,7 @@ authors = ["Anand Balakrishnan <anandbala1597@gmail.com>"]
 
 license = "MIT"
 
-readme = "README.md"
+readme = "README.rst"
 repository = "https://github.com/anand-bala/probabilistic-timed-automata.git"
 
 packages = [
