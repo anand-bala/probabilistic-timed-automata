@@ -31,5 +31,23 @@ def test_region_value():
         z: approx(5 / 3 + 1 / 6),
     }
 
+    reg.delay(1)
+    assert reg.value() == {x: approx(5 / 3), y: approx(1 / 3), z: 2.0}
 
-# TODO: rest of testing
+    reg.reset(z)
+    assert reg.value() == {x: approx(5 / 3), y: approx(1 / 3), z: 0}
+
+
+def test_delay_float():
+    """Check if delaying by a floating point returns same values"""
+    x, y, z = new_clocks(("x", "y", "z"))
+    reg1 = Region((x, y, z))
+    reg2 = Region((x, y, z))
+
+    assert reg1.delay(1).value() == reg2.delay_float(0.5).value()
+    assert reg1.reset(x).value() == reg2.reset(x).value()
+    assert reg1.delay(1).value() == reg2.delay_float(0.25).value()
+    assert reg1.delay(4).value() == reg2.delay_float(1.0).value()
+    assert reg1.reset(y).value() == reg2.reset(y).value()
+    assert reg1.delay(1).value() == reg2.delay_float(1 / 6).value()
+    assert reg1.delay(1).value() == reg2.delay_float(1 / 6).value()

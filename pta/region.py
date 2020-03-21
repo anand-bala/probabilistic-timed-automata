@@ -59,8 +59,18 @@ class Region:
             for clock in self.clocks
         }
 
-    def delay(self, steps: int = 1):
+    def delay(self, steps: int = 1) -> "Region":
         """Delay each of the clocks and move by ``steps`` "representative" region.
+
+        Parameters
+        ----------
+        steps: int
+            An integer >= 1 such that the region takes that many representative steps.
+
+        Returns
+        -------
+        :
+            The updated region (a reference to self)
         """
         assert steps >= 1, "At lease 1 step must be taken when PTA is delayed."
         self._value_vector = {
@@ -79,19 +89,21 @@ class Region:
 
         if steps % 2 == 1:
             self._is_int = not self._is_int
+        return self
 
-    def delay_float(self, time: float):
-        """Delay the region by ``time``"""
+    def delay_float(self, time: float) -> "Region":
+        """Delay the region by ``time``. Wrapper around `delay`.
+        """
         steps = int(time * 2 * self._num_frac)
-        self.delay(steps)
+        return self.delay(steps)
 
-    def reset(self, reset_clock: Clock):
+    def reset(self, reset_clock: Clock) -> "Region":
         """Reset the given clock to 0"""
         assert 0 <= reset_clock < self.n_clocks, "Invalid clock id."
 
         if self.is_int and self._fractional_ord[reset_clock] == 0:
             self._value_vector[reset_clock] = 0
-            return
+            return self
 
         same: bool = any(
             frac == self._fractional_ord[reset_clock]
@@ -118,3 +130,4 @@ class Region:
         self._fractional_ord[reset_clock] = 0
         self._value_vector[reset_clock] = 0
         self._is_int = True
+        return self

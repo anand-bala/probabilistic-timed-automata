@@ -49,24 +49,40 @@ class Clock:
     name: Hashable = attr.ib()
 
     def __lt__(self, other: int) -> "ClockConstraint":
+        if not isinstance(other, int):
+            raise TypeError(
+                "Clock can only be compared to an int, got {}".format(type(other))
+            )
         if other <= 0:
             # NOTE: Doesn't make sense for clock to be less than 0!
             return Boolean(False)
         return SingletonConstraint(self, other, ComparisonOp.LT)
 
     def __le__(self, other: int) -> "ClockConstraint":
+        if not isinstance(other, int):
+            raise TypeError(
+                "Clock can only be compared to an int, got {}".format(type(other))
+            )
         if other < 0:
             # NOTE: Doesn't make sense for clock to be less than 0!
             return Boolean(False)
         return SingletonConstraint(self, other, ComparisonOp.LE)
 
     def __gt__(self, other: int) -> "ClockConstraint":
+        if not isinstance(other, int):
+            raise TypeError(
+                "Clock can only be compared to an int, got {}".format(type(other))
+            )
         if other < 0:
             # NOTE: The clock value must always be >= 0
             return Boolean(True)
         return SingletonConstraint(self, other, ComparisonOp.GT)
 
     def __ge__(self, other: int) -> "ClockConstraint":
+        if not isinstance(other, int):
+            raise TypeError(
+                "Clock can only be compared to an int, got {}".format(type(other))
+            )
         if other <= 0:
             # NOTE: The clock value must always be >= 0
             return Boolean(True)
@@ -80,6 +96,8 @@ class ClockConstraint(ABC):
     """An abstract class for clock constraints"""
 
     def __and__(self, other: "ClockConstraint") -> "ClockConstraint":
+        if isinstance(other, bool):
+            other = Boolean(other)
         if isinstance(other, Boolean):
             if other.value:
                 return self
@@ -103,7 +121,16 @@ class Boolean(ClockConstraint):
 
     value: bool = attr.ib()
 
+    @value.validator
+    def _value_validator(self, attribute, value):
+        if not isinstance(value, bool):
+            raise TypeError(
+                "Boolean muse have a bool value, got {}".format(type(value))
+            )
+
     def __and__(self, other: ClockConstraint) -> ClockConstraint:
+        if isinstance(other, bool):
+            other = Boolean(other)
         if self.value:
             return other
         return Boolean(False)
@@ -117,6 +144,19 @@ class And(ClockConstraint):
     """Class to represent conjunctions of clock constraints"""
 
     args: Tuple[ClockConstraint, ClockConstraint] = attr.ib()
+
+    @args.validator
+    def _args_validator(self, valuations, value):
+        if not isinstance(value, tuple) or len(value) != 2:
+            raise TypeError("Given args are not tuple of length 2: {}".format(value))
+        if not isinstance(value[0], ClockConstraint) or not isinstance(
+            value[1], ClockConstraint
+        ):
+            raise TypeError(
+                "Value of both args must be ClockConstraint, got {}".format(
+                    (type(value[0]), type(value[1]))
+                )
+            )
 
     def contains(self, value: Mapping[Clock, float]) -> bool:
         return (value in self.args[0]) and (value in self.args[1])
@@ -168,6 +208,20 @@ class DiagonalLHS:
     clock1: Clock = attr.ib()
     clock2: Clock = attr.ib()
 
+    @clock1.validator
+    def _clock1_validator(self, attribute, value):
+        if not isinstance(value, Clock):
+            raise TypeError(
+                "DiagonalConstraint can only contain Clock, got {}".format(type(value))
+            )
+
+    @clock2.validator
+    def _clock2_validator(self, attribute, value):
+        if not isinstance(value, Clock):
+            raise TypeError(
+                "DiagonalConstraint can only contain Clock, got {}".format(type(value))
+            )
+
     def __call__(self, value: Mapping[Clock, float]) -> float:
         return value[self.clock1] - value[self.clock2]
 
@@ -195,6 +249,12 @@ class DiagonalConstraint(ClockConstraint):
 
     @rhs.validator
     def _rhs_validator(self, attribute, value):
+        if not isinstance(value, int):
+            raise TypeError(
+                "DiagonalConstraint cannot be compared with type other than int, got {}".format(
+                    type(value)
+                )
+            )
         if value < 0:
             raise ValueError("Clock constraint can't be negative")
 
@@ -217,7 +277,7 @@ def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -> Interv
 
     Returns
     -------
-    output :
+    :
         An interval that represents the set of possible delays that satisfy the
         given clock constraint.
 
