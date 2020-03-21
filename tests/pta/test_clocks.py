@@ -1,9 +1,11 @@
 from pytest import approx
+import pytest
 
 import pta
-from pta.clock import ClockConstraint
+import pta.clock as clk
 
-test_singleton_constraints():
+def test_singleton_constraints():
     x, y, z = pta.new_clocks(('x', 'y', 'z'))
 
-    assert (x < y) == 
+    with pytest.raises(TypeError):
+        x < y
