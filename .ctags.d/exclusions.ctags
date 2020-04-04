@@ -1,0 +1,3 @@
+--exclude=docs
+--exclude=docsrc
+--exclude=tests
