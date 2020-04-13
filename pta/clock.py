@@ -26,6 +26,7 @@ from typing import Hashable, Mapping, Tuple, Callable
 import operator
 
 import attr
+import attr.validators as VAL
 
 # NOTE:
 #   Currently using this library for intervals, but may use a custom Intervall
@@ -46,7 +47,7 @@ class Clock:
     In the above example, the variables ``x`` and ``y`` are clocks with the *name* (a hashable string).
     """
 
-    name: Hashable = attr.ib()
+    name: Hashable = attr.ib(validator=VAL.instance_of(Hashable))
 
     def __lt__(self, other: int) -> "ClockConstraint":
         if not isinstance(other, int):
@@ -119,7 +120,7 @@ class ClockConstraint(ABC):
 class Boolean(ClockConstraint):
     """An atomic boolean class to represent ``true`` and ``false`` clock constraints"""
 
-    value: bool = attr.ib()
+    value: bool = attr.ib(validator=VAL.instance_of(bool))
 
     @value.validator
     def _value_validator(self, attribute, value):
@@ -188,9 +189,16 @@ class ComparisonOp(Enum):
 class SingletonConstraint(ClockConstraint):
     """Constraints of the form \\(c \\sim n\\) for \\(n \\in \\mathbb{N}\\) and \\(\\sim \\in \\{<,\\le,\\ge,>\\}\\)"""
 
-    clock: Clock = attr.ib()
+    clock: Clock = attr.ib(validator=VAL.instance_of(Clock))
     rhs: int = attr.ib()
-    op: ComparisonOp = attr.ib()
+    op: ComparisonOp = attr.ib(validator=VAL.instance_of(ComparisonOp))
+
+    @clock.validator
+    def _clock_validator(self, attribute, value):
+        if not isinstance(value, clock):
+            raise TypeError(
+                "SingletonConstraint can only contain Clock, got {}".format(type(value))
+            )
 
     @rhs.validator
     def _rhs_validator(self, attribute, value):
@@ -210,7 +218,7 @@ class DiagonalLHS:
 
     @clock1.validator
     def _clock1_validator(self, attribute, value):
-        if not isinstance(value, Clock):
+        if not isinstance(value, clock):
             raise TypeError(
                 "DiagonalConstraint can only contain Clock, got {}".format(type(value))
             )

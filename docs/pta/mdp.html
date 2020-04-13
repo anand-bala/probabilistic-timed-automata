@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>pta.mdp module &#8212; Probabilistic Timed Automata v0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pta_examples package" href="../pta_examples.html" />
+    <link rel="prev" title="pta.pta module" href="pta.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Probabilistic Timed Automata v0.1.0 documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="pta.html" title="Previous document">pta.pta module</a>
+        </li>
+        <li>
+          <a href="../pta_examples.html" title="Next document">pta_examples package</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li>
+        <a href="../pta.html">Probabilistic Timed Automata</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pta.mdp">
+<span id="pta-mdp-module"></span><h1>pta.mdp module<a class="headerlink" href="#module-pta.mdp" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-pta.mdp.mdp"></span><p>General MDP simulator for PTAs.</p>
+<p>This simulator does not attempt to efficiently compute regions or any of that.
+Rather, it is a naive implementation of an on-the-fly MDP translation of a PTA
+for blackbox simulation.</p>
+<p>This is useful in the context of reinforcement learning when you have a
+controller (typically a neural network) that takes in a state (location,
+valuation pair) and outputs a delay or an edge</p>
+<dl class="py class">
+<dt id="pta.mdp.mdp.MDP">
+<em class="property">class </em><code class="sig-prename descclassname">pta.mdp.mdp.</code><code class="sig-name descname">MDP</code><a class="reference internal" href="../_modules/pta/mdp/mdp.html#MDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.mdp.MDP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<span class="target" id="module-pta.mdp.region_mdp"></span><dl class="py class">
+<dt id="pta.mdp.region_mdp.RegionMDP">
+<em class="property">class </em><code class="sig-prename descclassname">pta.mdp.region_mdp.</code><code class="sig-name descname">RegionMDP</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pta</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/region_mdp.html#RegionMDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.region_mdp.RegionMDP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>An integral region graph MDP simulation of a PTA with generator API.</p>
+<p>The region MDP shouldn’t be directly constructed as it requires access to
+private information of the PTA. Instead, use the <cite>PTA.to_region_mdp()</cite>
+method.</p>
+<dl class="py method">
+<dt id="pta.mdp.region_mdp.RegionMDP.location">
+<em class="property">property </em><code class="sig-name descname">location</code><a class="headerlink" href="#pta.mdp.region_mdp.RegionMDP.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current location of the MDP</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.mdp.region_mdp.RegionMDP.clock_valuation">
+<em class="property">property </em><code class="sig-name descname">clock_valuation</code><a class="headerlink" href="#pta.mdp.region_mdp.RegionMDP.clock_valuation" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current clock valuation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.mdp.region_mdp.RegionMDP.enabled_actions">
+<code class="sig-name descname">enabled_actions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/region_mdp.html#RegionMDP.enabled_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.region_mdp.RegionMDP.enabled_actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of enabled edges available given the current state of the MDP</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Set of distributions corresponding to edges enabled in the location
+with respect to their guards and the clock valuations.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Mapping[Hashable, <a class="reference internal" href="distributions.html#pta.distributions.DiscreteDistribution" title="pta.distributions.DiscreteDistribution">pta.distributions.DiscreteDistribution</a>[typing.Tuple[typing.Set[<a class="reference internal" href="clock.html#pta.clock.Clock" title="pta.clock.Clock">pta.clock.Clock</a>], typing.Hashable]][Tuple[Set[<a class="reference internal" href="clock.html#pta.clock.Clock" title="pta.clock.Clock">pta.clock.Clock</a>], Hashable]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.mdp.region_mdp.RegionMDP.invariant_interval">
+<code class="sig-name descname">invariant_interval</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/region_mdp.html#RegionMDP.invariant_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.region_mdp.RegionMDP.invariant_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the allowed interval of delays before the invariant associated with the location turns false.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>portion.interval.Interval</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.mdp.region_mdp.RegionMDP.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/region_mdp.html#RegionMDP.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.region_mdp.RegionMDP.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the PTA to an initial state</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[Hashable, Mapping[<a class="reference internal" href="clock.html#pta.clock.Clock" title="pta.clock.Clock">pta.clock.Clock</a>, float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.mdp.region_mdp.RegionMDP.delay">
+<code class="sig-name descname">delay</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/region_mdp.html#RegionMDP.delay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.region_mdp.RegionMDP.delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stay in the current location and delay by <code class="docutils literal notranslate"><span class="pre">time</span></code> amount.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>time</strong> (<em>float</em>) – The duration to delay taking an action</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>If delaying by <code class="docutils literal notranslate"><span class="pre">time</span></code> amount leads to the current location’s
+invariant being violated, the returned value is <code class="docutils literal notranslate"><span class="pre">None</span></code> as this
+implies the scheduler is bad and has driven the system into
+a non-recoverable state.</p>
+<p>Otherwise, the Region MDP moves to a successor region like so:</p>
+<div class="math notranslate nohighlight">
+\[\langle q, R \rangle \to \langle q, R' \rangle\]</div>
+<p>where, <span class="math notranslate nohighlight">\(q\)</span> is the current location, <span class="math notranslate nohighlight">\(R\)</span> is the current
+region and <span class="math notranslate nohighlight">\(R'\)</span> is the successor region.</p>
+<p>For more details, read the paper <a class="reference internal" href="../index.html#hartmanns2017" id="id1"><span>[Hartmanns2017]</span></a>.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Optional[Tuple[Hashable, Mapping[<a class="reference internal" href="clock.html#pta.clock.Clock" title="pta.clock.Clock">pta.clock.Clock</a>, float]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="pta.html" title="Previous document">pta.pta module</a>
+        </li>
+        <li>
+          <a href="../pta_examples.html" title="Next document">pta_examples package</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li>
+        <a href="../pta.html">Probabilistic Timed Automata</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2020, Anand Balakrishnan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      3.0.1
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

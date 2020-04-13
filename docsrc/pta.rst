@@ -1,3 +1,6 @@
+Probabilistic Timed Automata
+============================
+
 pta package
 ===========
 
@@ -15,3 +18,4 @@ Submodules
    pta/distributions
    pta/region
    pta/pta
+   pta/mdp
