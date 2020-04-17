@@ -22,7 +22,7 @@ Moreover, the `Clock` and `ClockConstraint` are *frozen*, which emulates immutab
 
 from abc import ABC, abstractmethod
 from enum import Enum, auto, unique
-from typing import Hashable, Mapping, Tuple, Callable
+from typing import Hashable, Mapping, Tuple, Callable, Dict, Iterator
 import operator
 
 import attr
@@ -93,6 +93,35 @@ class Clock:
         return DiagonalLHS(self, other)
 
 
+@attr.s(auto_attribs=True, slots=True)
+class ClockValuation(Mapping[Clock, float]):
+    _values: Dict[Clock, float] = attr.ib(converter=dict)
+
+    #  @_clocks.validator
+    #  def _clocks_validator(self, _, value):
+    #  if len(value) < 1:
+    #  raise ValueError("Expected at least 1 clock... Are you looking for an MDP instead?")
+    #  if not all([isinstance(c, Clock) for c in self._clocks]):
+    #  raise TypeError("Expected a list of Clocks...")
+
+    @_values.validator
+    def _values_validator(self, _, value):
+        if not all([isinstance(c, Clock) for c in self._values.keys()]):
+            raise TypeError("Expected keys to be Clocks...")
+        if not all([v >= 0 for v in self._values.values()]):
+            raise ValueError("Clock values cannot be negative...")
+
+    def __getitem__(self, clock: Clock) -> float:
+        assert isinstance(clock, Clock)
+        return self._values[clock]
+
+    def __iter__(self) -> Iterator[Clock]:
+        return iter(self._values)
+
+    def __len__(self) -> int:
+        return len(self._values)
+
+
 class ClockConstraint(ABC):
     """An abstract class for clock constraints"""
 
@@ -106,13 +135,13 @@ class ClockConstraint(ABC):
         return And((self, other))
 
     @abstractmethod
-    def contains(self, value: Mapping[Clock, float]) -> bool:
+    def contains(self, value: ClockValuation) -> bool:
         """Check if the clock constraints evaluate to true given clock valuations."""
         raise NotImplementedError(
             "Can't get the interval for the abstract ClockConstraint class"
         )
 
-    def __contains__(self, value: Mapping[Clock, float]) -> bool:
+    def __contains__(self, value: ClockValuation) -> bool:
         return self.contains(value)
 
 
@@ -136,7 +165,7 @@ class Boolean(ClockConstraint):
             return other
         return Boolean(False)
 
-    def contains(self, value: Mapping[Clock, float]) -> bool:
+    def contains(self, value: ClockValuation) -> bool:
         return self.value
 
 
@@ -159,7 +188,7 @@ class And(ClockConstraint):
                 )
             )
 
-    def contains(self, value: Mapping[Clock, float]) -> bool:
+    def contains(self, value: ClockValuation) -> bool:
         return (value in self.args[0]) and (value in self.args[1])
 
 
@@ -195,7 +224,7 @@ class SingletonConstraint(ClockConstraint):
 
     @clock.validator
     def _clock_validator(self, attribute, value):
-        if not isinstance(value, clock):
+        if not isinstance(value, Clock):
             raise TypeError(
                 "SingletonConstraint can only contain Clock, got {}".format(type(value))
             )
@@ -205,7 +234,7 @@ class SingletonConstraint(ClockConstraint):
         if value < 0:
             raise ValueError("Clock constraint can't be negative")
 
-    def contains(self, value: Mapping[Clock, float]) -> bool:
+    def contains(self, value: ClockValuation) -> bool:
         return self.op.to_op()(value[self.clock], self.rhs)
 
 
@@ -218,7 +247,7 @@ class DiagonalLHS:
 
     @clock1.validator
     def _clock1_validator(self, attribute, value):
-        if not isinstance(value, clock):
+        if not isinstance(value, Clock):
             raise TypeError(
                 "DiagonalConstraint can only contain Clock, got {}".format(type(value))
             )
@@ -230,7 +259,7 @@ class DiagonalLHS:
                 "DiagonalConstraint can only contain Clock, got {}".format(type(value))
             )
 
-    def __call__(self, value: Mapping[Clock, float]) -> float:
+    def __call__(self, value: ClockValuation) -> float:
         return value[self.clock1] - value[self.clock2]
 
     def __lt__(self, other: int) -> ClockConstraint:
@@ -266,11 +295,11 @@ class DiagonalConstraint(ClockConstraint):
         if value < 0:
             raise ValueError("Clock constraint can't be negative")
 
-    def contains(self, value: Mapping[Clock, float]) -> bool:
+    def contains(self, value: ClockValuation) -> bool:
         return self.op.to_op()(self.lhs(value), self.rhs)
 
 
-def delays(values: Mapping[Clock, float], constraint: ClockConstraint) -> Interval:
+def delays(values: ClockValuation, constraint: ClockConstraint) -> Interval:
     """Compute the allowable delay with the given clock valuations and constraints
 
     .. todo::

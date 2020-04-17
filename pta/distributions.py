@@ -1,5 +1,5 @@
 """Collection of distributions for the PTA and the Region MDP"""
-
+from __future__ import annotations
 import random
 
 # from itertools import product
@@ -25,7 +25,6 @@ class DiscreteDistribution(Generic[T]):
         assert p(5) == 1/10
 
     """
-
     _dist: Mapping[T, float] = attr.ib()
 
     def sample(self, *, k: int = 1) -> Sequence[T]:
@@ -47,39 +46,39 @@ class DiscreteDistribution(Generic[T]):
     def validate_support(self, check_set: Set[T]) -> bool:
         return not (set(self._dist.keys()) <= check_set)
 
+    @classmethod
+    def delta(cls, center: T) -> DiscreteDistribution[T]:
+        """Return the (Kronecker) delta distribution centered at ``center``
 
-def delta(center: T) -> DiscreteDistribution[T]:
-    """Return the (Kronecker) delta distribution centered at ``center``
+        Essentially, the distributon is the following:
 
-    Essentially, the distributon is the following:
+        .. math::
 
-    .. math::
+            \\texttt{Unit}(\\omega)(x) = \\begin{cases}
+                1, \\quad \\text{for } x = \\omega \\\\
+                0, \\quad \\text{otherwise.}
+            \\end{cases}
 
-        \\texttt{Unit}(\\omega)(x) = \\begin{cases}
-            1, \\quad \\text{for } x = \\omega \\\\
-            0, \\quad \\text{otherwise.}
-        \\end{cases}
+        Parameters
+        ----------
+        center : Hashable
+            Center of the delta distribution
+        """
+        return DiscreteDistribution(dict([(center, 1)]))
 
-    Parameters
-    ----------
-    center : Hashable
-        Center of the delta distribution
-    """
-    return DiscreteDistribution(dict([(center, 1)]))
+    @classmethod
+    def uniform(cls, support: Set[T]) -> DiscreteDistribution[T]:
+        """Return the uniform distribution over the given support
 
+        Parameters
+        ----------
+        support : Hashable
+            Any finite set of states.
 
-def uniform(support: Set[T]) -> DiscreteDistribution[T]:
-    """Return the uniform distribution over the given support
-
-    Parameters
-    ----------
-    support : Hashable
-        Any finite set of states.
-
-    Returns
-    -------
-    output : DiscreteDistribution
-        A uniform distribution over the finite set of states.
-    """
-    prob = 1 / len(support)
-    return DiscreteDistribution({s: prob for s in support})
+        Returns
+        -------
+        output : DiscreteDistribution
+            A uniform distribution over the finite set of states.
+        """
+        prob = 1 / len(support)
+        return DiscreteDistribution({s: prob for s in support})

@@ -3,7 +3,6 @@
 from typing import Iterable, Hashable, Tuple
 
 from pta.clock import Clock, ClockConstraint
-from pta.region import Region
 from pta.pta import PTA
 from pta.mdp import MDP, RegionMDP
 

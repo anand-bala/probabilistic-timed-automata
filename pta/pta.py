@@ -6,18 +6,17 @@ from typing import (
     Hashable,
     Mapping,
     Tuple,
-    Optional,
+    Text,
 )
 
 import attr
 
-from .clock import Clock, ClockConstraint, delays, Interval
-from .distributions import DiscreteDistribution
+from pta.clock import Clock, ClockConstraint, delays, Interval, ClockValuation
+from pta.distributions import DiscreteDistribution
 
 
-# Action = Union[str, int]
 Action = Hashable
-Label = str
+Label = Text
 Location = Hashable
 
 
@@ -125,7 +124,7 @@ class PTA:
         return self._labels[location]
 
     def enabled_actions(
-        self, loc: Location, values: Mapping[Clock, float]
+        self, loc: Location, values: ClockValuation
     ) -> Mapping[Action, DiscreteDistribution[Target]]:
         """Return the set of enabled edges available at a location with given clock valuation.
 
@@ -155,7 +154,7 @@ class PTA:
             if values in guard
         }
 
-    def allowed_delays(self, loc: Location, values: Mapping[Clock, float]) -> Interval:
+    def allowed_delays(self, loc: Location, values: ClockValuation) -> Interval:
         """Return the allowed interval of delays at the given location and clock valuation.
 
         .. seealso::

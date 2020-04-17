@@ -10,17 +10,17 @@ valuation pair) and outputs a delay or an edge
 """
 
 import attr
+from attr.validators import instance_of
 
-from pta.clock import Clock, ClockConstraint
+from pta.clock import Clock, ClockValuation
 from pta.distributions import DiscreteDistribution
+from pta import pta
 
 from typing import (
-    Set,
     FrozenSet,
     Hashable,
     Mapping,
     Tuple,
-    Optional,
 )
 
 # Location in the PTA
@@ -29,19 +29,35 @@ Location = Hashable
 # An is a transition that can be taken in the PTA
 Edge = Hashable
 
-Action = Tuple
+State = Tuple[float, Location]  # State is Valuation x Location
+Action = Tuple[float, Edge]     # Action is Delay x Edge
 
-# TransitionFn :: Location -> 
-TransitionFn = Mapping[Location, DiscreteDistribution]
+# TransitionFn :: State x Action -> Dist(State)
 
 
-@attr.s(auto_attribs=True, init=False)
+@attr.s(auto_attribs=True)
 class MDP:
 
-    _initial_location: Location = attr.ib()
-    _locations: FrozenSet[Location] = attr.ib()
-    _clocks: FrozenSet[Clock] = attr.ib()
+    _pta: pta.PTA = attr.ib(validator=[instance_of(pta.PTA)])
 
-    _discrete_actions: FrozenSet[Edge] = attr.ib()
+    _current_clock_valuation: ClockValuation = attr.ib(converter=ClockValuation)
 
-    _probability_transition_fn: TransitionFn = attr.ib()
+    @property
+    def locations(self) -> FrozenSet[Location]:
+        return self._pta.locations
+
+    @property
+    def clocks(self) -> FrozenSet[Clock]:
+        return self._pta.clocks
+
+    @property
+    def edges(self) -> FrozenSet[Edge]:
+        return self._pta.actions
+
+    @property
+    def initial_location(self) -> Location:
+        return self._pta.initial_location
+
+    def __attrs_post_init__(self):
+        # We have our PTA. Now I need to populate what?
+        # 1. A generator for 
