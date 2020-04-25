@@ -22,8 +22,9 @@ Moreover, the `Clock` and `ClockConstraint` are *frozen*, which emulates immutab
 
 from abc import ABC, abstractmethod
 from enum import Enum, auto, unique
-from typing import Hashable, Mapping, Tuple, Callable, Dict, Iterator
+from typing import Hashable, Mapping, Tuple, Callable, Dict, Iterator, Iterable
 import operator
+
 
 import attr
 import attr.validators as VAL
@@ -35,7 +36,7 @@ import portion as P
 from portion import Interval
 
 
-@attr.s(frozen=True, auto_attribs=True, order=False, eq=True)
+@attr.s(frozen=True, auto_attribs=True, order=False, eq=True, repr=False, hash=True)
 class Clock:
     """A Clock symbol
 
@@ -92,8 +93,11 @@ class Clock:
     def __sub__(self, other: "Clock") -> "DiagonalLHS":
         return DiagonalLHS(self, other)
 
+    def __repr__(self) -> str:
+        return "Clock('{}')".format(self.name)
 
-@attr.s(auto_attribs=True, slots=True)
+
+@attr.s(auto_attribs=True, slots=True, repr=False)
 class ClockValuation(Mapping[Clock, float]):
     _values: Dict[Clock, float] = attr.ib(converter=dict)
 
@@ -120,6 +124,27 @@ class ClockValuation(Mapping[Clock, float]):
 
     def __len__(self) -> int:
         return len(self._values)
+
+    def __repr__(self) -> str:
+        return repr(self._values)
+
+    @classmethod
+    def zero_init(cls, clocks: Iterable[Clock]) -> "ClockValuation":
+        """Zero initialize a `ClockValuation` for the given set of `Clock`s.
+
+        Parameters
+        ----------
+        clocks : Iterable[Clock]
+                 Set of clocks to track the valuation of
+
+        Returns
+        -------
+        ClockValuation
+                `ClockValuation` where each `Clock` has 0 valuation.
+        """
+        from itertools import repeat
+
+        return ClockValuation(dict(zip(clocks, repeat(0))))  # type: ignore
 
 
 class ClockConstraint(ABC):

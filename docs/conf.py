@@ -65,7 +65,6 @@ napoleon_use_rtype = True
 
 # Autodoc configuration
 autodoc_member_order = 'bysource'
-# TODO: Update this when Sphinx 3.0 is released
 autodoc_typehints = 'description'
 
 # -- Options for todo extension ----------------------------------------------

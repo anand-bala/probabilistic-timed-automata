@@ -1,7 +1,6 @@
 # Makefile adapted from https://github.com/python-poetry/poetry/blob/master/Makefile
 
-DOCSRC := ./docsrc
-DOCDST := ./docs
+DOCS := ./docs
 
 .PHONY: clean clean_py clean_docs
 clean_py:
@@ -15,9 +14,7 @@ clean_py:
 
 clean_docs:
 	@echo "Removing Sphinx build tree"
-	@$(MAKE) -C $(DOCSRC) clean
-	@echo "Removing documentation copied from Sphinx"
-	@rm -rf $(DOCDST)/*
+	@$(MAKE) -C $(DOCS) clean
 
 clean: clean_docs clean_py
 
@@ -41,8 +38,8 @@ build: format docs
 	@poetry build
 
 docs:
-	$(MAKE) -C $(DOCSRC) html
-	@echo "Copying built docs to $(DOCDST)"
-	@mkdir -p $(DOCDST)
-	@cp -a $(DOCDST)/_build/html/. $(DOCDST)
+	$(MAKE) -C $(DOCS) html
+	@echo "Copying built docs to $(DOCS)"
+	@mkdir -p $(DOCS)
+	@cp -a $(DOCS)/_build/html/. $(DOCS)
 

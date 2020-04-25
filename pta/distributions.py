@@ -1,5 +1,6 @@
-"""Collection of distributions for the PTA and the Region MDP"""
+"""Collection of useful distributions"""
 from __future__ import annotations
+from abc import ABC, abstractmethod
 import random
 
 # from itertools import product
@@ -16,6 +17,29 @@ T = TypeVar("T", bound=Hashable)
 
 
 @attr.s(frozen=True, auto_attribs=True)
+class Distribution(ABC):
+    @abstractmethod
+    def sample(self, *, k: int = 1) -> Sequence:
+        """Sample `k` values from the support
+
+        Parameters
+        ----------
+        k : int
+            Number of items to sample from the distribution.
+
+        """
+
+    @abstractmethod
+    def validate_support(self, arg1):
+        """TODO: Docstring for validate_support.
+
+        :arg1: TODO
+        :returns: TODO
+
+        """
+
+
+@attr.s(frozen=True, auto_attribs=True)
 class DiscreteDistribution(Generic[T]):
     """A Discrete distribution over a finite, countable support
 
@@ -25,6 +49,7 @@ class DiscreteDistribution(Generic[T]):
         assert p(5) == 1/10
 
     """
+
     _dist: Mapping[T, float] = attr.ib()
 
     def sample(self, *, k: int = 1) -> Sequence[T]:

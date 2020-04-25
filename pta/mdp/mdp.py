@@ -13,13 +13,11 @@ import attr
 from attr.validators import instance_of
 
 from pta.clock import Clock, ClockValuation
-from pta.distributions import DiscreteDistribution
 from pta import pta
 
 from typing import (
     FrozenSet,
     Hashable,
-    Mapping,
     Tuple,
 )
 
@@ -30,7 +28,7 @@ Location = Hashable
 Edge = Hashable
 
 State = Tuple[float, Location]  # State is Valuation x Location
-Action = Tuple[float, Edge]     # Action is Delay x Edge
+Action = Tuple[float, Edge]  # Action is Delay x Edge
 
 # TransitionFn :: State x Action -> Dist(State)
 
@@ -40,7 +38,10 @@ class MDP:
 
     _pta: pta.PTA = attr.ib(validator=[instance_of(pta.PTA)])
 
-    _current_clock_valuation: ClockValuation = attr.ib(converter=ClockValuation)
+    _current_clock_valuation: ClockValuation = attr.ib(
+        converter=ClockValuation, init=False
+    )
+    _current_location: Location = attr.ib(init=False)
 
     @property
     def locations(self) -> FrozenSet[Location]:
@@ -60,4 +61,5 @@ class MDP:
 
     def __attrs_post_init__(self):
         # We have our PTA. Now I need to populate what?
-        # 1. A generator for 
+        self._current_clock_valuation = ClockValuation.zero_init(self.clocks)
+        self._current_location = self.initial_location
