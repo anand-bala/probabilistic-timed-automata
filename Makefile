@@ -39,7 +39,4 @@ build: format docs
 
 docs:
 	$(MAKE) -C $(DOCS) html
-	@echo "Copying built docs to $(DOCS)"
-	@mkdir -p $(DOCS)
-	@cp -a $(DOCS)/_build/html/. $(DOCS)
 

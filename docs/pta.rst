@@ -14,8 +14,7 @@ Submodules
 
 .. toctree::
 
-   pta/clock
-   pta/distributions
-   pta/region
    pta/pta
    pta/mdp
+   pta/clock
+   pta/distributions

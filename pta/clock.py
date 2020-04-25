@@ -130,7 +130,7 @@ class ClockValuation(Mapping[Clock, float]):
 
     @classmethod
     def zero_init(cls, clocks: Iterable[Clock]) -> "ClockValuation":
-        """Zero initialize a `ClockValuation` for the given set of `Clock`s.
+        """Zero initialize a `ClockValuation` for the given set of `Clock`
 
         Parameters
         ----------
