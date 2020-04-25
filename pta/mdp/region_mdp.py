@@ -72,16 +72,14 @@ class Region:
         The representative value of the region depends on the integer value and
         the *fractional order* of the individual valuations.
         """
-        return ClockValuation(
-            {  # type: ignore
-                clock: self._value_vector[clock]
-                + (
-                    (2 * self._fractional_ord[clock] + int(not self.is_int))
-                    / (2.0 * self._num_frac)
-                )
-                for clock in self.clocks
-            }
-        )
+
+        def val_comp(clock) -> float:
+            return self._value_vector[clock] + (
+                (2 * self._fractional_ord[clock] + int(not self.is_int))
+                / (2.0 * self._num_frac)
+            )
+
+        return ClockValuation({clock: val_comp(clock) for clock in self._clocks})  # type: ignore
 
     def delay(self, steps: int = 1) -> "Region":
         """Delay each of the clocks and move by ``steps`` "representative" region.

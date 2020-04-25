@@ -1,6 +1,7 @@
 # Makefile adapted from https://github.com/python-poetry/poetry/blob/master/Makefile
 
 DOCS := ./docs
+DOCDST := ./_docs
 
 .PHONY: clean clean_py clean_docs
 clean_py:
@@ -25,7 +26,7 @@ format: clean_py
 	poetry run autoflake --in-place --remove-all-unused-imports --ignore-init-module-imports --recursive pta/ tests/
 
 .PHONY: check
-check:
+check: format
 	poetry run mypy -p pta
 	poetry run flake8 pta
 
@@ -37,6 +38,21 @@ test: check
 build: format docs
 	@poetry build
 
-docs:
+.PHONY: docs
+docs: test
 	$(MAKE) -C $(DOCS) html
 
+.PHONY: gh-pages
+gh-pages: docs
+	@echo "Deleting old $(DOCDST)"
+	rm -rf $(DOCDST)
+	@git worktree prune && rm -rf .git/worktrees/$(shell dirname $(DOCDST))
+	@mkdir -pv $(DOCDST)
+	@echo "Checking out gh-pages branch into public"
+	git worktree add -B gh-pages $(DOCDST) origin/gh-pages
+	@echo "Copying Sphinx HTML output to $(DOCDST)"
+	@cp -a $(DOCS)/_build/html/ $(DOCDST)
+	@echo "Updating gh-pages branch"
+	@cd $(DOCDST) && git add --all && git commit -m "Publishing docs to gh-pages"
+	@echo "Pushing to origin"
+	@cd $(DOCDST) && git push origin gh-pages
