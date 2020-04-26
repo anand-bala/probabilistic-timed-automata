@@ -32,8 +32,6 @@ SOFTWARE.
 
 """
 
-from __future__ import annotations
-
 import abc
 from functools import total_ordering
 from itertools import product

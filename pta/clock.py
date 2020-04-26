@@ -146,6 +146,16 @@ class ClockValuation(Mapping[Clock, float]):
 
         return ClockValuation(dict(zip(clocks, repeat(0))))  # type: ignore
 
+    def __add__(self, other) -> "ClockValuation":
+        if isinstance(other, float):
+            new_vals = {clk: val + other for clk, val in self._values.items()}
+            return ClockValuation(new_vals)  # type: ignore
+        if isinstance(other, (ClockValuation, Mapping)):
+            assert set(other.keys()) >= self._values.keys()
+            new_vals = {clk: val + other[clk] for clk, val in self._values.items()}
+            return ClockValuation(new_vals)  # type: ignore
+        return NotImplemented
+
 
 class ClockConstraint(ABC):
     """An abstract class for clock constraints"""

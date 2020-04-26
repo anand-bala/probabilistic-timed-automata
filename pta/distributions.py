@@ -1,42 +1,15 @@
 """Collection of useful distributions"""
-from __future__ import annotations
-from abc import ABC, abstractmethod
 import random
 
 # from itertools import product
 import functools
 
-from typing import Generic, TypeVar, Hashable, Mapping, Sequence, Set
+from typing import Hashable, Mapping, Sequence, Set, Generic, TypeVar
 
 import attr
 
 # TODO: Is it worth using numpy or torch distributions instead? No (I think)...
-
-# DiscreteSpace = TypeVar('DiscreteSpace', Hashable)
 T = TypeVar("T", bound=Hashable)
-
-
-@attr.s(frozen=True, auto_attribs=True)
-class Distribution(ABC):
-    @abstractmethod
-    def sample(self, *, k: int = 1) -> Sequence:
-        """Sample `k` values from the support
-
-        Parameters
-        ----------
-        k : int
-            Number of items to sample from the distribution.
-
-        """
-
-    @abstractmethod
-    def validate_support(self, arg1):
-        """TODO: Docstring for validate_support.
-
-        :arg1: TODO
-        :returns: TODO
-
-        """
 
 
 @attr.s(frozen=True, auto_attribs=True)
@@ -63,47 +36,52 @@ class DiscreteDistribution(Generic[T]):
         support, distribution = zip(*self._dist.items())
         return random.choices(support, distribution, k=k)
 
+    @property
+    def support(self) -> Set[T]:
+        """The support of the distribution"""
+        return set(self._dist.keys())
+
     @functools.lru_cache(128)
     def __call__(self, x: T) -> float:
         """Get the probability of ``x`` in the distribution"""
         return self._dist.get(x, 0)
 
-    def validate_support(self, check_set: Set[T]) -> bool:
+    def _validate_support(self, check_set: Set[T]) -> bool:
         return not (set(self._dist.keys()) <= check_set)
 
-    @classmethod
-    def delta(cls, center: T) -> DiscreteDistribution[T]:
-        """Return the (Kronecker) delta distribution centered at ``center``
 
-        Essentially, the distributon is the following:
+def delta(center: Hashable) -> DiscreteDistribution:
+    """Return the (Kronecker) delta distribution centered at ``center``
 
-        .. math::
+    Essentially, the distributon is the following:
 
-            \\texttt{Unit}(\\omega)(x) = \\begin{cases}
-                1, \\quad \\text{for } x = \\omega \\\\
-                0, \\quad \\text{otherwise.}
-            \\end{cases}
+    .. math::
 
-        Parameters
-        ----------
-        center : Hashable
-            Center of the delta distribution
-        """
-        return DiscreteDistribution(dict([(center, 1)]))
+        \\texttt{Unit}(\\omega)(x) = \\begin{cases}
+            1, \\quad \\text{for } x = \\omega \\\\
+            0, \\quad \\text{otherwise.}
+        \\end{cases}
 
-    @classmethod
-    def uniform(cls, support: Set[T]) -> DiscreteDistribution[T]:
-        """Return the uniform distribution over the given support
+    Parameters
+    ----------
+    center : Hashable
+        Center of the delta distribution
+    """
+    return DiscreteDistribution(dict([(center, 1)]))
 
-        Parameters
-        ----------
-        support : Hashable
-            Any finite set of states.
 
-        Returns
-        -------
-        output : DiscreteDistribution
-            A uniform distribution over the finite set of states.
-        """
-        prob = 1 / len(support)
-        return DiscreteDistribution({s: prob for s in support})
+def uniform(support: Set[Hashable]) -> DiscreteDistribution:
+    """Return the uniform distribution over the given support
+
+    Parameters
+    ----------
+    support : Hashable
+        Any finite set of states.
+
+    Returns
+    -------
+    output : DiscreteDistribution
+        A uniform distribution over the finite set of states.
+    """
+    prob = 1 / len(support)
+    return DiscreteDistribution({s: prob for s in support})

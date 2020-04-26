@@ -6,6 +6,7 @@ from typing import (
     Hashable,
     Mapping,
     Tuple,
+    Callable,
     Text,
 )
 
@@ -98,6 +99,33 @@ class PTA:
                 self._locations - set(value.keys()),
             )
         # TODO: Check if clock constraints are only defined on known clocks...
+
+    @staticmethod
+    def _default_delay_stochasticity(val: ClockValuation, cc: ClockConstraint) -> float:
+        """Uniformly randomly pick a float withing the delay"""
+        import portion as P
+        import random
+
+        # Get interval of allowable delays
+        interval: Interval = delays(val, cc)
+        assert (
+            interval.atomic
+        ), "Interval seems to be a disjunction of other intervals... Bug!"
+        assert interval.lower != -P.inf, "Interval lower bound is unbounded... Bug!"
+        left_offset = 0.1 if interval.left == P.OPEN else 0
+        right_offset = 0.1 if interval.right == P.OPEN else 0
+        if interval.upper == P.inf:
+            # If upper is unbounded, it doesn't matter what value we pick, so pick the lower bound + some offset if open bound
+            return interval.lower + left_offset
+        # Otherwise pick uniformly from the range
+        return random.uniform(
+            interval.lower + left_offset, interval.upper - right_offset
+        )
+
+    # Given a ClockConstraint, pick an offset value
+    _random_delay: Callable[[ClockValuation, ClockConstraint], float] = attr.ib(
+        default=_default_delay_stochasticity, kw_only=True
+    )
 
     @property
     def clocks(self) -> FrozenSet[Clock]:
