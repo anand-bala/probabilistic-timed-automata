@@ -22,7 +22,7 @@ Moreover, the `Clock` and `ClockConstraint` are *frozen*, which emulates immutab
 
 from abc import ABC, abstractmethod
 from enum import Enum, auto, unique
-from typing import Hashable, Mapping, Tuple, Callable, Dict, Iterator, Iterable
+from typing import Hashable, Mapping, Tuple, Callable, Dict, Iterator, Iterable, Set
 import operator
 
 
@@ -101,19 +101,16 @@ class Clock:
 class ClockValuation(Mapping[Clock, float]):
     _values: Dict[Clock, float] = attr.ib(converter=dict)
 
-    #  @_clocks.validator
-    #  def _clocks_validator(self, _, value):
-    #  if len(value) < 1:
-    #  raise ValueError("Expected at least 1 clock... Are you looking for an MDP instead?")
-    #  if not all([isinstance(c, Clock) for c in self._clocks]):
-    #  raise TypeError("Expected a list of Clocks...")
-
     @_values.validator
     def _values_validator(self, _, value):
         if not all([isinstance(c, Clock) for c in self._values.keys()]):
             raise TypeError("Expected keys to be Clocks...")
         if not all([v >= 0 for v in self._values.values()]):
             raise ValueError("Clock values cannot be negative...")
+
+    @property
+    def clocks(self) -> Set[Clock]:
+        return set(self._values.keys())
 
     def __getitem__(self, clock: Clock) -> float:
         assert isinstance(clock, Clock)
@@ -147,14 +144,22 @@ class ClockValuation(Mapping[Clock, float]):
         return ClockValuation(dict(zip(clocks, repeat(0))))  # type: ignore
 
     def __add__(self, other) -> "ClockValuation":
-        if isinstance(other, float):
-            new_vals = {clk: val + other for clk, val in self._values.items()}
+        if isinstance(other, (float, int)):
+            new_vals = {clk: val + float(other) for clk, val in self._values.items()}
             return ClockValuation(new_vals)  # type: ignore
         if isinstance(other, (ClockValuation, Mapping)):
             assert set(other.keys()) >= self._values.keys()
             new_vals = {clk: val + other[clk] for clk, val in self._values.items()}
             return ClockValuation(new_vals)  # type: ignore
         return NotImplemented
+
+    def reset(self, clocks: Iterable[Clock]) -> "ClockValuation":
+        """Given a set of `Clock` that is a subset of the tracked `Clock` objects, set the values to 0"""
+        assert (
+            set(clocks) <= self.clocks
+        ), "Given `Set[Clock]` is not a subset of `self.clocks`"
+        d = {**self._values, **{clk: 0 for clk in clocks}}
+        return ClockValuation(d)  # type: ignore
 
 
 class ClockConstraint(ABC):
@@ -379,3 +384,6 @@ def delays(values: ClockValuation, constraint: ClockConstraint) -> Interval:
             return P.closed(0, P.inf)
         return P.empty()
     raise TypeError("Unsupported ClockConstraint type: {}".format(type(constraint)))
+
+
+__all__ = ["delays", "ClockConstraint", "Clock", "ClockValuation", "Interval"]

@@ -85,3 +85,6 @@ def uniform(support: Set[Hashable]) -> DiscreteDistribution:
     """
     prob = 1 / len(support)
     return DiscreteDistribution({s: prob for s in support})
+
+
+__all__ = ["uniform", "delta", "DiscreteDistribution"]

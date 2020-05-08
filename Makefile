@@ -26,7 +26,7 @@ format: clean_py
 	poetry run autoflake --in-place --remove-all-unused-imports --ignore-init-module-imports --recursive pta/ tests/
 
 .PHONY: check
-check: format
+check:
 	poetry run mypy -p pta
 	poetry run flake8 pta
 
