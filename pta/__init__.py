@@ -1,10 +1,9 @@
 """Probabilistic Timed Automata"""
 
-from typing import Iterable, Hashable, Tuple
+from typing import Hashable, Iterable, Tuple
 
 from pta.clock import Clock, ClockConstraint
 from pta.pta import PTA
-from pta.mdp import MDP, RegionMDP
 
 __version__ = "0.1.0"
 

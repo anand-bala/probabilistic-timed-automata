@@ -20,15 +20,14 @@ The `Clock` and `ClockConstraint` classes have syntactic sugar to easily write t
 Moreover, the `Clock` and `ClockConstraint` are *frozen*, which emulates immutable data.
 """
 
+import operator
 from abc import ABC, abstractmethod
 from enum import Enum, auto, unique
-from typing import Hashable, Mapping, Tuple, Callable, Dict, Iterator, Iterable, Set
-import operator
-
+from typing import (Callable, Dict, Hashable, Iterable, Iterator, Mapping, Set,
+                    Tuple)
 
 import attr
 import attr.validators as VAL
-
 # NOTE:
 #   Currently using this library for intervals, but may use a custom Intervall
 #   class in the future.
@@ -173,6 +172,8 @@ class ClockConstraint(ABC):
                 return self
             return other
         return And((self, other))
+
+    __rand__ = __and__
 
     @abstractmethod
     def contains(self, value: ClockValuation) -> bool:
@@ -359,6 +360,8 @@ def delays(values: ClockValuation, constraint: ClockConstraint) -> Interval:
         given clock constraint.
 
     """
+    if isinstance(constraint, bool):
+        constraint = Boolean(constraint)
     if isinstance(constraint, Boolean):
         if constraint.value:
             return P.closed(0, P.inf)

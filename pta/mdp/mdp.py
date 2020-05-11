@@ -9,20 +9,14 @@ controller (typically a neural network) that takes in a state (location,
 valuation pair) and outputs a delay or an edge
 """
 
+from typing import Callable, FrozenSet, Hashable, Set, Tuple
+
 import attr
 from attr.validators import instance_of
 
-from pta.clock import Clock, ClockValuation, delays, ClockConstraint, Interval
-from pta.distributions import DiscreteDistribution
 from pta import pta
-
-from typing import (
-    FrozenSet,
-    Hashable,
-    Tuple,
-    Callable,
-    Set,
-)
+from pta.clock import Clock, ClockConstraint, ClockValuation, Interval, delays
+from pta.distributions import DiscreteDistribution
 
 # Location in the PTA
 Location = Hashable
@@ -35,6 +29,7 @@ Action = Tuple[float, Edge]  # Action is Delay x Edge
 
 Target = Tuple[Set[Clock], Location]
 EdgeTransition = Tuple[ClockConstraint, DiscreteDistribution[Target]]
+
 
 @attr.s(auto_attribs=True, slots=True)
 class MDP:
@@ -142,8 +137,11 @@ class MDP:
         if edge_first:
             # TODO: Do I need this check?
             # NOTE: An RL algorithm should be able to generalize right?
-            assert edge in allowed_edges, "Given action {} is not enables at state {}".format(edge, self._get_obs())
-            guard, prob_dist = self._get_transition(edge) # Get the transition the agent wants to take
-            
-
-
+            assert (
+                edge in allowed_edges
+            ), "Given action {} is not enables at state {}".format(
+                edge, self._get_obs()
+            )
+            guard, prob_dist = self._get_transition(
+                edge
+            )  # Get the transition the agent wants to take

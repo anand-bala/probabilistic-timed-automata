@@ -1,10 +1,8 @@
 """Collection of useful distributions"""
-import random
-
-# from itertools import product
 import functools
-
-from typing import Hashable, Mapping, Sequence, Set, Generic, TypeVar
+import random
+from itertools import product
+from typing import Generic, Hashable, Mapping, Sequence, Set, TypeVar
 
 import attr
 
@@ -12,7 +10,7 @@ import attr
 T = TypeVar("T", bound=Hashable)
 
 
-@attr.s(frozen=True, auto_attribs=True)
+@attr.s(frozen=True, auto_attribs=True, hash=False)
 class DiscreteDistribution(Generic[T]):
     """A Discrete distribution over a finite, countable support
 
@@ -67,7 +65,7 @@ def delta(center: Hashable) -> DiscreteDistribution:
     center : Hashable
         Center of the delta distribution
     """
-    return DiscreteDistribution(dict([(center, 1)]))
+    return DiscreteDistribution({center: 1.0})
 
 
 def uniform(support: Set[Hashable]) -> DiscreteDistribution:
