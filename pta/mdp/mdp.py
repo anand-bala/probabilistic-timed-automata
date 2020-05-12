@@ -9,14 +9,17 @@ controller (typically a neural network) that takes in a state (location,
 valuation pair) and outputs a delay or an edge
 """
 
-from typing import Callable, FrozenSet, Hashable, Set, Tuple
+import random
+from typing import Callable, FrozenSet, Hashable, Mapping, Set, Tuple
 
 import attr
 from attr.validators import instance_of
 
 from pta import pta
 from pta.clock import Clock, ClockConstraint, ClockValuation, Interval, delays
-from pta.distributions import DiscreteDistribution
+from pta.pta import Target
+from pta.pta import Transition as EdgeTransition
+from pta.spaces import Space
 
 # Location in the PTA
 Location = Hashable
@@ -26,9 +29,6 @@ Edge = Hashable
 
 State = Tuple[ClockValuation, Location]  # State is Valuation x Location
 Action = Tuple[float, Edge]  # Action is Delay x Edge
-
-Target = Tuple[Set[Clock], Location]
-EdgeTransition = Tuple[ClockConstraint, DiscreteDistribution[Target]]
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -67,8 +67,8 @@ class MDP:
     )
 
     @property
-    def locations(self) -> FrozenSet[Location]:
-        return self._pta.locations
+    def location_space(self) -> Space:
+        return self._pta.location_space
 
     @property
     def clocks(self) -> FrozenSet[Clock]:
@@ -82,26 +82,45 @@ class MDP:
     def initial_location(self) -> Location:
         return self._pta.initial_location
 
+    def __attrs_post_init__(self):
+        self._current_clock_valuation = ClockValuation.zero_init(self.clocks)
+        self._current_location = self.initial_location
+
+    @property
+    def valuation(self) -> ClockValuation:
+        return self._current_clock_valuation
+
+    @property
+    def location(self) -> Location:
+        return self._current_location
+
+    def _get_obs(self) -> State:
+        return (self._current_clock_valuation, self._current_location)
+
+    def transition(self, edge: Edge) -> EdgeTransition:
+        return self._pta._transitions(self._current_location)[edge]
+
     def enabled_actions(self) -> Tuple[Interval, FrozenSet[Edge]]:
         """Get the interval of delays satisfying the invariant and the set of actions enabled at the current time"""
         return (
             self._pta.allowed_delays(
                 self._current_location, self._current_clock_valuation
             ),
-            self._pta.enabled_actions(
-                self._current_location, self._current_clock_valuation
+            frozenset(
+                self._pta.enabled_actions(
+                    self._current_location, self._current_clock_valuation
+                ).keys()
             ),
         )
 
-    def __attrs_post_init__(self):
-        self._current_clock_valuation = ClockValuation.zero_init(self.clocks)
-        self._current_location = self.initial_location
-
-    def _get_obs(self) -> State:
-        return (self._current_clock_valuation, self._current_location)
-
-    def _get_transition(self, edge: Edge) -> Transition:
-        return self._pta._transitions[self._current_location][edge]
+    def available_edges(self) -> Mapping[Edge, EdgeTransition]:
+        return {
+            action: transition
+            for action, transition in self._pta.transitions(
+                self._current_location
+            ).items()
+            if action in self.edges
+        }
 
     def reset(self) -> State:
         """Reset the MDP to its initial state
@@ -114,7 +133,7 @@ class MDP:
         self.__attrs_post_init__()
         return self._get_obs()
 
-    def step(self, action: Action, *, edge_first=True) -> State:
+    def step(self, action: Action, *, edge_first=False) -> State:
         """Take a timed action on the MDP
 
         Here, the semantics imply that the agent takes an edge, and then waits
@@ -132,16 +151,51 @@ class MDP:
             The new state of the MDP
         """
         delay, edge = action
-        allowed_delay, allowed_edges = self.enabled_actions()
 
-        if edge_first:
-            # TODO: Do I need this check?
-            # NOTE: An RL algorithm should be able to generalize right?
-            assert (
-                edge in allowed_edges
-            ), "Given action {} is not enables at state {}".format(
-                edge, self._get_obs()
+        if not edge_first:
+            # First let's take the delay.
+
+            # (Assume that a preprocessing step makes sure delay satisfies invariant)
+            # And update current clock valuation
+            self._current_clock_valuation = self._current_clock_valuation + delay
+
+            _, allowed_edges = self.enabled_actions()
+
+            # If edge is in allowed_edges, we can take the transition
+            if edge in allowed_edges:
+                transition = self.transition(edge)
+                target: Target = transition.target_dist.sample()[0]
+                self._current_location = target.location
+                self._current_clock_valuation.reset(target.reset)
+
+        else:  # if edge taken first, then delay
+            # First get the set of allowed edges
+            _, allowed_edges = self.enabled_actions()
+            # If edge is in allowed_edges, we can take the transition
+            if edge in allowed_edges:
+                transition = self.transition(edge)
+                next_loc = transition.target_dist.sample()
+                self._current_location = next_loc
+            # Now, we take the delay
+            self._current_clock_valuation = self._current_clock_valuation + delay
+
+        # Now the environment can take actions...
+        # Get the current allowed delays and actions
+        allowed_delay, allowed_edges = self.enabled_actions()
+        # Check if there is any edges available that are not part of self.edges
+        env_actions = list(allowed_edges - self.edges)
+        if len(env_actions) > 0:
+            # Take it?
+            env_edge: Edge = random.choices(env_actions, k=1)[0]
+            env_transition: EdgeTransition = self.transition(env_edge)
+            env_delay: float = self._random_delay(
+                self._current_clock_valuation, env_transition.guard
             )
-            guard, prob_dist = self._get_transition(
-                edge
-            )  # Get the transition the agent wants to take
+            env_reset, env_step = transition.target_dist.sample(k=1)[
+                0
+            ]  # type: Set[Clock], Location
+            self._current_clock_valuation = self._current_clock_valuation + env_delay
+            self._current_clock_valuation.reset(env_reset)
+            self._current_location = env_step
+
+        return self._get_obs()

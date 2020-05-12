@@ -1,7 +1,6 @@
 """Bunch of utility functions for the package and it's users"""
 
-from collections import deque
-from typing import Iterable, Iterator, Tuple, Union
+from typing import Iterable, Iterator
 
 
 def flatten(t) -> Iterator:

@@ -22,8 +22,8 @@ clean: clean_docs clean_py
 
 .PHONY: format
 format: clean_py
-	poetry run black pta/ tests/
-	poetry run autoflake --in-place --remove-all-unused-imports --ignore-init-module-imports --recursive pta/ tests/
+	poetry run black pta/ tests/ pta_examples/
+	poetry run autoflake --in-place --remove-all-unused-imports --ignore-init-module-imports --recursive pta/ tests/ pta_examples/
 
 .PHONY: check
 check:

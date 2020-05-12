@@ -23,11 +23,11 @@ Moreover, the `Clock` and `ClockConstraint` are *frozen*, which emulates immutab
 import operator
 from abc import ABC, abstractmethod
 from enum import Enum, auto, unique
-from typing import (Callable, Dict, Hashable, Iterable, Iterator, Mapping, Set,
-                    Tuple)
+from typing import Callable, Dict, Hashable, Iterable, Iterator, Mapping, Set, Tuple
 
 import attr
 import attr.validators as VAL
+
 # NOTE:
 #   Currently using this library for intervals, but may use a custom Intervall
 #   class in the future.

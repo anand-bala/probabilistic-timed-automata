@@ -139,7 +139,8 @@ from typing import Mapping, Tuple
 
 from pta import PTA, Clock, ClockConstraint
 from pta.clock import Boolean
-from pta.distributions import DiscreteDistribution, delta, uniform
+from pta.distributions import DiscreteDistribution, delta
+from pta.spaces import Space
 from pta.utils import flatten
 
 
@@ -153,13 +154,9 @@ class Edges(enum.IntEnum):
     P2_DONE = enum.auto()
 
 
-TaskLocs = namedtuple(
-    "TaskLocs", [f"task{i}" for i in range(1, 7)]
-)  # type: Tuple[int, ...]
-ProcessLocs = namedtuple("ProcessLocs", ["p1", "p2"])  # type: Tuple[int, int]
-PTALocation = namedtuple(
-    "PTALocation", TaskLocs._fields + ProcessLocs._fields
-)  # type: Tuple[int, ...]
+TaskLocs = namedtuple("TaskLocs", [f"task{i}" for i in range(1, 7)])
+ProcessLocs = namedtuple("ProcessLocs", ["p1", "p2"])
+PTALocation = namedtuple("PTALocation", TaskLocs._fields + ProcessLocs._fields)
 
 Transition = namedtuple(
     "Transition", ["guard", "target_dist"]
@@ -334,15 +331,40 @@ def merge_transitions(*transitions: Transition) -> Transition:
     return Transition(merged_guard, DiscreteDistribution(merged_target_dist))
 
 
+class TaskGraphSpace(Space):
+    def __len__(self) -> int:
+        return (4 ** 6) * 3 * 3  # 6 Tasks * Processor 1 * Processor 2
+
+    def __contains__(self, x):
+        location = PTALocation._make(x)
+        return (
+            all(l in range(4) for l in location[:6])
+            and location.p1 in range(3)
+            and location.p2 in range(3)
+        )
+
+    def sample(self, x):
+        import random
+
+        task_locs = random.choices(range(4), k=6)
+        proc_locs = random.choices(range(3), k=2)
+        return PTALocation(*task_locs, *proc_locs)
+
+
 def create_pta() -> PTA:
-    n_locations = (4 ** 6) * 3 * 3  # 6 Tasks * Processor 1 * Processor 2
     clocks = {P1.x1, P2.x2}
-    acts = set(Edges)
+    acts = {
+        Edges.P1_ADD,
+        Edges.P2_ADD,
+        Edges.P1_MUL,
+        Edges.P2_MUL,
+    }
+
     init_location = PTALocation(
         *Scheduler.init_location, P1.init_location, P2.init_location
     )
 
-    def transitions(loc) -> Mapping[Edges, Transition]:
+    def transitions(loc: PTALocation) -> Mapping[Edges, Transition]:
         location = PTALocation._make(loc)
         task_loc = location[:6]
         p1_loc = location.p1
@@ -364,7 +386,7 @@ def create_pta() -> PTA:
 
         return actions
 
-    def invariants(loc) -> ClockConstraint:
+    def invariants(loc: PTALocation) -> ClockConstraint:
         location = PTALocation._make(loc)
         task_loc = location[:6]
         p1_loc = location.p1
@@ -374,7 +396,7 @@ def create_pta() -> PTA:
         )
 
     return PTA(
-        n_locations=n_locations,
+        location_space=TaskGraphSpace(),
         clocks=clocks,
         actions=acts,
         init_location=init_location,

@@ -1,30 +1,25 @@
 from typing import (
-    Set,
-    Hashable,
-    Mapping,
-    Tuple,
-    Optional,
-    Union,
     FrozenSet,
+    Hashable,
     Iterable,
+    Mapping,
     MutableMapping,
+    Optional,
+    Set,
+    Tuple,
+    Union,
 )
 
 import attr
 
-from pta.clock import Clock, ClockConstraint, Interval, ClockValuation
+from pta.clock import Clock, ClockValuation, Interval
 from pta.distributions import DiscreteDistribution
-from pta.pta import PTA
-
+from pta.pta import PTA, Target, Transition
 
 # Action = Union[str, int]
 Action = Hashable
 Label = str
 Location = Hashable
-
-
-Target = Tuple[Set[Clock], Location]
-Transition = Tuple[ClockConstraint, DiscreteDistribution[Target]]
 
 TransitionFn = Mapping[Location, Mapping[Action, Transition]]
 
@@ -177,7 +172,7 @@ class RegionMDP:
 
     @property
     def _current_transitions(self) -> Mapping[Action, Transition]:
-        return self._pta._transitions[self.location]
+        return self._pta._transitions(self.location)
 
     @property
     def location(self) -> Location:

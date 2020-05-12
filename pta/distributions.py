@@ -1,7 +1,6 @@
 """Collection of useful distributions"""
 import functools
 import random
-from itertools import product
 from typing import Generic, Hashable, Mapping, Sequence, Set, TypeVar
 
 import attr

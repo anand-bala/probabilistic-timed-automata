@@ -1,12 +1,12 @@
 """Probabilistic Timed Automaton"""
 
-from typing import (Callable, FrozenSet, Hashable, Mapping, NamedTuple, Set,
-                    Text, Tuple)
+from typing import Callable, FrozenSet, Hashable, Mapping, NamedTuple, Set, Text
 
 import attr
 
 from pta.clock import Clock, ClockConstraint, ClockValuation, Interval, delays
 from pta.distributions import DiscreteDistribution
+from pta.spaces import Space
 
 Action = Hashable
 Label = Text
@@ -29,8 +29,7 @@ TransitionFn = Callable[[Location], Mapping[Action, Transition]]
 @attr.s(frozen=True, auto_attribs=True, kw_only=True)
 class PTA:
 
-    # NOTE: We never explicitly need to know the locations...
-    _n_locations: int = attr.ib()
+    _location_space: Space = attr.ib()
     _clocks: FrozenSet[Clock] = attr.ib(converter=frozenset)
     _actions: FrozenSet[Action] = attr.ib(converter=frozenset)
 
@@ -40,8 +39,8 @@ class PTA:
     _invariants: Callable[[Location], ClockConstraint] = attr.ib()
 
     @property
-    def n_locations(self) -> int:
-        return self._n_locations
+    def location_space(self) -> Space:
+        return self._location_space
 
     @property
     def clocks(self) -> FrozenSet[Clock]:
@@ -95,7 +94,8 @@ class PTA:
         }
 
     def allowed_delays(self, loc: Location, values: ClockValuation) -> Interval:
-        """Return the allowed interval of delays at the given location and clock valuation.
+        """Return the interval of delays that satisfy the invariant at the
+        given location and clock valuation.
 
         .. seealso::
             :py:func:`~pta.clocks.delays`
