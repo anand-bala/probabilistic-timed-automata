@@ -3,3 +3,5 @@
 
 [1] : https://www.prismmodelchecker.org/casestudies/task_graph.php
 """
+
+from .basic import create_pta as deterministic_task_graph

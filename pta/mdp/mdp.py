@@ -9,8 +9,10 @@ controller (typically a neural network) that takes in a state (location,
 valuation pair) and outputs a delay or an edge
 """
 
+import enum
 import random
-from typing import Callable, FrozenSet, Hashable, Mapping, Set, Tuple
+from typing import (Callable, FrozenSet, Hashable, Mapping, NamedTuple, Set,
+                    Tuple)
 
 import attr
 from attr.validators import instance_of
@@ -27,8 +29,21 @@ Location = Hashable
 # An is a transition that can be taken in the PTA
 Edge = Hashable
 
-State = Tuple[ClockValuation, Location]  # State is Valuation x Location
-Action = Tuple[float, Edge]  # Action is Delay x Edge
+
+class State(NamedTuple):
+    value: ClockValuation
+    location: Location
+
+
+class Action(NamedTuple):
+    delay: float
+    edge: Edge
+
+
+@enum.unique
+class _Turn(enum.Enum):
+    PLAYER = enum.auto()
+    ENV = enum.auto()
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -38,6 +53,14 @@ class MDP:
 
     _current_clock_valuation: ClockValuation = attr.ib(init=False)
     _current_location: Location = attr.ib(init=False)
+    _progress_steps: int = attr.ib(init=False, default=0)
+    _turn: _Turn = attr.ib(init=False, default=_Turn.PLAYER)
+
+    def __attrs_post_init__(self):
+        self._current_clock_valuation = ClockValuation.zero_init(self.clocks)
+        self._current_location = self.initial_location
+        self._progress_steps = 0
+        self._turn = _Turn.PLAYER
 
     @staticmethod
     def _default_delay_stochasticity(val: ClockValuation, cc: ClockConstraint) -> float:
@@ -82,10 +105,6 @@ class MDP:
     def initial_location(self) -> Location:
         return self._pta.initial_location
 
-    def __attrs_post_init__(self):
-        self._current_clock_valuation = ClockValuation.zero_init(self.clocks)
-        self._current_location = self.initial_location
-
     @property
     def valuation(self) -> ClockValuation:
         return self._current_clock_valuation
@@ -95,7 +114,7 @@ class MDP:
         return self._current_location
 
     def _get_obs(self) -> State:
-        return (self._current_clock_valuation, self._current_location)
+        return State(self._current_clock_valuation, self._current_location)
 
     def transition(self, edge: Edge) -> EdgeTransition:
         return self._pta._transitions(self._current_location)[edge]
@@ -110,7 +129,7 @@ class MDP:
                 self._pta.enabled_actions(
                     self._current_location, self._current_clock_valuation
                 ).keys()
-            ),
+            ).intersection(self.edges),
         )
 
     def available_edges(self) -> Mapping[Edge, EdgeTransition]:
@@ -150,7 +169,8 @@ class MDP:
         State
             The new state of the MDP
         """
-        delay, edge = action
+
+        delay, edge = Action._make(action)
 
         if not edge_first:
             # First let's take the delay.
@@ -164,7 +184,7 @@ class MDP:
             # If edge is in allowed_edges, we can take the transition
             if edge in allowed_edges:
                 transition = self.transition(edge)
-                target: Target = transition.target_dist.sample()[0]
+                target: Target = Target._make(transition.target_dist.sample()[0])
                 self._current_location = target.location
                 self._current_clock_valuation.reset(target.reset)
 
@@ -191,7 +211,7 @@ class MDP:
             env_delay: float = self._random_delay(
                 self._current_clock_valuation, env_transition.guard
             )
-            env_reset, env_step = transition.target_dist.sample(k=1)[
+            env_reset, env_step = env_transition.target_dist.sample(k=1)[
                 0
             ]  # type: Set[Clock], Location
             self._current_clock_valuation = self._current_clock_valuation + env_delay

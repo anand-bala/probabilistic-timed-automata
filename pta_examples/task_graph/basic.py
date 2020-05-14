@@ -2,132 +2,6 @@
 Bouyer, Fahrenberg, Larsen and Markey
 Quantitative analysis of real-time systems using priced timed automata
 Communications of the ACM, 54(9):78–87, 2011
-
-
-The basic model concerns computing the arithmetic expression D × (C × (A + B))
-+ ((A + B) + (C × D)) using two processors (P1 and P2) that have different
-speed and energy requirements.
-
-```
-// basic task graph model from
-// Bouyer, Fahrenberg, Larsen and Markey
-// Quantitative analysis of real-time systems using priced timed automata
-// Communications of the ACM, 54(9):78–87, 2011
-
-pta // model is a PTA
-
-module scheduler
-
-        task1 : [0..3]; // A+B
-        task2 : [0..3]; // CxD
-        task3 : [0..3]; // Cx(A+B)
-        task4 : [0..3]; // (A+B)+(CxD)
-        task5 : [0..3]; // DxCx(A+B)
-        task6 : [0..3]; // (DxCx(A+B)) + ((A+B)+(CxD))
-
-        // task status: 
-        // 0 - not started
-        // 1 - running on processor 1
-        // 2 - running on processor 2
-        // 3 - task complete
-
-        // start task 1
-        [p1_add] task1=0 -> (task1'=1);
-        [p2_add] task1=0 -> (task1'=2);
-
-        // start task 2
-        [p1_mult] task2=0 -> (task2'=1);
-        [p2_mult] task2=0 -> (task2'=2);
-
-        // start task 3 (must wait for task 1 to complete)
-        [p1_mult] task3=0 & task1=3 -> (task3'=1);
-        [p2_mult] task3=0 & task1=3 -> (task3'=2);
-
-        // start task 4 (must wait for tasks 1 and 2 to complete)
-        [p1_add] task4=0 & task1=3 & task2=3 -> (task4'=1);
-        [p2_add] task4=0 & task1=3 & task2=3 -> (task4'=2);
-
-        // start task 5 (must wait for task 3 to complete)
-        [p1_mult] task5=0 & task3=3 -> (task5'=1);
-        [p2_mult] task5=0 & task3=3 -> (task5'=2);
-
-        // start task 6 (must wait for tasks 4 and 5 to complete)
-        [p1_add] task6=0 & task4=3 & task5=3 -> (task6'=1);
-        [p2_add] task6=0 & task4=3 & task5=3 -> (task6'=2);
-
-        // a task finishes on processor 1
-        [p1_done] task1=1 -> (task1'=3);
-        [p1_done] task2=1 -> (task2'=3);
-        [p1_done] task3=1 -> (task3'=3);
-        [p1_done] task4=1 -> (task4'=3);
-        [p1_done] task5=1 -> (task5'=3);
-        [p1_done] task6=1 -> (task6'=3);
-
-        // a task finishes on processor 2
-        [p2_done] task1=2 -> (task1'=3);
-        [p2_done] task2=2 -> (task2'=3);
-        [p2_done] task3=2 -> (task3'=3);
-        [p2_done] task4=2 -> (task4'=3);
-        [p2_done] task5=2 -> (task5'=3);
-        [p2_done] task6=2 -> (task6'=3);
-
-endmodule
-
-// processor 1
-module P1
-
-        p1 : [0..2];
-        // 0 - idle
-        // 1 - add
-        // 2 - multiply
-
-        x1 : clock; // local clock
-
-        invariant
-        (p1=1 => x1<=2) &
-        (p1=2 => x1<=3)
-    endinvariant
-
-        // addition
-        [p1_add] p1=0 -> (p1'=1) & (x1'=0); // start
-        [p1_done] p1=1 & x1=2 -> (p1'=0) & (x1'=0); // finish
-
-        // multiplication
-        [p1_mult] p1=0 -> (p1'=2) & (x1'=0); // start
-        [p1_done] p1=2 & x1=3 -> (p1'=0) & (x1'=0);  // finish
-
-endmodule
-
-// processor 2
-module P2
-
-        p2 : [0..2];
-        // 0 - idle
-        // 1 - add
-        // 2 - multiply
-
-        x2 : clock; // local clock
-
-        invariant
-        (p2=1 => x2<=5) &
-        (p2=2 => x2<=7)
-    endinvariant
-
-        // addition
-        [p2_add] p2=0 -> (p2'=1) & (x2'=0); // start
-        [p2_done] p2=1 & x2=5 -> (p2'=0) & (x2'=0); // finish
-
-        // multiplication
-        [p2_mult] p2=0 -> (p2'=2) & (x2'=0); // start
-        [p2_done] p2=2 & x2=7 -> (p2'=0) & (x2'=0);  // finish
-
-endmodule
-
-// target state (all tasks complete)
-label "tasks_complete" = (task6=3);
-
-```
-
 """
 
 import enum
@@ -255,7 +129,7 @@ class P1:
         if loc == 1:
             return P1.x1 <= 2
         if loc == 2:
-            return P1.x1 >= 3
+            return P1.x1 <= 3
         return Boolean(True)
 
     @staticmethod
@@ -292,7 +166,7 @@ class P2:
         if loc == 1:
             return P2.x2 <= 5
         if loc == 2:
-            return P2.x2 >= 7
+            return P2.x2 <= 7
         return Boolean(True)
 
     @staticmethod
