@@ -1,6 +1,8 @@
 from abc import abstractmethod
 from functools import reduce
-from typing import Protocol, Sequence, Tuple, runtime_checkable
+from typing import Sequence, Tuple
+
+from typing_extensions import Protocol, runtime_checkable
 
 
 @runtime_checkable

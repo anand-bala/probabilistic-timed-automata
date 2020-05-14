@@ -234,7 +234,7 @@ class TaskGraphSpace(Space):
     def __contains__(self, x):
         location = PTALocation._make(x)
         return (
-            all(l in range(4) for l in location[:6])
+            all(loc in range(4) for loc in location[:6])
             and location.p1 in range(3)
             and location.p2 in range(3)
         )

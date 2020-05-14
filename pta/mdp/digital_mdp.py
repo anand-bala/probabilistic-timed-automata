@@ -10,8 +10,7 @@ the delay actions can be restricted to `[0, k]`.
 
 import enum
 import random
-from typing import (Callable, FrozenSet, Hashable, Mapping, NamedTuple, Set,
-                    Tuple)
+from typing import Callable, FrozenSet, Hashable, Mapping, NamedTuple, Set, Tuple
 
 import attr
 from attr.validators import instance_of

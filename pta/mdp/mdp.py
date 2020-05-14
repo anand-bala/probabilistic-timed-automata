@@ -11,8 +11,7 @@ valuation pair) and outputs a delay or an edge
 
 import enum
 import random
-from typing import (Callable, FrozenSet, Hashable, Mapping, NamedTuple, Set,
-                    Tuple)
+from typing import Callable, FrozenSet, Hashable, Mapping, NamedTuple, Set, Tuple
 
 import attr
 from attr.validators import instance_of
