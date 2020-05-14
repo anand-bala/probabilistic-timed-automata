@@ -7,13 +7,13 @@ Communications of the ACM, 54(9):78–87, 2011
 import enum
 import functools
 import operator
-from collections import namedtuple
 from itertools import chain, product, repeat
-from typing import Mapping, Tuple
+from typing import Mapping, NamedTuple, Set
 
 from pta import PTA, Clock, ClockConstraint
 from pta.clock import Boolean
 from pta.distributions import DiscreteDistribution, delta
+from pta.pta import Target, Transition
 from pta.spaces import Space
 from pta.utils import flatten
 
@@ -28,15 +28,29 @@ class Edges(enum.IntEnum):
     P2_DONE = enum.auto()
 
 
-TaskLocs = namedtuple("TaskLocs", [f"task{i}" for i in range(1, 7)])
-ProcessLocs = namedtuple("ProcessLocs", ["p1", "p2"])
-PTALocation = namedtuple("PTALocation", TaskLocs._fields + ProcessLocs._fields)
+class TaskLocs(NamedTuple):
+    task1: int
+    task2: int
+    task3: int
+    task4: int
+    task5: int
+    task6: int
 
-Transition = namedtuple(
-    "Transition", ["guard", "target_dist"]
-)  # type: Tuple[ClockConstraint, DiscreteDistribution]
 
-Label = namedtuple("Label", ["tasks_complete"])
+class ProcessLocs(NamedTuple):
+    p1: int
+    p2: int
+
+
+class PTALocation(NamedTuple):
+    task1: int
+    task2: int
+    task3: int
+    task4: int
+    task5: int
+    task6: int
+    p1: int
+    p2: int
 
 
 class Scheduler:
@@ -141,10 +155,10 @@ class P1:
             actions[Edges.P1_MUL] = Transition(Boolean(True), delta((P1.clocks(), 1)))
         if loc == 1:
             # TODO: Exactly equal may be an issue in the Guard...
-            actions[Edges.P1_DONE] = Transition(P1.x1 == 2, delta((P1.clocks(), 0)))
+            # NOTE: Fix it by making it >=
+            actions[Edges.P1_DONE] = Transition(P1.x1 >= 2, delta((P1.clocks(), 0)))
         if loc == 2:
-            # TODO: Exactly equal may be an issue in the Guard...
-            actions[Edges.P1_DONE] = Transition(P1.x1 == 3, delta((P1.clocks(), 0)))
+            actions[Edges.P1_DONE] = Transition(P1.x1 >= 3, delta((P1.clocks(), 0)))
 
         return actions
 
@@ -178,10 +192,10 @@ class P2:
             actions[Edges.P2_MUL] = Transition(Boolean(True), delta((P2.clocks(), 1)))
         if loc == 1:
             # TODO: Exactly equal may be an issue in the Guard...
-            actions[Edges.P2_DONE] = Transition(P2.x2 == 5, delta((P2.clocks(), 0)))
+            actions[Edges.P2_DONE] = Transition(P2.x2 >= 5, delta((P2.clocks(), 0)))
         if loc == 2:
             # TODO: Exactly equal may be an issue in the Guard...
-            actions[Edges.P2_DONE] = Transition(P2.x2 == 7, delta((P2.clocks(), 0)))
+            actions[Edges.P2_DONE] = Transition(P2.x2 >= 7, delta((P2.clocks(), 0)))
 
         return actions
 
@@ -190,7 +204,7 @@ def merge_transitions(*transitions: Transition) -> Transition:
     merged_guard: ClockConstraint = functools.reduce(
         operator.and_, [t.guard for t in transitions], Boolean(True)
     )
-    merged_target_dist = dict()  # type: Mapping[Tuple[Set[Clock], PTALocation], float]
+    merged_target_dist = dict()  # type: Mapping[Target, float]
     for ks in product(*(t.target_dist.support for t in transitions)):
         # Compute the union of clock reset sets
         clock_resets: Set[Clock] = functools.reduce(
@@ -201,7 +215,7 @@ def merge_transitions(*transitions: Transition) -> Transition:
         # Compute the product probability
         probs = [t.target_dist(ks[i]) for i, t in enumerate(transitions)]
         new_prob: float = functools.reduce(operator.mul, probs, 1.0)
-        merged_target_dist[(clock_resets, pta_loc)] = new_prob
+        merged_target_dist[Target(clock_resets, pta_loc)] = new_prob  # type: ignore
     return Transition(merged_guard, DiscreteDistribution(merged_target_dist))
 
 
@@ -271,9 +285,9 @@ def create_pta() -> PTA:
 
     return PTA(
         location_space=TaskGraphSpace(),
-        clocks=clocks,
-        actions=acts,
+        clocks=clocks,  # type: ignore
+        actions=acts,  # type: ignore
         init_location=init_location,
-        transitions=transitions,
-        invariants=invariants,
+        transitions=transitions,  # type: ignore
+        invariants=invariants,  # type: ignore
     )

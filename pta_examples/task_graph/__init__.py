@@ -5,3 +5,4 @@
 """
 
 from .basic import create_pta as deterministic_task_graph
+from .random_exec_times import create_pta as randomized_task_graph

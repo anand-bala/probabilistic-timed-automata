@@ -217,5 +217,6 @@ class MDP:
             self._current_clock_valuation = self._current_clock_valuation + env_delay
             self._current_clock_valuation.reset(env_reset)
             self._current_location = env_step
+        self._progress_steps += 1
 
         return self._get_obs()

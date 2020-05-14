@@ -27,8 +27,8 @@ format: clean_py
 
 .PHONY: check
 check:
-	python3 -m mypy -p pta
-	python3 -m flake8 pta
+	python3 -m mypy -p pta -p pta_examples
+	python3 -m flake8 pta pta_examples
 
 .PHONY: test
 test: check
