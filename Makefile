@@ -22,13 +22,13 @@ clean: clean_docs clean_py
 
 .PHONY: format
 format: clean_py
-	python3 -m black pta/ tests/ pta_examples/
-	python3 -m autoflake --in-place --remove-all-unused-imports --ignore-init-module-imports --recursive pta/ tests/ pta_examples/
+	python3 -m black pta/ tests/
+	python3 -m autoflake --in-place --remove-all-unused-imports --ignore-init-module-imports --recursive pta/ tests/
 
 .PHONY: check
 check:
-	python3 -m mypy -p pta -p pta_examples
-	python3 -m flake8 pta pta_examples
+	python3 -m mypy -p pta
+	python3 -m flake8 pta
 
 .PHONY: test
 test: check
