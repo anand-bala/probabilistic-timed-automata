@@ -4,6 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>pta.clocks module &#8212; Probabilistic Timed Automata v0.1.0 documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -12,7 +13,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pta.distributions module" href="distributions.html" />
@@ -70,247 +71,6 @@
 </pre></div>
 </div>
 <p>Moreover, the <cite>Clock</cite> and <cite>ClockConstraint</cite> are <em>frozen</em>, which emulates immutable data.</p>
-<dl class="py class">
-<dt id="pta.clock.Clock">
-<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">Clock</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#Clock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Clock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A Clock symbol</p>
-<p>The Clock class is a simple wrapper around any Hashable. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">Clock</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">Clock</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>In the above example, the variables <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are clocks with the <em>name</em> (a hashable string).</p>
-<dl class="py attribute">
-<dt id="pta.clock.Clock.name">
-<code class="sig-name descname">name</code><em class="property">: Hashable</em><em class="property"> = None</em><a class="headerlink" href="#pta.clock.Clock.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pta.clock.ClockValuation">
-<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">ClockValuation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#ClockValuation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.ClockValuation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Mapping</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
-<dl class="py method">
-<dt id="pta.clock.ClockValuation.zero_init">
-<em class="property">classmethod </em><code class="sig-name descname">zero_init</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clocks</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#ClockValuation.zero_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.ClockValuation.zero_init" title="Permalink to this definition">¶</a></dt>
-<dd><p>Zero initialize a <cite>ClockValuation</cite> for the given set of <cite>Clock</cite></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>clocks</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="#pta.clock.Clock" title="pta.clock.Clock"><em>Clock</em></a><em>]</em>) – Set of clocks to track the valuation of</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><cite>ClockValuation</cite> where each <cite>Clock</cite> has 0 valuation.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#pta.clock.ClockValuation" title="pta.clock.ClockValuation">ClockValuation</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pta.clock.ClockConstraint">
-<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">ClockConstraint</code><a class="reference internal" href="../_modules/pta/clock.html#ClockConstraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.ClockConstraint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
-<p>An abstract class for clock constraints</p>
-<dl class="py method">
-<dt id="pta.clock.ClockConstraint.contains">
-<em class="property">abstract </em><code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#ClockConstraint.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.ClockConstraint.contains" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the clock constraints evaluate to true given clock valuations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<a class="reference internal" href="#pta.clock.ClockValuation" title="pta.clock.ClockValuation"><em>pta.clock.ClockValuation</em></a>) – </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pta.clock.Boolean">
-<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">Boolean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#Boolean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Boolean" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pta.clock.ClockConstraint" title="pta.clock.ClockConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">pta.clock.ClockConstraint</span></code></a></p>
-<p>An atomic boolean class to represent <code class="docutils literal notranslate"><span class="pre">true</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code> clock constraints</p>
-<dl class="py attribute">
-<dt id="pta.clock.Boolean.value">
-<code class="sig-name descname">value</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#pta.clock.Boolean.value" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="pta.clock.Boolean.contains">
-<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#Boolean.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Boolean.contains" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the clock constraints evaluate to true given clock valuations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<a class="reference internal" href="#pta.clock.ClockValuation" title="pta.clock.ClockValuation"><em>pta.clock.ClockValuation</em></a>) – </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pta.clock.And">
-<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">And</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#And"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.And" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pta.clock.ClockConstraint" title="pta.clock.ClockConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">pta.clock.ClockConstraint</span></code></a></p>
-<p>Class to represent conjunctions of clock constraints</p>
-<dl class="py attribute">
-<dt id="pta.clock.And.args">
-<code class="sig-name descname">args</code><em class="property">: Tuple[ClockConstraint, ClockConstraint]</em><em class="property"> = None</em><a class="headerlink" href="#pta.clock.And.args" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="pta.clock.And.contains">
-<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#And.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.And.contains" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the clock constraints evaluate to true given clock valuations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<a class="reference internal" href="#pta.clock.ClockValuation" title="pta.clock.ClockValuation"><em>pta.clock.ClockValuation</em></a>) – </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pta.clock.ComparisonOp">
-<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">ComparisonOp</code><a class="reference internal" href="../_modules/pta/clock.html#ComparisonOp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.ComparisonOp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
-<p>Four comparison operations allowed in <cite>SingletonConstraint</cite> and <cite>DiagonalConstraint</cite></p>
-<dl class="py attribute">
-<dt id="pta.clock.ComparisonOp.GE">
-<code class="sig-name descname">GE</code><em class="property"> = 1</em><a class="headerlink" href="#pta.clock.ComparisonOp.GE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pta.clock.ComparisonOp.GT">
-<code class="sig-name descname">GT</code><em class="property"> = 2</em><a class="headerlink" href="#pta.clock.ComparisonOp.GT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pta.clock.ComparisonOp.LE">
-<code class="sig-name descname">LE</code><em class="property"> = 3</em><a class="headerlink" href="#pta.clock.ComparisonOp.LE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pta.clock.ComparisonOp.LT">
-<code class="sig-name descname">LT</code><em class="property"> = 4</em><a class="headerlink" href="#pta.clock.ComparisonOp.LT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="pta.clock.ComparisonOp.to_op">
-<code class="sig-name descname">to_op</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#ComparisonOp.to_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.ComparisonOp.to_op" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output the operator function that corresponds to the enum</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Callable[[float, float], bool]</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pta.clock.SingletonConstraint">
-<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">SingletonConstraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clock</span></em>, <em class="sig-param"><span class="n">rhs</span></em>, <em class="sig-param"><span class="n">op</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#SingletonConstraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.SingletonConstraint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pta.clock.ClockConstraint" title="pta.clock.ClockConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">pta.clock.ClockConstraint</span></code></a></p>
-<p>Constraints of the form (c sim n) for (n in mathbb{N}) and (sim in {&lt;,le,ge,&gt;})</p>
-<dl class="py attribute">
-<dt id="pta.clock.SingletonConstraint.clock">
-<code class="sig-name descname">clock</code><em class="property">: Clock</em><em class="property"> = None</em><a class="headerlink" href="#pta.clock.SingletonConstraint.clock" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pta.clock.SingletonConstraint.rhs">
-<code class="sig-name descname">rhs</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#pta.clock.SingletonConstraint.rhs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pta.clock.SingletonConstraint.op">
-<code class="sig-name descname">op</code><em class="property">: ComparisonOp</em><em class="property"> = None</em><a class="headerlink" href="#pta.clock.SingletonConstraint.op" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="pta.clock.SingletonConstraint.contains">
-<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#SingletonConstraint.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.SingletonConstraint.contains" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the clock constraints evaluate to true given clock valuations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<a class="reference internal" href="#pta.clock.ClockValuation" title="pta.clock.ClockValuation"><em>pta.clock.ClockValuation</em></a>) – </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pta.clock.DiagonalLHS">
-<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">DiagonalLHS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clock1</span></em>, <em class="sig-param"><span class="n">clock2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#DiagonalLHS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.DiagonalLHS" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Intermediate result for (c_1 - c_2)</p>
-<dl class="py attribute">
-<dt id="pta.clock.DiagonalLHS.clock1">
-<code class="sig-name descname">clock1</code><em class="property">: Clock</em><em class="property"> = None</em><a class="headerlink" href="#pta.clock.DiagonalLHS.clock1" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pta.clock.DiagonalLHS.clock2">
-<code class="sig-name descname">clock2</code><em class="property">: Clock</em><em class="property"> = None</em><a class="headerlink" href="#pta.clock.DiagonalLHS.clock2" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pta.clock.DiagonalConstraint">
-<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">DiagonalConstraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lhs</span></em>, <em class="sig-param"><span class="n">rhs</span></em>, <em class="sig-param"><span class="n">op</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#DiagonalConstraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.DiagonalConstraint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pta.clock.ClockConstraint" title="pta.clock.ClockConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">pta.clock.ClockConstraint</span></code></a></p>
-<p>Diagonal constraints of the form: (c_1 - c_2 sim n)</p>
-<dl class="py attribute">
-<dt id="pta.clock.DiagonalConstraint.lhs">
-<code class="sig-name descname">lhs</code><em class="property">: DiagonalLHS</em><em class="property"> = None</em><a class="headerlink" href="#pta.clock.DiagonalConstraint.lhs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pta.clock.DiagonalConstraint.rhs">
-<code class="sig-name descname">rhs</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#pta.clock.DiagonalConstraint.rhs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pta.clock.DiagonalConstraint.op">
-<code class="sig-name descname">op</code><em class="property">: ComparisonOp</em><em class="property"> = None</em><a class="headerlink" href="#pta.clock.DiagonalConstraint.op" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="pta.clock.DiagonalConstraint.contains">
-<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#DiagonalConstraint.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.DiagonalConstraint.contains" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the clock constraints evaluate to true given clock valuations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<a class="reference internal" href="#pta.clock.ClockValuation" title="pta.clock.ClockValuation"><em>pta.clock.ClockValuation</em></a>) – </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="py function">
 <dt id="pta.clock.delays">
 <code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">delays</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span></em>, <em class="sig-param"><span class="n">constraint</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#delays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.delays" title="Permalink to this definition">¶</a></dt>
@@ -336,9 +96,308 @@ given clock constraint.</p>
 </dl>
 </dd></dl>
 
+<dl class="py class">
+<dt id="pta.clock.ClockConstraint">
+<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">ClockConstraint</code><a class="reference internal" href="../_modules/pta/clock.html#ClockConstraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.ClockConstraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>An abstract class for clock constraints</p>
+<dl class="py method">
+<dt id="pta.clock.ClockConstraint.contains">
+<em class="property">abstract </em><code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#ClockConstraint.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.ClockConstraint.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the clock constraints evaluate to true given clock valuations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference internal" href="#pta.clock.ClockValuation" title="pta.clock.ClockValuation"><em>pta.clock.ClockValuation</em></a>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pta.clock.Clock">
+<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">Clock</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#Clock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Clock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Clock symbol</p>
+<p>The Clock class is a simple wrapper around any Hashable. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">Clock</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">Clock</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the above example, the variables <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are clocks with the <em>name</em> (a hashable string).</p>
+<dl class="py attribute">
+<dt id="pta.clock.Clock.name">
+<code class="sig-name descname">name</code><em class="property">: Hashable</em><a class="headerlink" href="#pta.clock.Clock.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pta.clock.ClockValuation">
+<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">ClockValuation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#ClockValuation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.ClockValuation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Mapping</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<dl class="py method">
+<dt id="pta.clock.ClockValuation.clocks">
+<em class="property">property </em><code class="sig-name descname">clocks</code><a class="headerlink" href="#pta.clock.ClockValuation.clocks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.ClockValuation.zero_init">
+<em class="property">classmethod </em><code class="sig-name descname">zero_init</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clocks</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#ClockValuation.zero_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.ClockValuation.zero_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zero initialize a <cite>ClockValuation</cite> for the given set of <cite>Clock</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>clocks</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="#pta.clock.Clock" title="pta.clock.Clock"><em>Clock</em></a><em>]</em>) – Set of clocks to track the valuation of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>ClockValuation</cite> where each <cite>Clock</cite> has 0 valuation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pta.clock.ClockValuation" title="pta.clock.ClockValuation">ClockValuation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.ClockValuation.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clocks</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/clock.html#ClockValuation.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.ClockValuation.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a set of <cite>Clock</cite> that is a subset of the tracked <cite>Clock</cite> objects, set the values to 0</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>clocks</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="#pta.clock.Clock" title="pta.clock.Clock"><em>pta.clock.Clock</em></a><em>]</em>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pta.clock.ClockValuation" title="pta.clock.ClockValuation">pta.clock.ClockValuation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pta.clock.Interval">
+<em class="property">class </em><code class="sig-prename descclassname">pta.clock.</code><code class="sig-name descname">Interval</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">intervals</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/portion/interval.html#Interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class represents an interval.</p>
+<p>An interval is an (automatically simplified) union of atomic intervals.
+It can be created with Interval.from_atomic(), by passing intervals to __init__, or by using
+one of the helpers provided in this module (open, closed, openclosed, etc.)</p>
+<dl class="py method">
+<dt id="pta.clock.Interval.left">
+<em class="property">property </em><code class="sig-name descname">left</code><a class="headerlink" href="#pta.clock.Interval.left" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lowest left boundary is either CLOSED or OPEN.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.lower">
+<em class="property">property </em><code class="sig-name descname">lower</code><a class="headerlink" href="#pta.clock.Interval.lower" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lowest lower bound value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.upper">
+<em class="property">property </em><code class="sig-name descname">upper</code><a class="headerlink" href="#pta.clock.Interval.upper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Highest upper bound value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.right">
+<em class="property">property </em><code class="sig-name descname">right</code><a class="headerlink" href="#pta.clock.Interval.right" title="Permalink to this definition">¶</a></dt>
+<dd><p>Highest right boundary is either CLOSED or OPEN.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.empty">
+<em class="property">property </em><code class="sig-name descname">empty</code><a class="headerlink" href="#pta.clock.Interval.empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if interval is empty, False otherwise.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.atomic">
+<em class="property">property </em><code class="sig-name descname">atomic</code><a class="headerlink" href="#pta.clock.Interval.atomic" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if this interval is atomic, False otherwise.
+An interval is atomic if it is composed of a single (possibly empty) atomic interval.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.from_atomic">
+<em class="property">static </em><code class="sig-name descname">from_atomic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">left</span></em>, <em class="sig-param"><span class="n">lower</span></em>, <em class="sig-param"><span class="n">upper</span></em>, <em class="sig-param"><span class="n">right</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/portion/interval.html#Interval.from_atomic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Interval.from_atomic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an Interval instance containing a single atomic interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> – either CLOSED or OPEN.</p></li>
+<li><p><strong>lower</strong> – value of the lower bound.</p></li>
+<li><p><strong>upper</strong> – value of the upper bound.</p></li>
+<li><p><strong>right</strong> – either CLOSED or OPEN.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.enclosure">
+<em class="property">property </em><code class="sig-name descname">enclosure</code><a class="headerlink" href="#pta.clock.Interval.enclosure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the smallest interval composed of a single atomic interval that encloses
+the current interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>an Interval instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.replace">
+<code class="sig-name descname">replace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">left</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lower</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">upper</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">right</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">ignore_inf</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/portion/interval.html#Interval.replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Interval.replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new interval based on the current one and the provided values.</p>
+<p>If current interval is not atomic, it is extended or restricted such that
+its enclosure satisfies the new bounds. In other words, its new enclosure
+will be equal to self.enclosure.replace(left, lower, upper, right).</p>
+<p>Callable can be passed instead of values. In that case, it is called with the current
+corresponding value except if ignore_inf if set (default) and the corresponding
+bound is an infinity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> – (a function of) left boundary.</p></li>
+<li><p><strong>lower</strong> – (a function of) value of the lower bound.</p></li>
+<li><p><strong>upper</strong> – (a function of) value of the upper bound.</p></li>
+<li><p><strong>right</strong> – (a function of) right boundary.</p></li>
+<li><p><strong>ignore_inf</strong> – ignore infinities if functions are provided (default is True).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an Interval instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.apply">
+<code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/portion/interval.html#Interval.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Interval.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a function on each of the underlying atomic intervals and return their union
+as a new interval instance</p>
+<p>Given function is expected to return an interval (possibly empty or not atomic) or
+a 4-uple (left, lower, upper, right) whose values correspond to the parameters of
+Interval.from_atomic(left, lower, upper, right).</p>
+<p>This method is merely a shortcut for Interval(<a href="#id2"><span class="problematic" id="id3">*</span></a>list(map(func, self))).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> – function to apply on each underlying atomic interval.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an Interval instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.adjacent">
+<code class="sig-name descname">adjacent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/portion/interval.html#Interval.adjacent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Interval.adjacent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if given interval is adjacent.</p>
+<p>An interval is adjacent if there is no intersection, and their union is an atomic interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – an interval.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if intervals are adjacent, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.overlaps">
+<code class="sig-name descname">overlaps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/portion/interval.html#Interval.overlaps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Interval.overlaps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if intervals have any overlapping value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – an interval.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if intervals overlap, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.intersection">
+<code class="sig-name descname">intersection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/portion/interval.html#Interval.intersection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Interval.intersection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the intersection of two intervals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – an interval.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the intersection of the intervals.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.union">
+<code class="sig-name descname">union</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/portion/interval.html#Interval.union"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Interval.union" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the union of two intervals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – an interval.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the union of the intervals.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/portion/interval.html#Interval.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Interval.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if given item is contained in this interval.
+This method accepts intervals and arbitrary comparable values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>item</strong> – an interval or any arbitrary comparable value.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if given item is contained, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.complement">
+<code class="sig-name descname">complement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/portion/interval.html#Interval.complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Interval.complement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the complement of this interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the complement of this interval.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.clock.Interval.difference">
+<code class="sig-name descname">difference</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/portion/interval.html#Interval.difference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.clock.Interval.difference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the difference of two intervals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – an interval.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the difference of the intervals.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -379,7 +438,7 @@ given clock constraint.</p>
   </div>
   <footer id="pagefooter">&copy; 2020, Anand Balakrishnan.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      3.0.2
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -4,6 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>pta.mdp.mdp &#8212; Probabilistic Timed Automata v0.1.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -12,7 +13,7 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -55,17 +56,18 @@
 <span class="sd">valuation pair) and outputs a delay or an edge</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">FrozenSet</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+
 <span class="kn">import</span> <span class="nn">attr</span>
 <span class="kn">from</span> <span class="nn">attr.validators</span> <span class="kn">import</span> <span class="n">instance_of</span>
 
-<span class="kn">from</span> <span class="nn">pta.clock</span> <span class="kn">import</span> <span class="n">Clock</span><span class="p">,</span> <span class="n">ClockValuation</span>
 <span class="kn">from</span> <span class="nn">pta</span> <span class="kn">import</span> <span class="n">pta</span>
-
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">FrozenSet</span><span class="p">,</span>
-    <span class="n">Hashable</span><span class="p">,</span>
-    <span class="n">Tuple</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pta.clock</span> <span class="kn">import</span> <span class="n">Clock</span><span class="p">,</span> <span class="n">ClockConstraint</span><span class="p">,</span> <span class="n">ClockValuation</span><span class="p">,</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">delays</span>
+<span class="kn">from</span> <span class="nn">pta.pta</span> <span class="kn">import</span> <span class="n">Target</span>
+<span class="kn">from</span> <span class="nn">pta.pta</span> <span class="kn">import</span> <span class="n">Transition</span> <span class="k">as</span> <span class="n">EdgeTransition</span>
+<span class="kn">from</span> <span class="nn">pta.spaces</span> <span class="kn">import</span> <span class="n">Space</span>
 
 <span class="c1"># Location in the PTA</span>
 <span class="n">Location</span> <span class="o">=</span> <span class="n">Hashable</span>
@@ -73,25 +75,69 @@
 <span class="c1"># An is a transition that can be taken in the PTA</span>
 <span class="n">Edge</span> <span class="o">=</span> <span class="n">Hashable</span>
 
-<span class="n">State</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Location</span><span class="p">]</span>  <span class="c1"># State is Valuation x Location</span>
-<span class="n">Action</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Edge</span><span class="p">]</span>  <span class="c1"># Action is Delay x Edge</span>
 
-<span class="c1"># TransitionFn :: State x Action -&gt; Dist(State)</span>
+<div class="viewcode-block" id="State"><a class="viewcode-back" href="../../../pta/mdp.html#pta.mdp.mdp.State">[docs]</a><span class="k">class</span> <span class="nc">State</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">ClockValuation</span>
+    <span class="n">location</span><span class="p">:</span> <span class="n">Location</span></div>
 
 
-<div class="viewcode-block" id="MDP"><a class="viewcode-back" href="../../../pta/mdp.html#pta.mdp.mdp.MDP">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../../pta/mdp.html#pta.mdp.mdp.Action">[docs]</a><span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">delay</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">edge</span><span class="p">:</span> <span class="n">Edge</span></div>
+
+
+<span class="nd">@enum</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">class</span> <span class="nc">_Turn</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">PLAYER</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
+    <span class="n">ENV</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="MDP"><a class="viewcode-back" href="../../../pta/mdp.html#pta.mdp.mdp.MDP">[docs]</a><span class="nd">@attr</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">MDP</span><span class="p">:</span>
 
     <span class="n">_pta</span><span class="p">:</span> <span class="n">pta</span><span class="o">.</span><span class="n">PTA</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="p">[</span><span class="n">instance_of</span><span class="p">(</span><span class="n">pta</span><span class="o">.</span><span class="n">PTA</span><span class="p">)])</span>
 
-    <span class="n">_current_clock_valuation</span><span class="p">:</span> <span class="n">ClockValuation</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span>
-        <span class="n">converter</span><span class="o">=</span><span class="n">ClockValuation</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span>
-    <span class="p">)</span>
+    <span class="n">_current_clock_valuation</span><span class="p">:</span> <span class="n">ClockValuation</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">_current_location</span><span class="p">:</span> <span class="n">Location</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_progress_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">_turn</span><span class="p">:</span> <span class="n">_Turn</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_Turn</span><span class="o">.</span><span class="n">PLAYER</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span> <span class="o">=</span> <span class="n">ClockValuation</span><span class="o">.</span><span class="n">zero_init</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clocks</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_steps</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_turn</span> <span class="o">=</span> <span class="n">_Turn</span><span class="o">.</span><span class="n">PLAYER</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_default_delay_stochasticity</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="n">ClockValuation</span><span class="p">,</span> <span class="n">cc</span><span class="p">:</span> <span class="n">ClockConstraint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Uniformly randomly pick a float withing the delay&quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">portion</span> <span class="k">as</span> <span class="nn">P</span>
+        <span class="kn">import</span> <span class="nn">random</span>
+
+        <span class="c1"># Get interval of allowable delays</span>
+        <span class="n">interval</span><span class="p">:</span> <span class="n">Interval</span> <span class="o">=</span> <span class="n">delays</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">cc</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">interval</span><span class="o">.</span><span class="n">atomic</span>
+        <span class="p">),</span> <span class="s2">&quot;Interval seems to be a disjunction of other intervals... Bug!&quot;</span>
+        <span class="k">assert</span> <span class="n">interval</span><span class="o">.</span><span class="n">lower</span> <span class="o">!=</span> <span class="o">-</span><span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;Interval lower bound is unbounded... Bug!&quot;</span>
+        <span class="n">left_offset</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="k">if</span> <span class="n">interval</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">OPEN</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">right_offset</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="k">if</span> <span class="n">interval</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">OPEN</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">interval</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+            <span class="c1"># If upper is unbounded, it doesn&#39;t matter what value we pick, so pick the lower bound + some offset if open bound</span>
+            <span class="k">return</span> <span class="n">interval</span><span class="o">.</span><span class="n">lower</span> <span class="o">+</span> <span class="n">left_offset</span>
+        <span class="c1"># Otherwise pick uniformly from the range</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+            <span class="n">interval</span><span class="o">.</span><span class="n">lower</span> <span class="o">+</span> <span class="n">left_offset</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">upper</span> <span class="o">-</span> <span class="n">right_offset</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Given a ClockConstraint, pick an offset value</span>
+    <span class="n">_random_delay</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ClockValuation</span><span class="p">,</span> <span class="n">ClockConstraint</span><span class="p">],</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">ib</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">_default_delay_stochasticity</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">locations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FrozenSet</span><span class="p">[</span><span class="n">Location</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">locations</span>
+    <span class="k">def</span> <span class="nf">location_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">location_space</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">clocks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FrozenSet</span><span class="p">[</span><span class="n">Clock</span><span class="p">]:</span>
@@ -105,12 +151,124 @@
     <span class="k">def</span> <span class="nf">initial_location</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Location</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">initial_location</span>
 
-    <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># We have our PTA. Now I need to populate what?</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span> <span class="o">=</span> <span class="n">ClockValuation</span><span class="o">.</span><span class="n">zero_init</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clocks</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_location</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">valuation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClockValuation</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">location</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Location</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span>
+
+    <span class="k">def</span> <span class="nf">_get_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">State</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">State</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MDP.transition"><a class="viewcode-back" href="../../../pta/mdp.html#pta.mdp.mdp.MDP.transition">[docs]</a>    <span class="k">def</span> <span class="nf">transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">:</span> <span class="n">Edge</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EdgeTransition</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">_transitions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span><span class="p">)[</span><span class="n">edge</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="MDP.enabled_actions"><a class="viewcode-back" href="../../../pta/mdp.html#pta.mdp.mdp.MDP.enabled_actions">[docs]</a>    <span class="k">def</span> <span class="nf">enabled_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Interval</span><span class="p">,</span> <span class="n">FrozenSet</span><span class="p">[</span><span class="n">Edge</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the interval of delays satisfying the invariant and the set of actions enabled at the current time&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">allowed_delays</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span>
+            <span class="p">),</span>
+            <span class="nb">frozenset</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">enabled_actions</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="MDP.available_edges"><a class="viewcode-back" href="../../../pta/mdp.html#pta.mdp.mdp.MDP.available_edges">[docs]</a>    <span class="k">def</span> <span class="nf">available_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Edge</span><span class="p">,</span> <span class="n">EdgeTransition</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">action</span><span class="p">:</span> <span class="n">transition</span>
+            <span class="k">for</span> <span class="n">action</span><span class="p">,</span> <span class="n">transition</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">transitions</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="MDP.reset"><a class="viewcode-back" href="../../../pta/mdp.html#pta.mdp.mdp.MDP.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">State</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reset the MDP to its initial state</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        State</span>
+<span class="sd">            The reset state of the MDP</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__attrs_post_init__</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_obs</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MDP.step"><a class="viewcode-back" href="../../../pta/mdp.html#pta.mdp.mdp.MDP.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">Action</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">edge_first</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">State</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Take a timed action on the MDP</span>
+
+<span class="sd">        Here, the semantics imply that the agent takes an edge, and then waits</span>
+<span class="sd">        for the given delay. Due to the stochasticity in the environment, there</span>
+<span class="sd">        is noise in the delay and the edge may be probabilistic.</span>
+<span class="sd">        If you want the reverse to be true, set `edge_first` to `False`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        action : Action</span>
+<span class="sd">                 A timed action</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        State</span>
+<span class="sd">            The new state of the MDP</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">delay</span><span class="p">,</span> <span class="n">edge</span> <span class="o">=</span> <span class="n">Action</span><span class="o">.</span><span class="n">_make</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">edge_first</span><span class="p">:</span>
+            <span class="c1"># First let&#39;s take the delay.</span>
+
+            <span class="c1"># (Assume that a preprocessing step makes sure delay satisfies invariant)</span>
+            <span class="c1"># And update current clock valuation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span> <span class="o">+</span> <span class="n">delay</span>
+
+            <span class="n">_</span><span class="p">,</span> <span class="n">allowed_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enabled_actions</span><span class="p">()</span>
+
+            <span class="c1"># If edge is in allowed_edges, we can take the transition</span>
+            <span class="k">if</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">allowed_edges</span><span class="p">:</span>
+                <span class="n">transition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transition</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+                <span class="n">target</span><span class="p">:</span> <span class="n">Target</span> <span class="o">=</span> <span class="n">Target</span><span class="o">.</span><span class="n">_make</span><span class="p">(</span><span class="n">transition</span><span class="o">.</span><span class="n">target_dist</span><span class="o">.</span><span class="n">sample</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">location</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">reset</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># if edge taken first, then delay</span>
+            <span class="c1"># First get the set of allowed edges</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">allowed_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enabled_actions</span><span class="p">()</span>
+            <span class="c1"># If edge is in allowed_edges, we can take the transition</span>
+            <span class="k">if</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">allowed_edges</span><span class="p">:</span>
+                <span class="n">transition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transition</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+                <span class="n">next_loc</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">target_dist</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span> <span class="o">=</span> <span class="n">next_loc</span>
+            <span class="c1"># Now, we take the delay</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span> <span class="o">+</span> <span class="n">delay</span>
+
+        <span class="c1"># Now the environment can take actions...</span>
+        <span class="c1"># Get the current allowed delays and actions</span>
+        <span class="n">allowed_delay</span><span class="p">,</span> <span class="n">allowed_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enabled_actions</span><span class="p">()</span>
+        <span class="c1"># Check if there is any edges available that are not part of self.edges</span>
+        <span class="n">env_actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allowed_edges</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">env_actions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Take it?</span>
+            <span class="n">env_edge</span><span class="p">:</span> <span class="n">Edge</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="n">env_actions</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">env_transition</span><span class="p">:</span> <span class="n">EdgeTransition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transition</span><span class="p">(</span><span class="n">env_edge</span><span class="p">)</span>
+            <span class="n">env_delay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_delay</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span><span class="p">,</span> <span class="n">env_transition</span><span class="o">.</span><span class="n">guard</span>
+            <span class="p">)</span>
+            <span class="n">env_reset</span><span class="p">,</span> <span class="n">env_step</span> <span class="o">=</span> <span class="n">env_transition</span><span class="o">.</span><span class="n">target_dist</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span>
+                <span class="mi">0</span>
+            <span class="p">]</span>  <span class="c1"># type: Set[Clock], Location</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span> <span class="o">+</span> <span class="n">env_delay</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_clock_valuation</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">env_reset</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_location</span> <span class="o">=</span> <span class="n">env_step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_steps</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_obs</span><span class="p">()</span></div></div>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -146,7 +304,7 @@
   </div>
   <footer id="pagefooter">&copy; 2020, Anand Balakrishnan.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      3.0.2
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

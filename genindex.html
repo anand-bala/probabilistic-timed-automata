@@ -1,10 +1,10 @@
 
-
 <!DOCTYPE html>
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Index &#8212; Probabilistic Timed Automata v0.1.0 documentation</title>
     <link rel="stylesheet" href="_static/better.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,7 +13,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -42,11 +42,12 @@
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#A"><strong>A</strong></a>
- | <a href="#B"><strong>B</strong></a>
+ <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
@@ -62,26 +63,32 @@
  | <a href="#Z"><strong>Z</strong></a>
  
 </div>
-<h2 id="A">A</h2>
+<h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/pta.html#pta.pta.PTA.actions">actions() (pta.pta.PTA property)</a>
-</li>
-      <li><a href="pta/pta.html#pta.pta.PTA.allowed_delays">allowed_delays() (pta.pta.PTA method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/clock.html#pta.clock.And">And (class in pta.clock)</a>
-</li>
-      <li><a href="pta/clock.html#pta.clock.And.args">args (pta.clock.And attribute)</a>
+      <li><a href="pta/distributions.html#pta.distributions.DiscreteDistribution.__call__">__call__() (pta.distributions.DiscreteDistribution method)</a>
 </li>
   </ul></td>
 </tr></table>
 
-<h2 id="B">B</h2>
+<h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/clock.html#pta.clock.Boolean">Boolean (class in pta.clock)</a>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.Action">Action (class in pta.mdp.mdp)</a>
+</li>
+      <li><a href="pta/pta.html#pta.pta.PTA.actions">actions() (pta.pta.PTA property)</a>
+</li>
+      <li><a href="pta/clock.html#pta.clock.Interval.adjacent">adjacent() (pta.clock.Interval method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pta/pta.html#pta.pta.PTA.allowed_delays">allowed_delays() (pta.pta.PTA method)</a>
+</li>
+      <li><a href="pta/clock.html#pta.clock.Interval.apply">apply() (pta.clock.Interval method)</a>
+</li>
+      <li><a href="pta/clock.html#pta.clock.Interval.atomic">atomic() (pta.clock.Interval property)</a>
+</li>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.MDP.available_edges">available_edges() (pta.mdp.mdp.MDP method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -91,19 +98,15 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pta/clock.html#pta.clock.Clock">Clock (class in pta.clock)</a>
 </li>
-      <li><a href="pta/clock.html#pta.clock.SingletonConstraint.clock">clock (pta.clock.SingletonConstraint attribute)</a>
-</li>
-      <li><a href="pta/clock.html#pta.clock.DiagonalLHS.clock1">clock1 (pta.clock.DiagonalLHS attribute)</a>
-</li>
-      <li><a href="pta/clock.html#pta.clock.DiagonalLHS.clock2">clock2 (pta.clock.DiagonalLHS attribute)</a>
-</li>
       <li><a href="pta/mdp.html#pta.mdp.region_mdp.RegionMDP.clock_valuation">clock_valuation() (pta.mdp.region_mdp.RegionMDP property)</a>
 </li>
       <li><a href="pta/clock.html#pta.clock.ClockConstraint">ClockConstraint (class in pta.clock)</a>
 </li>
-      <li><a href="pta/mdp.html#pta.mdp.mdp.MDP.clocks">clocks() (pta.mdp.mdp.MDP property)</a>
+      <li><a href="pta/clock.html#pta.clock.ClockValuation.clocks">clocks() (pta.clock.ClockValuation property)</a>
 
       <ul>
+        <li><a href="pta/mdp.html#pta.mdp.mdp.MDP.clocks">(pta.mdp.mdp.MDP property)</a>
+</li>
         <li><a href="pta/mdp.html#pta.mdp.region_mdp.Region.clocks">(pta.mdp.region_mdp.Region property)</a>
 </li>
         <li><a href="pta/pta.html#pta.pta.PTA.clocks">(pta.pta.PTA property)</a>
@@ -113,18 +116,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pta/clock.html#pta.clock.ClockValuation">ClockValuation (class in pta.clock)</a>
 </li>
-      <li><a href="pta/clock.html#pta.clock.ComparisonOp">ComparisonOp (class in pta.clock)</a>
+      <li><a href="pta/clock.html#pta.clock.Interval.complement">complement() (pta.clock.Interval method)</a>
 </li>
-      <li><a href="pta/clock.html#pta.clock.And.contains">contains() (pta.clock.And method)</a>
+      <li><a href="pta/clock.html#pta.clock.ClockConstraint.contains">contains() (pta.clock.ClockConstraint method)</a>
 
       <ul>
-        <li><a href="pta/clock.html#pta.clock.Boolean.contains">(pta.clock.Boolean method)</a>
-</li>
-        <li><a href="pta/clock.html#pta.clock.ClockConstraint.contains">(pta.clock.ClockConstraint method)</a>
-</li>
-        <li><a href="pta/clock.html#pta.clock.DiagonalConstraint.contains">(pta.clock.DiagonalConstraint method)</a>
-</li>
-        <li><a href="pta/clock.html#pta.clock.SingletonConstraint.contains">(pta.clock.SingletonConstraint method)</a>
+        <li><a href="pta/clock.html#pta.clock.Interval.contains">(pta.clock.Interval method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -133,6 +130,8 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.Action.delay">delay (pta.mdp.mdp.Action attribute)</a>
+</li>
       <li><a href="pta/mdp.html#pta.mdp.region_mdp.Region.delay">delay() (pta.mdp.region_mdp.Region method)</a>
 
       <ul>
@@ -141,19 +140,15 @@
       </ul></li>
       <li><a href="pta/mdp.html#pta.mdp.region_mdp.Region.delay_float">delay_float() (pta.mdp.region_mdp.Region method)</a>
 </li>
-      <li><a href="pta/clock.html#pta.clock.delays">delays() (in module pta.clock)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/distributions.html#pta.distributions.DiscreteDistribution.delta">delta() (pta.distributions.DiscreteDistribution class method)</a>
+      <li><a href="pta/clock.html#pta.clock.delays">delays() (in module pta.clock)</a>
 </li>
-      <li><a href="pta/clock.html#pta.clock.DiagonalConstraint">DiagonalConstraint (class in pta.clock)</a>
+      <li><a href="pta/distributions.html#pta.distributions.delta">delta() (in module pta.distributions)</a>
 </li>
-      <li><a href="pta/clock.html#pta.clock.DiagonalLHS">DiagonalLHS (class in pta.clock)</a>
+      <li><a href="pta/clock.html#pta.clock.Interval.difference">difference() (pta.clock.Interval method)</a>
 </li>
       <li><a href="pta/distributions.html#pta.distributions.DiscreteDistribution">DiscreteDistribution (class in pta.distributions)</a>
-</li>
-      <li><a href="pta/distributions.html#pta.distributions.Distribution">Distribution (class in pta.distributions)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -161,27 +156,39 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.Action.edge">edge (pta.mdp.mdp.Action attribute)</a>
+</li>
       <li><a href="pta/mdp.html#pta.mdp.mdp.MDP.edges">edges() (pta.mdp.mdp.MDP property)</a>
+</li>
+      <li><a href="pta/clock.html#pta.clock.Interval.empty">empty() (pta.clock.Interval property)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/mdp.html#pta.mdp.region_mdp.RegionMDP.enabled_actions">enabled_actions() (pta.mdp.region_mdp.RegionMDP method)</a>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.MDP.enabled_actions">enabled_actions() (pta.mdp.mdp.MDP method)</a>
 
       <ul>
+        <li><a href="pta/mdp.html#pta.mdp.region_mdp.RegionMDP.enabled_actions">(pta.mdp.region_mdp.RegionMDP method)</a>
+</li>
         <li><a href="pta/pta.html#pta.pta.PTA.enabled_actions">(pta.pta.PTA method)</a>
 </li>
       </ul></li>
+      <li><a href="pta/clock.html#pta.clock.Interval.enclosure">enclosure() (pta.clock.Interval property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pta/clock.html#pta.clock.Interval.from_atomic">from_atomic() (pta.clock.Interval static method)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/clock.html#pta.clock.ComparisonOp.GE">GE (pta.clock.ComparisonOp attribute)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/clock.html#pta.clock.ComparisonOp.GT">GT (pta.clock.ComparisonOp attribute)</a>
+      <li><a href="pta/pta.html#pta.pta.Transition.guard">guard (pta.pta.Transition attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -195,9 +202,15 @@
         <li><a href="pta/pta.html#pta.pta.PTA.initial_location">(pta.pta.PTA property)</a>
 </li>
       </ul></li>
+      <li><a href="pta/clock.html#pta.clock.Interval.intersection">intersection() (pta.clock.Interval method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pta/clock.html#pta.clock.Interval">Interval (class in pta.clock)</a>
+</li>
       <li><a href="pta/mdp.html#pta.mdp.region_mdp.RegionMDP.invariant_interval">invariant_interval() (pta.mdp.region_mdp.RegionMDP method)</a>
+</li>
+      <li><a href="pta/pta.html#pta.pta.PTA.invariants">invariants() (pta.pta.PTA method)</a>
 </li>
       <li><a href="pta/mdp.html#pta.mdp.region_mdp.Region.is_int">is_int() (pta.mdp.region_mdp.Region property)</a>
 </li>
@@ -207,23 +220,29 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/pta.html#pta.pta.PTA.labels">labels() (pta.pta.PTA method)</a>
+      <li><a href="pta/clock.html#pta.clock.Interval.left">left() (pta.clock.Interval property)</a>
 </li>
-      <li><a href="pta/clock.html#pta.clock.ComparisonOp.LE">LE (pta.clock.ComparisonOp attribute)</a>
-</li>
-      <li><a href="pta/clock.html#pta.clock.DiagonalConstraint.lhs">lhs (pta.clock.DiagonalConstraint attribute)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/mdp.html#pta.mdp.region_mdp.RegionMDP.location">location() (pta.mdp.region_mdp.RegionMDP property)</a>
-</li>
-      <li><a href="pta/mdp.html#pta.mdp.mdp.MDP.locations">locations() (pta.mdp.mdp.MDP property)</a>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.State.location">location (pta.mdp.mdp.State attribute)</a>
 
       <ul>
-        <li><a href="pta/pta.html#pta.pta.PTA.locations">(pta.pta.PTA property)</a>
+        <li><a href="pta/pta.html#pta.pta.Target.location">(pta.pta.Target attribute)</a>
 </li>
       </ul></li>
-      <li><a href="pta/clock.html#pta.clock.ComparisonOp.LT">LT (pta.clock.ComparisonOp attribute)</a>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.MDP.location">location() (pta.mdp.mdp.MDP property)</a>
+
+      <ul>
+        <li><a href="pta/mdp.html#pta.mdp.region_mdp.RegionMDP.location">(pta.mdp.region_mdp.RegionMDP property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.MDP.location_space">location_space() (pta.mdp.mdp.MDP property)</a>
+
+      <ul>
+        <li><a href="pta/pta.html#pta.pta.PTA.location_space">(pta.pta.PTA property)</a>
+</li>
+      </ul></li>
+      <li><a href="pta/clock.html#pta.clock.Interval.lower">lower() (pta.clock.Interval property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -251,10 +270,6 @@
 </li>
         <li><a href="pta/pta.html#module-pta.pta">pta.pta</a>
 </li>
-        <li><a href="pta_examples.html#module-pta_examples">pta_examples</a>
-</li>
-        <li><a href="pta_examples/traffic_example.html#module-pta_examples.traffic_example">pta_examples.traffic_example</a>
-</li>
       </ul></li>
   </ul></td>
 </tr></table>
@@ -276,12 +291,8 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/clock.html#pta.clock.DiagonalConstraint.op">op (pta.clock.DiagonalConstraint attribute)</a>
-
-      <ul>
-        <li><a href="pta/clock.html#pta.clock.SingletonConstraint.op">(pta.clock.SingletonConstraint attribute)</a>
+      <li><a href="pta/clock.html#pta.clock.Interval.overlaps">overlaps() (pta.clock.Interval method)</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -311,6 +322,8 @@
         <li><a href="pta/distributions.html#module-pta.distributions">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pta.mdp
 
@@ -318,8 +331,6 @@
         <li><a href="pta/mdp.html#module-pta.mdp">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pta.mdp.mdp
 
@@ -341,20 +352,6 @@
         <li><a href="pta/pta.html#module-pta.pta">module</a>
 </li>
       </ul></li>
-      <li>
-    pta_examples
-
-      <ul>
-        <li><a href="pta_examples.html#module-pta_examples">module</a>
-</li>
-      </ul></li>
-      <li>
-    pta_examples.traffic_example
-
-      <ul>
-        <li><a href="pta_examples/traffic_example.html#module-pta_examples.traffic_example">module</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -365,20 +362,24 @@
 </li>
       <li><a href="pta/mdp.html#pta.mdp.region_mdp.RegionMDP">RegionMDP (class in pta.mdp.region_mdp)</a>
 </li>
-      <li><a href="pta/mdp.html#pta.mdp.region_mdp.Region.reset">reset() (pta.mdp.region_mdp.Region method)</a>
+      <li><a href="pta/clock.html#pta.clock.Interval.replace">replace() (pta.clock.Interval method)</a>
+</li>
+      <li><a href="pta/pta.html#pta.pta.Target.reset">reset (pta.pta.Target attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pta/clock.html#pta.clock.ClockValuation.reset">reset() (pta.clock.ClockValuation method)</a>
 
       <ul>
+        <li><a href="pta/mdp.html#pta.mdp.mdp.MDP.reset">(pta.mdp.mdp.MDP method)</a>
+</li>
+        <li><a href="pta/mdp.html#pta.mdp.region_mdp.Region.reset">(pta.mdp.region_mdp.Region method)</a>
+</li>
         <li><a href="pta/mdp.html#pta.mdp.region_mdp.RegionMDP.reset">(pta.mdp.region_mdp.RegionMDP method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/clock.html#pta.clock.DiagonalConstraint.rhs">rhs (pta.clock.DiagonalConstraint attribute)</a>
-
-      <ul>
-        <li><a href="pta/clock.html#pta.clock.SingletonConstraint.rhs">(pta.clock.SingletonConstraint attribute)</a>
+      <li><a href="pta/clock.html#pta.clock.Interval.right">right() (pta.clock.Interval property)</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -386,14 +387,14 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pta/distributions.html#pta.distributions.DiscreteDistribution.sample">sample() (pta.distributions.DiscreteDistribution method)</a>
-
-      <ul>
-        <li><a href="pta/distributions.html#pta.distributions.Distribution.sample">(pta.distributions.Distribution method)</a>
 </li>
-      </ul></li>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.State">State (class in pta.mdp.mdp)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/clock.html#pta.clock.SingletonConstraint">SingletonConstraint (class in pta.clock)</a>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.MDP.step">step() (pta.mdp.mdp.MDP method)</a>
+</li>
+      <li><a href="pta/distributions.html#pta.distributions.DiscreteDistribution.support">support() (pta.distributions.DiscreteDistribution property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -401,7 +402,17 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/clock.html#pta.clock.ComparisonOp.to_op">to_op() (pta.clock.ComparisonOp method)</a>
+      <li><a href="pta/pta.html#pta.pta.Target">Target (class in pta.pta)</a>
+</li>
+      <li><a href="pta/pta.html#pta.pta.Transition.target_dist">target_dist (pta.pta.Transition attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pta/pta.html#pta.pta.Transition">Transition (class in pta.pta)</a>
+</li>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.MDP.transition">transition() (pta.mdp.mdp.MDP method)</a>
+</li>
+      <li><a href="pta/pta.html#pta.pta.PTA.transitions">transitions() (pta.pta.PTA method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -409,7 +420,13 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/distributions.html#pta.distributions.DiscreteDistribution.uniform">uniform() (pta.distributions.DiscreteDistribution class method)</a>
+      <li><a href="pta/distributions.html#pta.distributions.uniform">uniform() (in module pta.distributions)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pta/clock.html#pta.clock.Interval.union">union() (pta.clock.Interval method)</a>
+</li>
+      <li><a href="pta/clock.html#pta.clock.Interval.upper">upper() (pta.clock.Interval property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -417,15 +434,11 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/distributions.html#pta.distributions.DiscreteDistribution.validate_support">validate_support() (pta.distributions.DiscreteDistribution method)</a>
-
-      <ul>
-        <li><a href="pta/distributions.html#pta.distributions.Distribution.validate_support">(pta.distributions.Distribution method)</a>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.MDP.valuation">valuation() (pta.mdp.mdp.MDP property)</a>
 </li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pta/clock.html#pta.clock.Boolean.value">value (pta.clock.Boolean attribute)</a>
+      <li><a href="pta/mdp.html#pta.mdp.mdp.State.value">value (pta.mdp.mdp.State attribute)</a>
 </li>
       <li><a href="pta/mdp.html#pta.mdp.region_mdp.Region.value">value() (pta.mdp.region_mdp.Region method)</a>
 </li>
@@ -442,6 +455,7 @@
 
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -471,7 +485,7 @@
   </div>
   <footer id="pagefooter">&copy; 2020, Anand Balakrishnan.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      3.0.2
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

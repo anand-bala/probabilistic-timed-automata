@@ -1,0 +1,681 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>portion.interval &#8212; Probabilistic Timed Automata v0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../../index.html ">
+        Probabilistic Timed Automata v0.1.0 documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../index.html">Home</a></li>
+      <li>
+        <a href="../index.html">Module code</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for portion.interval</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">.const</span> <span class="kn">import</span> <span class="n">Bound</span><span class="p">,</span> <span class="n">inf</span>
+
+
+<span class="n">Atomic</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Atomic&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">mergeable</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tester whether two atomic intervals can be merged (i.e. they overlap or are adjacent).</span>
+
+<span class="sd">    :param a: an atomic interval.</span>
+<span class="sd">    :param b: an atomic interval.</span>
+<span class="sd">    :return: True if mergeable, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">lower</span> <span class="o">&lt;</span> <span class="n">b</span><span class="o">.</span><span class="n">lower</span> <span class="ow">or</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">lower</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">):</span>
+        <span class="n">first</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">first</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span>
+
+    <span class="k">if</span> <span class="n">first</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="n">second</span><span class="o">.</span><span class="n">lower</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">first</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span> <span class="ow">or</span> <span class="n">second</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span>
+
+    <span class="k">return</span> <span class="n">first</span><span class="o">.</span><span class="n">upper</span> <span class="o">&gt;</span> <span class="n">second</span><span class="o">.</span><span class="n">lower</span>
+
+
+<span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an open interval with given bounds.</span>
+
+<span class="sd">    :param lower: value of the lower bound.</span>
+<span class="sd">    :param upper: value of the upper bound.</span>
+<span class="sd">    :return: an interval.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">closed</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a closed interval with given bounds.</span>
+
+<span class="sd">    :param lower: value of the lower bound.</span>
+<span class="sd">    :param upper: value of the upper bound.</span>
+<span class="sd">    :return: an interval.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">openclosed</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a left-open interval with given bounds.</span>
+
+<span class="sd">    :param lower: value of the lower bound.</span>
+<span class="sd">    :param upper: value of the upper bound.</span>
+<span class="sd">    :return: an interval.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">closedopen</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a right-open interval with given bounds.</span>
+
+<span class="sd">    :param lower: value of the lower bound.</span>
+<span class="sd">    :param upper: value of the upper bound.</span>
+<span class="sd">    :return: an interval.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">singleton</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a singleton interval.</span>
+
+<span class="sd">    :param value: value of the lower and upper bounds.</span>
+<span class="sd">    :return: an interval.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">empty</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an empty interval.</span>
+
+<span class="sd">    :return: an interval.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Interval"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Interval">[docs]</a><span class="k">class</span> <span class="nc">Interval</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class represents an interval.</span>
+
+<span class="sd">    An interval is an (automatically simplified) union of atomic intervals.</span>
+<span class="sd">    It can be created with Interval.from_atomic(), by passing intervals to __init__, or by using</span>
+<span class="sd">    one of the helpers provided in this module (open, closed, openclosed, etc.)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_intervals&#39;</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">intervals</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a disjunction of zero, one or more intervals.</span>
+
+<span class="sd">        :param intervals: zero, one or more intervals.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">interval</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Parameters must be Interval instances&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># So we have at least one (empty) interval</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Atomic</span><span class="p">(</span><span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Sort intervals by lower bound</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
+
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1"># Try to merge consecutive intervals</span>
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">current</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">successor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">mergeable</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">successor</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">current</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">successor</span><span class="o">.</span><span class="n">lower</span><span class="p">:</span>
+                        <span class="n">lower</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">lower</span>
+                        <span class="n">left</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">left</span> <span class="k">if</span> <span class="n">current</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span> <span class="k">else</span> <span class="n">successor</span><span class="o">.</span><span class="n">left</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">lower</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">current</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">successor</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
+                        <span class="n">left</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">left</span> <span class="k">if</span> <span class="n">lower</span> <span class="o">==</span> <span class="n">current</span><span class="o">.</span><span class="n">lower</span> <span class="k">else</span> <span class="n">successor</span><span class="o">.</span><span class="n">left</span>
+
+                    <span class="k">if</span> <span class="n">current</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="n">successor</span><span class="o">.</span><span class="n">upper</span><span class="p">:</span>
+                        <span class="n">upper</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">upper</span>
+                        <span class="n">right</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">right</span> <span class="k">if</span> <span class="n">current</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span> <span class="k">else</span> <span class="n">successor</span><span class="o">.</span><span class="n">right</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">upper</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">current</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="n">successor</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+                        <span class="n">right</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">right</span> <span class="k">if</span> <span class="n">upper</span> <span class="o">==</span> <span class="n">current</span><span class="o">.</span><span class="n">upper</span> <span class="k">else</span> <span class="n">successor</span><span class="o">.</span><span class="n">right</span>
+
+                    <span class="n">union</span> <span class="o">=</span> <span class="n">Atomic</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>  <span class="c1"># pop current</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>  <span class="c1"># pop successor</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">union</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Lowest left boundary is either CLOSED or OPEN.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">left</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Lowest lower bound value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Highest upper bound value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Highest right boundary is either CLOSED or OPEN.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">right</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        True if interval is empty, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="ow">or</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">atomic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        True if this interval is atomic, False otherwise.</span>
+<span class="sd">        An interval is atomic if it is composed of a single (possibly empty) atomic interval.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="Interval.from_atomic"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Interval.from_atomic">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_atomic</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an Interval instance containing a single atomic interval.</span>
+
+<span class="sd">        :param left: either CLOSED or OPEN.</span>
+<span class="sd">        :param lower: value of the lower bound.</span>
+<span class="sd">        :param upper: value of the upper bound.</span>
+<span class="sd">        :param right: either CLOSED or OPEN.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="n">Interval</span><span class="p">()</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">left</span> <span class="k">if</span> <span class="n">lower</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">inf</span><span class="p">]</span> <span class="k">else</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">right</span> <span class="k">if</span> <span class="n">upper</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">inf</span><span class="p">]</span> <span class="k">else</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span>
+
+        <span class="n">instance</span><span class="o">.</span><span class="n">_intervals</span> <span class="o">=</span> <span class="p">[</span><span class="n">Atomic</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">right</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">instance</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Interval</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">instance</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">enclosure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the smallest interval composed of a single atomic interval that encloses</span>
+<span class="sd">        the current interval.</span>
+
+<span class="sd">        :return: an Interval instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Interval.replace"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Interval.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ignore_inf</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new interval based on the current one and the provided values.</span>
+
+<span class="sd">        If current interval is not atomic, it is extended or restricted such that</span>
+<span class="sd">        its enclosure satisfies the new bounds. In other words, its new enclosure</span>
+<span class="sd">        will be equal to self.enclosure.replace(left, lower, upper, right).</span>
+
+<span class="sd">        Callable can be passed instead of values. In that case, it is called with the current</span>
+<span class="sd">        corresponding value except if ignore_inf if set (default) and the corresponding</span>
+<span class="sd">        bound is an infinity.</span>
+
+<span class="sd">        :param left: (a function of) left boundary.</span>
+<span class="sd">        :param lower: (a function of) value of the lower bound.</span>
+<span class="sd">        :param upper: (a function of) value of the upper bound.</span>
+<span class="sd">        :param right: (a function of) right boundary.</span>
+<span class="sd">        :param ignore_inf: ignore infinities if functions are provided (default is True).</span>
+<span class="sd">        :return: an Interval instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">enclosure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enclosure</span>
+
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">left</span><span class="p">):</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">left</span><span class="p">(</span><span class="n">enclosure</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">enclosure</span><span class="o">.</span><span class="n">left</span> <span class="k">if</span> <span class="n">left</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">left</span>
+
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">lower</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ignore_inf</span> <span class="ow">and</span> <span class="n">enclosure</span><span class="o">.</span><span class="n">lower</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">]:</span>
+                <span class="n">lower</span> <span class="o">=</span> <span class="n">enclosure</span><span class="o">.</span><span class="n">lower</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lower</span> <span class="o">=</span> <span class="n">lower</span><span class="p">(</span><span class="n">enclosure</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="n">enclosure</span><span class="o">.</span><span class="n">lower</span> <span class="k">if</span> <span class="n">lower</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">lower</span>
+
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">upper</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ignore_inf</span> <span class="ow">and</span> <span class="n">enclosure</span><span class="o">.</span><span class="n">upper</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">]:</span>
+                <span class="n">upper</span> <span class="o">=</span> <span class="n">enclosure</span><span class="o">.</span><span class="n">upper</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">upper</span> <span class="o">=</span> <span class="n">upper</span><span class="p">(</span><span class="n">enclosure</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">enclosure</span><span class="o">.</span><span class="n">upper</span> <span class="k">if</span> <span class="n">upper</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">upper</span>
+
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">right</span><span class="p">):</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">(</span><span class="n">enclosure</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">enclosure</span><span class="o">.</span><span class="n">right</span> <span class="k">if</span> <span class="n">right</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">right</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomic</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+
+        <span class="n">n_interval</span> <span class="o">=</span> <span class="bp">self</span> <span class="o">&amp;</span> <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n_interval</span><span class="o">.</span><span class="n">atomic</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">n_interval</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lowest</span> <span class="o">=</span> <span class="n">n_interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="n">left</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="n">lower</span><span class="p">)</span>
+            <span class="n">highest</span> <span class="o">=</span> <span class="n">n_interval</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">right</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Interval</span><span class="p">(</span><span class="n">lowest</span><span class="p">,</span> <span class="o">*</span><span class="n">n_interval</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">highest</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Interval.apply"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Interval.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply a function on each of the underlying atomic intervals and return their union</span>
+<span class="sd">        as a new interval instance</span>
+
+<span class="sd">        Given function is expected to return an interval (possibly empty or not atomic) or</span>
+<span class="sd">        a 4-uple (left, lower, upper, right) whose values correspond to the parameters of</span>
+<span class="sd">        Interval.from_atomic(left, lower, upper, right).</span>
+
+<span class="sd">        This method is merely a shortcut for Interval(*list(map(func, self))).</span>
+
+<span class="sd">        :param func: function to apply on each underlying atomic interval.</span>
+<span class="sd">        :return: an Interval instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">intervals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+                <span class="n">intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unsupported return type </span><span class="si">{}</span><span class="s1"> for </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">Interval</span><span class="p">(</span><span class="o">*</span><span class="n">intervals</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Interval.adjacent"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Interval.adjacent">[docs]</a>    <span class="k">def</span> <span class="nf">adjacent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Test if given interval is adjacent.</span>
+
+<span class="sd">        An interval is adjacent if there is no intersection, and their union is an atomic interval.</span>
+
+<span class="sd">        :param other: an interval.</span>
+<span class="sd">        :return: True if intervals are adjacent, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span> <span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span> <span class="o">|</span> <span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">atomic</span></div>
+
+<div class="viewcode-block" id="Interval.overlaps"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Interval.overlaps">[docs]</a>    <span class="k">def</span> <span class="nf">overlaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Test if intervals have any overlapping value.</span>
+
+<span class="sd">        :param other: an interval.</span>
+<span class="sd">        :return: True if intervals overlap, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+            <span class="n">i_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">o_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+            <span class="n">i_current</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i_iter</span><span class="p">)</span>
+            <span class="n">o_current</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">o_iter</span><span class="p">)</span>
+
+            <span class="k">while</span> <span class="n">i_current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">o_current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i_current</span> <span class="o">&lt;</span> <span class="n">o_current</span><span class="p">:</span>
+                    <span class="n">i_current</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i_iter</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">o_current</span> <span class="o">&lt;</span> <span class="n">i_current</span><span class="p">:</span>
+                    <span class="n">o_current</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">o_iter</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unsupported type </span><span class="si">{}</span><span class="s1"> for </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">),</span> <span class="n">other</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Interval.intersection"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Interval.intersection">[docs]</a>    <span class="k">def</span> <span class="nf">intersection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the intersection of two intervals.</span>
+
+<span class="sd">        :param other: an interval.</span>
+<span class="sd">        :return: the intersection of the intervals.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">&amp;</span> <span class="n">other</span></div>
+
+<div class="viewcode-block" id="Interval.union"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Interval.union">[docs]</a>    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the union of two intervals.</span>
+
+<span class="sd">        :param other: an interval.</span>
+<span class="sd">        :return: the union of the intervals.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">|</span> <span class="n">other</span></div>
+
+<div class="viewcode-block" id="Interval.contains"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Interval.contains">[docs]</a>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Test if given item is contained in this interval.</span>
+<span class="sd">        This method accepts intervals and arbitrary comparable values.</span>
+
+<span class="sd">        :param item: an interval or any arbitrary comparable value.</span>
+<span class="sd">        :return: True if given item is contained, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Interval.complement"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Interval.complement">[docs]</a>    <span class="k">def</span> <span class="nf">complement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the complement of this interval.</span>
+
+<span class="sd">        :return: the complement of this interval.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="o">~</span><span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Interval.difference"><a class="viewcode-back" href="../../pta/clock.html#pta.clock.Interval.difference">[docs]</a>    <span class="k">def</span> <span class="nf">difference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the difference of two intervals.</span>
+
+<span class="sd">        :param other: an interval.</span>
+<span class="sd">        :return: the difference of the intervals.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">-</span> <span class="n">other</span></div>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">([</span><span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">[</span><span class="n">item</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">[</span><span class="n">item</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomic</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">atomic</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">lower</span><span class="p">:</span>
+                <span class="n">lower</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span> <span class="k">else</span> <span class="n">other</span><span class="o">.</span><span class="n">left</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lower</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="k">if</span> <span class="n">lower</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="k">else</span> <span class="n">other</span><span class="o">.</span><span class="n">left</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">upper</span><span class="p">:</span>
+                <span class="n">upper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span> <span class="k">else</span> <span class="n">other</span><span class="o">.</span><span class="n">right</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">upper</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="k">if</span> <span class="n">upper</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="k">else</span> <span class="n">other</span><span class="o">.</span><span class="n">right</span>
+
+            <span class="k">return</span> <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">intersections</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">i_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">o_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+            <span class="n">i_current</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i_iter</span><span class="p">)</span>
+            <span class="n">o_current</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">o_iter</span><span class="p">)</span>
+
+            <span class="k">while</span> <span class="n">i_current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">o_current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i_current</span> <span class="o">&lt;</span> <span class="n">o_current</span><span class="p">:</span>
+                    <span class="n">i_current</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i_iter</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">o_current</span> <span class="o">&lt;</span> <span class="n">i_current</span><span class="p">:</span>
+                    <span class="n">o_current</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">o_iter</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># i_current and o_current have an overlap</span>
+                    <span class="n">intersections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_current</span> <span class="o">&amp;</span> <span class="n">o_current</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">i_current</span> <span class="o">&lt;=</span> <span class="n">o_current</span><span class="p">:</span>
+                        <span class="c1"># o_current can still intersect next i</span>
+                        <span class="n">i_current</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i_iter</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">o_current</span> <span class="o">&lt;=</span> <span class="n">i_current</span><span class="p">:</span>
+                        <span class="c1"># i_current can still intersect next o</span>
+                        <span class="n">o_current</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">o_iter</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">assert</span> <span class="kc">False</span>
+
+            <span class="k">return</span> <span class="n">Interval</span><span class="p">(</span><span class="o">*</span><span class="n">intersections</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomic</span><span class="p">:</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">lower</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="n">item</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="ow">and</span>
+                    <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">upper</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="n">item</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="ow">and</span>
+                    <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">left</span> <span class="ow">and</span> <span class="n">right</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">selfiter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="n">current</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">selfiter</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                    <span class="k">while</span> <span class="n">current</span> <span class="o">&lt;</span> <span class="n">other</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">current</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">selfiter</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+
+                    <span class="c1"># here current and other could have an overlap</span>
+                    <span class="k">if</span> <span class="n">other</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Item is a value</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">:</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="p">(</span><span class="n">item</span> <span class="o">&gt;=</span> <span class="n">i</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span> <span class="k">else</span> <span class="p">(</span><span class="n">item</span> <span class="o">&gt;</span> <span class="n">i</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="p">(</span><span class="n">item</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span> <span class="k">else</span> <span class="p">(</span><span class="n">item</span> <span class="o">&lt;</span> <span class="n">i</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">left</span> <span class="ow">and</span> <span class="n">right</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__invert__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">complements</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">,</span> <span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">),</span>
+            <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="n">complements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Interval</span><span class="o">.</span><span class="n">from_atomic</span><span class="p">(</span><span class="o">~</span><span class="n">i</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="n">j</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="o">~</span><span class="n">j</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Interval</span><span class="p">(</span><span class="o">*</span><span class="n">complements</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">other</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_intervals</span><span class="p">):</span>
+                <span class="n">eq</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">a</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">left</span> <span class="ow">and</span>
+                    <span class="n">a</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">lower</span> <span class="ow">and</span>
+                    <span class="n">a</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">upper</span> <span class="ow">and</span>
+                    <span class="n">a</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">right</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">eq</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">lower</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">lower</span> <span class="ow">or</span> \
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">lower</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">&lt;</span> <span class="n">other</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">upper</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">upper</span> <span class="ow">or</span> \
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">upper</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">&gt;</span> <span class="n">other</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">upper</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">upper</span> <span class="ow">or</span> \
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">upper</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">&lt;</span> <span class="n">other</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">OPEN</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">lower</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">lower</span> <span class="ow">or</span> \
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">lower</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">&gt;</span> <span class="n">other</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">==</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">]))</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">intervals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">interval</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;()&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">interval</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">interval</span><span class="o">.</span><span class="n">upper</span><span class="p">:</span>
+                <span class="n">intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">{}</span><span class="s1">]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">lower</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">,</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="s1">&#39;[&#39;</span> <span class="k">if</span> <span class="n">interval</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span> <span class="k">else</span> <span class="s1">&#39;(&#39;</span><span class="p">,</span>
+                        <span class="nb">repr</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">lower</span><span class="p">),</span>
+                        <span class="nb">repr</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">upper</span><span class="p">),</span>
+                        <span class="s1">&#39;]&#39;</span> <span class="k">if</span> <span class="n">interval</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Bound</span><span class="o">.</span><span class="n">CLOSED</span> <span class="k">else</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39; | &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">intervals</span><span class="p">)</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form class="search" action="../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../index.html">Home</a></li>
+      <li>
+        <a href="../index.html">Module code</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2020, Anand Balakrishnan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      3.2.1
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

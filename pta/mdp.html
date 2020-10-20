@@ -4,6 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>pta.mdp module &#8212; Probabilistic Timed Automata v0.1.0 documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -12,7 +13,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pta.clocks module" href="clock.html" />
@@ -60,12 +61,48 @@ for blackbox simulation.</p>
 controller (typically a neural network) that takes in a state (location,
 valuation pair) and outputs a delay or an edge</p>
 <dl class="py class">
+<dt id="pta.mdp.mdp.State">
+<em class="property">class </em><code class="sig-prename descclassname">pta.mdp.mdp.</code><code class="sig-name descname">State</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">location</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/mdp.html#State"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.mdp.State" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt id="pta.mdp.mdp.State.value">
+<code class="sig-name descname">value</code><em class="property">: <a class="reference internal" href="clock.html#pta.clock.ClockValuation" title="pta.clock.ClockValuation">pta.clock.ClockValuation</a></em><a class="headerlink" href="#pta.mdp.mdp.State.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pta.mdp.mdp.State.location">
+<code class="sig-name descname">location</code><em class="property">: Hashable</em><a class="headerlink" href="#pta.mdp.mdp.State.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pta.mdp.mdp.Action">
+<em class="property">class </em><code class="sig-prename descclassname">pta.mdp.mdp.</code><code class="sig-name descname">Action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">delay</span></em>, <em class="sig-param"><span class="n">edge</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/mdp.html#Action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.mdp.Action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt id="pta.mdp.mdp.Action.delay">
+<code class="sig-name descname">delay</code><em class="property">: float</em><a class="headerlink" href="#pta.mdp.mdp.Action.delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pta.mdp.mdp.Action.edge">
+<code class="sig-name descname">edge</code><em class="property">: Hashable</em><a class="headerlink" href="#pta.mdp.mdp.Action.edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="pta.mdp.mdp.MDP">
-<em class="property">class </em><code class="sig-prename descclassname">pta.mdp.mdp.</code><code class="sig-name descname">MDP</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pta</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/mdp.html#MDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.mdp.MDP" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pta.mdp.mdp.</code><code class="sig-name descname">MDP</code><span class="sig-paren">(</span><em class="sig-param">pta</em>, <em class="sig-param">*</em>, <em class="sig-param">random_delay=&lt;staticmethod object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/mdp.html#MDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.mdp.MDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
-<dt id="pta.mdp.mdp.MDP.locations">
-<em class="property">property </em><code class="sig-name descname">locations</code><a class="headerlink" href="#pta.mdp.mdp.MDP.locations" title="Permalink to this definition">¶</a></dt>
+<dt id="pta.mdp.mdp.MDP.location_space">
+<em class="property">property </em><code class="sig-name descname">location_space</code><a class="headerlink" href="#pta.mdp.mdp.MDP.location_space" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -82,6 +119,85 @@ valuation pair) and outputs a delay or an edge</p>
 <dt id="pta.mdp.mdp.MDP.initial_location">
 <em class="property">property </em><code class="sig-name descname">initial_location</code><a class="headerlink" href="#pta.mdp.mdp.MDP.initial_location" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt id="pta.mdp.mdp.MDP.valuation">
+<em class="property">property </em><code class="sig-name descname">valuation</code><a class="headerlink" href="#pta.mdp.mdp.MDP.valuation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pta.mdp.mdp.MDP.location">
+<em class="property">property </em><code class="sig-name descname">location</code><a class="headerlink" href="#pta.mdp.mdp.MDP.location" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pta.mdp.mdp.MDP.transition">
+<code class="sig-name descname">transition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">edge</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/mdp.html#MDP.transition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.mdp.MDP.transition" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>edge</strong> (<em>Hashable</em>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="pta.html#pta.pta.Transition" title="pta.pta.Transition">pta.pta.Transition</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.mdp.mdp.MDP.enabled_actions">
+<code class="sig-name descname">enabled_actions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/mdp.html#MDP.enabled_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.mdp.MDP.enabled_actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the interval of delays satisfying the invariant and the set of actions enabled at the current time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[portion.interval.Interval, FrozenSet[Hashable]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.mdp.mdp.MDP.available_edges">
+<code class="sig-name descname">available_edges</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/mdp.html#MDP.available_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.mdp.MDP.available_edges" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Mapping[Hashable, <a class="reference internal" href="pta.html#pta.pta.Transition" title="pta.pta.Transition">pta.pta.Transition</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.mdp.mdp.MDP.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/mdp.html#MDP.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.mdp.MDP.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the MDP to its initial state</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The reset state of the MDP</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pta.mdp.mdp.State" title="pta.mdp.mdp.State">State</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pta.mdp.mdp.MDP.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">edge_first</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pta/mdp/mdp.html#MDP.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pta.mdp.mdp.MDP.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a timed action on the MDP</p>
+<p>Here, the semantics imply that the agent takes an edge, and then waits
+for the given delay. Due to the stochasticity in the environment, there
+is noise in the delay and the edge may be probabilistic.
+If you want the reverse to be true, set <cite>edge_first</cite> to <cite>False</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action</strong> (<a class="reference internal" href="#pta.mdp.mdp.Action" title="pta.mdp.mdp.Action"><em>Action</em></a>) – A timed action</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The new state of the MDP</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pta.mdp.mdp.State" title="pta.mdp.mdp.State">State</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -198,7 +314,7 @@ method.</p>
 with respect to their guards and the clock valuations.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Mapping[Hashable, <a class="reference internal" href="distributions.html#pta.distributions.DiscreteDistribution" title="pta.distributions.DiscreteDistribution">pta.distributions.DiscreteDistribution</a>[typing.Tuple[typing.Set[<a class="reference internal" href="clock.html#pta.clock.Clock" title="pta.clock.Clock">pta.clock.Clock</a>], typing.Hashable]][Tuple[Set[<a class="reference internal" href="clock.html#pta.clock.Clock" title="pta.clock.Clock">pta.clock.Clock</a>], Hashable]]]</p>
+<dd class="field-even"><p>Mapping[Hashable, <a class="reference internal" href="distributions.html#pta.distributions.DiscreteDistribution" title="pta.distributions.DiscreteDistribution">pta.distributions.DiscreteDistribution</a>[<a class="reference internal" href="pta.html#pta.pta.Target" title="pta.pta.Target">pta.pta.Target</a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -257,6 +373,7 @@ region and <span class="math notranslate nohighlight">\(R'\)</span> is the succe
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -297,7 +414,7 @@ region and <span class="math notranslate nohighlight">\(R'\)</span> is the succe
   </div>
   <footer id="pagefooter">&copy; 2020, Anand Balakrishnan.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      3.0.2
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -4,6 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>pta.mdp.region_mdp &#8212; Probabilistic Timed Automata v0.1.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -12,7 +13,7 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -45,32 +46,27 @@
             
   <h1>Source code for pta.mdp.region_mdp</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Set</span><span class="p">,</span>
-    <span class="n">Hashable</span><span class="p">,</span>
-    <span class="n">Mapping</span><span class="p">,</span>
-    <span class="n">Tuple</span><span class="p">,</span>
-    <span class="n">Optional</span><span class="p">,</span>
-    <span class="n">Union</span><span class="p">,</span>
     <span class="n">FrozenSet</span><span class="p">,</span>
+    <span class="n">Hashable</span><span class="p">,</span>
     <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">Mapping</span><span class="p">,</span>
     <span class="n">MutableMapping</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Set</span><span class="p">,</span>
+    <span class="n">Tuple</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">attr</span>
 
-<span class="kn">from</span> <span class="nn">pta.clock</span> <span class="kn">import</span> <span class="n">Clock</span><span class="p">,</span> <span class="n">ClockConstraint</span><span class="p">,</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">ClockValuation</span>
+<span class="kn">from</span> <span class="nn">pta.clock</span> <span class="kn">import</span> <span class="n">Clock</span><span class="p">,</span> <span class="n">ClockValuation</span><span class="p">,</span> <span class="n">Interval</span>
 <span class="kn">from</span> <span class="nn">pta.distributions</span> <span class="kn">import</span> <span class="n">DiscreteDistribution</span>
-<span class="kn">from</span> <span class="nn">pta.pta</span> <span class="kn">import</span> <span class="n">PTA</span>
-
+<span class="kn">from</span> <span class="nn">pta.pta</span> <span class="kn">import</span> <span class="n">PTA</span><span class="p">,</span> <span class="n">Target</span><span class="p">,</span> <span class="n">Transition</span>
 
 <span class="c1"># Action = Union[str, int]</span>
 <span class="n">Action</span> <span class="o">=</span> <span class="n">Hashable</span>
 <span class="n">Label</span> <span class="o">=</span> <span class="nb">str</span>
 <span class="n">Location</span> <span class="o">=</span> <span class="n">Hashable</span>
-
-
-<span class="n">Target</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">Clock</span><span class="p">],</span> <span class="n">Location</span><span class="p">]</span>
-<span class="n">Transition</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">ClockConstraint</span><span class="p">,</span> <span class="n">DiscreteDistribution</span><span class="p">[</span><span class="n">Target</span><span class="p">]]</span>
 
 <span class="n">TransitionFn</span> <span class="o">=</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Location</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Action</span><span class="p">,</span> <span class="n">Transition</span><span class="p">]]</span>
 
@@ -118,16 +114,14 @@
 <span class="sd">        The representative value of the region depends on the integer value and</span>
 <span class="sd">        the *fractional order* of the individual valuations.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">ClockValuation</span><span class="p">(</span>
-            <span class="p">{</span>  <span class="c1"># type: ignore</span>
-                <span class="n">clock</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_vector</span><span class="p">[</span><span class="n">clock</span><span class="p">]</span>
-                <span class="o">+</span> <span class="p">(</span>
-                    <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fractional_ord</span><span class="p">[</span><span class="n">clock</span><span class="p">]</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_int</span><span class="p">))</span>
-                    <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_frac</span><span class="p">)</span>
-                <span class="p">)</span>
-                <span class="k">for</span> <span class="n">clock</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clocks</span>
-            <span class="p">}</span>
-        <span class="p">)</span></div>
+
+        <span class="k">def</span> <span class="nf">val_comp</span><span class="p">(</span><span class="n">clock</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_vector</span><span class="p">[</span><span class="n">clock</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span>
+                <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fractional_ord</span><span class="p">[</span><span class="n">clock</span><span class="p">]</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_int</span><span class="p">))</span>
+                <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_frac</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ClockValuation</span><span class="p">({</span><span class="n">clock</span><span class="p">:</span> <span class="n">val_comp</span><span class="p">(</span><span class="n">clock</span><span class="p">)</span> <span class="k">for</span> <span class="n">clock</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clocks</span><span class="p">})</span>  <span class="c1"># type: ignore</span></div>
 
 <div class="viewcode-block" id="Region.delay"><a class="viewcode-back" href="../../../pta/mdp.html#pta.mdp.region_mdp.Region.delay">[docs]</a>    <span class="k">def</span> <span class="nf">delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Region&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Delay each of the clocks and move by ``steps`` &quot;representative&quot; region.</span>
@@ -225,7 +219,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_current_transitions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Action</span><span class="p">,</span> <span class="n">Transition</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">_transitions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pta</span><span class="o">.</span><span class="n">_transitions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">location</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Location</span><span class="p">:</span>
@@ -294,6 +288,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clock_valuation</span></div></div>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -329,7 +324,7 @@
   </div>
   <footer id="pagefooter">&copy; 2020, Anand Balakrishnan.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      3.0.2
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 
