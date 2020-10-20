@@ -1,16 +1,19 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath(".."))
 
 from better import better_theme_path
+
 import pta
+
+sys.path.insert(0, os.path.abspath(".."))
+
 
 # -- Project information -----------------------------------------------------
 
 project = "Probabilistic Timed Automata"
 copyright = "2020, Anand Balakrishnan"
 author = "Anand Balakrishnan"
-version = pta.__version__.split('-')[0]
+version = pta.__version__.split("-")[0]
 release = pta.__version__
 
 # -- General configuration ---------------------------------------------------
@@ -23,6 +26,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.githubpages",
     "sphinx.ext.napoleon",
+    "recommonmark",
 ]
 
 templates_path = ["_templates"]
@@ -39,10 +43,10 @@ html_theme = "better"
 
 html_context = {}
 html_sidebars = {
-    '**': ['localtoc.html', 'searchbox.html'],
+    "**": ["localtoc.html", "searchbox.html"],
 }
 
-html_title = F"{project} v{release} documentation"
+html_title = f"{project} v{release} documentation"
 html_short_title = "Home"
 
 html_show_sourcelink = True
@@ -64,8 +68,8 @@ napoleon_use_param = True
 napoleon_use_rtype = True
 
 # Autodoc configuration
-autodoc_member_order = 'bysource'
-autodoc_typehints = 'description'
+autodoc_member_order = "bysource"
+autodoc_typehints = "description"
 
 # -- Options for todo extension ----------------------------------------------
 
