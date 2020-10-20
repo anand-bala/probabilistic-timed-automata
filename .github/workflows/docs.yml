@@ -1,4 +1,4 @@
-name: Deploy package and documentation
+name: Deploy documentation to gh-pages
 on:
   push:
     branches:
